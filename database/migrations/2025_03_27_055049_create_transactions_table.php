@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class CreateTransactionsTable extends Migration
 {
@@ -31,6 +31,6 @@ class CreateTransactionsTable extends Migration
     public function down()
     {
         Schema::dropIfExists('transactions');
-        DB::statement("DROP TYPE IF EXISTS transaction_type");
+        DB::statement('DROP TYPE IF EXISTS transaction_type');
     }
 }
