@@ -9,8 +9,12 @@ class CreateNotificationsTable extends Migration
 {
     public function up()
     {
-        // Create the enum type in PostgreSQL
-        DB::statement("CREATE TYPE notification_type AS ENUM ('portfolio_update', 'system')");
+        // Create the enum type if it doesn't exist
+        DB::statement("DO $$ BEGIN
+            IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'notification_type') THEN
+                CREATE TYPE notification_type AS ENUM ('portfolio_update', 'system');
+            END IF;
+        END $$;");
 
         // Create the table without the type column
         Schema::create('notifications', function (Blueprint $table) {

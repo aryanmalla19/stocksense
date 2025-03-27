@@ -9,8 +9,12 @@ class CreateTransactionsTable extends Migration
 {
     public function up()
     {
-        // Create the enum type in PostgreSQL
-        DB::statement("CREATE TYPE transaction_type AS ENUM ('buy', 'sell')");
+        // Create the enum type if it doesn't exist
+        DB::statement("DO $$ BEGIN
+            IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'transaction_type') THEN
+                CREATE TYPE transaction_type AS ENUM ('buy', 'sell');
+            END IF;
+        END $$;");
 
         // Create the table without the type column
         Schema::create('transactions', function (Blueprint $table) {
