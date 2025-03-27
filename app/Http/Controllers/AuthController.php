@@ -20,7 +20,7 @@ class AuthController extends Controller
                     'min:8',
                     'max:50',
                     'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/',
-                    'confirmed' // This requires a password_confirmation field in the request
+                    'confirmed'
                 ],
                 'password_confirmation' => 'required_with:password',
             ],
