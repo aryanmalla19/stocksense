@@ -3,8 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class StockPrice extends Model
 {
-    protected $fillable = ['stock_id', 'price', 'timestamp'];
+    protected $fillable = [
+        'stock_id',
+        'price',
+    ];
+
+    public function stock(): BelongsTo
+    {
+        return $this->belongsTo(Stock::class);
+    }
 }

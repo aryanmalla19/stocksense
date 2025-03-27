@@ -9,10 +9,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class SectorFactory extends Factory
 {
-    
-     # Define the model's default state.
-      protected $model = Sector::class;
-
     public function definition(): array
     {
         return [
@@ -25,9 +21,7 @@ class SectorFactory extends Factory
                 'hotels',
                 'trading',
                 'others',
-        
             ]),
-            //
         ];
     }
 }

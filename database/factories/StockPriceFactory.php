@@ -6,16 +6,20 @@ use App\Models\Sector;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Stock>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\StockPrice>
  */
-class StockFactory extends Factory
+class StockPriceFactory extends Factory
 {
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
     public function definition(): array
     {
         return [
-            'symbol' => $this->faker->unique()->lexify('????'),
-            'name' => $this->faker->company . ' Limited',
             'sector_id' => Sector::query()->inRandomOrder()->first()->id ?? Sector::facoty()->create()->id,
+            'price' => $this->faker->numberBetween(100, 999999),
         ];
     }
 }
