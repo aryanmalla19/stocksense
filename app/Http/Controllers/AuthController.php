@@ -3,16 +3,44 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 {
-    public function login()
+    public function login(Request $request)
     {
         //return 'This is login controller';
+        $request->validate(
+            [
+                'email' => 'required | email',
+                'password' => 'required'
+            ],
+            [
+                'email.required' => 'Email missing',
+                'email.email' => 'Not in email format',
 
-        $credentials = request(['email', 'password']);
+                'password.required' => 'Password missing'
+            ]
+        );
+
+        $credentials = $request->only(['email', 'password']);
+
+        $user = User::where('email', $credentials['email'])->first();
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'Invalid email'
+            ], 401);
+        }
+
+        if (!Hash::check($credentials['password'], $user->password)) {
+            return response()->json([
+                'message' => 'Invalid password'
+            ], 401);
+        }
 
         if (!$token = auth('api')->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Error generating token'], 401);
         }
 
         return $this->respondWithToken($token);
