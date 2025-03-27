@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\SectorController;
+use App\Http\Controllers\StockController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -9,6 +11,8 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // })->middleware('auth:sanctum');
 
+Route::apiResource('/stocks', StockController::class);
+Route::apiResource('/sectors', SectorController::class);
 
 # User authentication route api
 Route::post('login', [UserController::class, 'login']);
@@ -22,6 +26,4 @@ Route::group([
     Route::post('refresh', [UserController::class, 'refresh']);
     Route::post('me', [UserController::class, 'me']);
 });
-
-
 
