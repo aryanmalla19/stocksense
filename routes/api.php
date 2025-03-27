@@ -8,7 +8,7 @@ Route::post('login', [AuthController::class, 'login']);
 
 Route::group([
     'middleware' => 'auth:api',
-    'prefix' => 'user'
+    'prefix' => 'auth'
 ], function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
