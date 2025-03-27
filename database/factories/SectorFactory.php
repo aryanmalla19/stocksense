@@ -12,15 +12,19 @@ class SectorFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->randomElement([
+            'name' => $this->faker->unique()->randomElement([
                 'banking',
                 'hydropower',
-                'insurance',
+                'life Insurance',
+                'non-life Insurance',
                 'health',
                 'manufacturing',
-                'hotels',
+                'hotel',
                 'trading',
-                'others',
+                'microfinance',
+                'finance',
+                'investment',
+                'others'
             ]),
         ];
     }

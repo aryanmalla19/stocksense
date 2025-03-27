@@ -15,7 +15,7 @@ class StockFactory extends Factory
         return [
             'symbol' => $this->faker->unique()->lexify('????'),
             'name' => $this->faker->company . ' Limited',
-            'sector_id' => Sector::query()->inRandomOrder()->first()->id ?? Sector::facoty()->create()->id,
+            'sector_id' => Sector::query()->inRandomOrder()->first()->id ?? Sector::factory()->create()->id,
         ];
     }
 }

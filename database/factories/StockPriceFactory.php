@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Sector;
+use App\Models\Stock;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,7 +18,7 @@ class StockPriceFactory extends Factory
     public function definition(): array
     {
         return [
-            'sector_id' => Sector::query()->inRandomOrder()->first()->id ?? Sector::facoty()->create()->id,
+            'stock_id' => Stock::query()->inRandomOrder()->first()->id ?? Stock::factory()->create()->id,
             'price' => $this->faker->numberBetween(100, 999999),
         ];
     }
