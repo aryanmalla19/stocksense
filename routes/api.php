@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('login', [AuthController::class, 'login']);
 
 Route::group([
-    'middleware' => 'api',
+    'middleware' => 'auth:api',
     'prefix' => 'user'
 ], function () {
     Route::post('logout', [AuthController::class, 'logout']);
