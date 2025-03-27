@@ -13,7 +13,6 @@ class CreateStocksTable extends Migration
             $table->string('symbol')->unique();
             $table->string('name');
             $table->foreignId('sector_id')->nullable()->constrained('sectors')->onDelete('set null');
-            $table->index('sector_id', 'idx_stock_sector');
             $table->timestamps();
         });
     }
