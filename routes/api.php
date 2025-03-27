@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 
 # User authentication route api
 Route::post('login', [UserController::class, 'login']);
+Route::get('/users', [UserController::class, 'getUsers']);
 
 Route::group([
     'middleware' => 'api',
