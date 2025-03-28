@@ -22,10 +22,11 @@ class Stock extends Model
         return $this->hasMany(StockPrice::class);
     }
 
-    public function price(): HasOne
+    public function latestPrice()
     {
-        return $this->hasOne(StockPrice::class)->where('created_at', now());
+        return $this->hasOne(StockPrice::class, 'stock_id')->latest();
     }
+
 
     public function sector(): BelongsTo
     {
