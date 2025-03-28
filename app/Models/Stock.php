@@ -27,7 +27,6 @@ class Stock extends Model
         return $this->hasOne(StockPrice::class, 'stock_id')->latest();
     }
 
-
     public function sector(): BelongsTo
     {
         return $this->belongsTo(Sector::class);

@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\SectorController;
 use App\Http\Controllers\StockController;
+use App\Http\Controllers\StockPriceController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserSettingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -13,6 +15,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::apiResource('/stocks', StockController::class);
 Route::apiResource('/sectors', SectorController::class);
+Route::apiResource('stock_prices', StockPriceController::class);
+Route::apiResource('/user/settings', UserSettingController::class);
 
 # User authentication route api
 Route::post('login', [UserController::class, 'login']);
