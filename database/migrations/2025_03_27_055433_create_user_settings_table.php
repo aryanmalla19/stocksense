@@ -15,8 +15,8 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade')->unique();
             $table->boolean('notification_enabled')->default(true);
-            $table->string('currency')->default('NPR');
-            $table->timestamp('updated_at')->nullable();
+            $table->enum('mode', ['dark', 'light']);
+            $table->timestamps();
         });
     }
 

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('stock_id')->constrained('stocks')->onDelete('cascade');
+            $table->primary(['user_id', 'stock_id']);
             $table->timestamps();
         });
     }
