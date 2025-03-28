@@ -1,27 +1,17 @@
 <?php
 
-use App\Http\Controllers\UserController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
-
-// Route::get('/user', function (Request $request) {
-//     return $request->user();
-// })->middleware('auth:sanctum');
-
-
-# User authentication route api
-Route::post('login', [UserController::class, 'login']);
-Route::get('/users', [UserController::class, 'getUsers']);
+// User authentication route api
+Route::post('login', [AuthController::class, 'login']);
+Route::post('register', [AuthController::class, 'register']);
 
 Route::group([
-    'middleware' => 'api',
-    'prefix' => 'user'
-], function ($router) {
-    Route::post('logout', [UserController::class, 'logout']);
-    Route::post('refresh', [UserController::class, 'refresh']);
-    Route::post('me', [UserController::class, 'me']);
+    'middleware' => 'auth:api',
+    'prefix' => 'auth',
+], function () {
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('refresh', [AuthController::class, 'refresh']);
+    Route::post('me', [AuthController::class, 'me']);
 });
-
-
-
