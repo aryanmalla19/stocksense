@@ -12,8 +12,6 @@ class CreateStockPricesTable extends Migration
             $table->bigIncrements('id');
             $table->foreignId('stock_id')->constrained('stocks')->onDelete('cascade');
             $table->decimal('price', 15, 2);
-            $table->timestamp('timestamp');
-            $table->index(['stock_id', 'timestamp'], 'idx_stock_time');
             $table->timestamps();
         });
     }
