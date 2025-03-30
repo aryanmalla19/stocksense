@@ -7,27 +7,25 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserSettingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 
-
-// Route::get('/user', function (Request $request) {
-//     return $request->user();
-// })->middleware('auth:sanctum');
 
 Route::apiResource('/stocks', StockController::class);
 Route::apiResource('/sectors', SectorController::class);
 Route::apiResource('stock_prices', StockPriceController::class);
 Route::apiResource('/user/settings', UserSettingController::class);
 
-# User authentication route api
-Route::post('login', [UserController::class, 'login']);
-Route::get('/users', [UserController::class, 'getUsers']);
+
+
+// User authentication route api
+Route::post('login', [AuthController::class, 'login']);
+Route::post('register', [AuthController::class, 'register']);
 
 Route::group([
-    'middleware' => 'api',
-    'prefix' => 'user'
-], function ($router) {
-    Route::post('logout', [UserController::class, 'logout']);
-    Route::post('refresh', [UserController::class, 'refresh']);
-    Route::post('me', [UserController::class, 'me']);
+    'middleware' => 'auth:api',
+    'prefix' => 'auth',
+], function () {
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('refresh', [AuthController::class, 'refresh']);
+    Route::post('me', [AuthController::class, 'me']);
 });
-

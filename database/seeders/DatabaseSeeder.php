@@ -26,7 +26,6 @@ class DatabaseSeeder extends Seeder
         DB::table('sectors')->truncate();
         Sector::factory(12)->create();
 
-
         Stock::factory(100)->create()->each(function ($stock) {
             StockPrice::factory(5)->create([
                 'stock_id' => $stock->id,
