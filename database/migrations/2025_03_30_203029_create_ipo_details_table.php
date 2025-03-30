@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('total_shares');
             $table->timestamp('open_date');
             $table->timestamp('close_date');
+            $table->timestamps();
         });
     }
 

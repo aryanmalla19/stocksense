@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreignId('ipo_id')->constrained('ipo_details');
             $table->integer('applied_shares');
             $table->string('status');
+            $table->decimal('amount');
+            $table->timestamp('application_date');
             $table->timestamps();
         });
     }

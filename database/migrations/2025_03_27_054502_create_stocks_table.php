@@ -13,6 +13,10 @@ class CreateStocksTable extends Migration
             $table->string('symbol')->unique();
             $table->string('company_name');
             $table->foreignId('sector_id')->nullable()->constrained('sectors')->onDelete('set null');
+            $table->text('description')->nullable();
+            $table->decimal('current_price');
+            $table->boolean('is_ipo')->default(false);
+            $table->enum('ipo_status', ['pending', 'opened', 'closed'])->nullable();
             $table->timestamps();
         });
     }
