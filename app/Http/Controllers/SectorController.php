@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\SectorResource;
 use App\Models\Sector;
 use App\Models\Stock;
 use Illuminate\Http\Request;
@@ -16,7 +17,7 @@ class SectorController extends Controller
         $sectors = Sector::all();
         return response()->json([
             'message' => 'Successfully fetched all sectors data',
-            'data' => $sectors
+            'data' => SectorResource::collection($sectors),
         ]);
     }
 
@@ -32,7 +33,7 @@ class SectorController extends Controller
         $sector = Sector::create($data);
         return response()->json([
             'message' => 'Successfully created sector',
-            'data' => $sector
+            'data' => new SectorResource($sector),
         ]);
     }
 
@@ -50,7 +51,7 @@ class SectorController extends Controller
 
         return response()->json([
             'message' => 'Successfully fetched sector data',
-            'data' => $sector
+            'data' => new SectorResource($sector),
         ]);
     }
 
@@ -74,7 +75,7 @@ class SectorController extends Controller
 
         return response()->json([
             'message' => 'Successfully updated sector with ID '. $id,
-            'data' => $sector
+            'data' => new SectorResource($sector),
         ]);
     }
 

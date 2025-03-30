@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\StockPriceResource;
+use App\Http\Resources\StockWithPriceResource;
 use App\Models\Stock;
 use App\Models\StockPrice;
 use Illuminate\Http\Request;
@@ -16,7 +18,7 @@ class StockPriceController extends Controller
         $stocks = Stock::with('prices')->get();
         return response()->json([
             'message' => 'Successfully fetched all stock with its prices',
-            'data' => $stocks
+            'data' => StockWithPriceResource::collection($stocks),
         ]);
     }
 

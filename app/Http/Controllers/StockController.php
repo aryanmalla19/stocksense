@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\StockResource;
 use App\Models\Stock;
 use Illuminate\Http\Request;
 
@@ -15,7 +16,7 @@ class StockController extends Controller
         $stocks = Stock::with('sector')->get();
         return response()->json([
             'message' => 'Successfully fetched all stocks',
-            'data' => $stocks
+            'data' => StockResource::collection($stocks)
         ]);
     }
 
@@ -25,7 +26,7 @@ class StockController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'symbol' => 'required|max:6|unique|stocks,symbol',
+            'symbol' => 'required|max:6|unique:stocks,symbol',
             'name' => 'required|string',
             'sector_id' => 'required|integer|exists:sectors,id'
         ]);
@@ -51,7 +52,7 @@ class StockController extends Controller
 
         return response()->json([
             'message' => 'Successfully fetched stock data',
-            'data' => $stock
+            'data' => new StockResource($stock),
         ]);
     }
 
@@ -78,7 +79,7 @@ class StockController extends Controller
 
         return response()->json([
             'message' => 'Stock successfully updated',
-            'data' => $stock
+            'data' => new StockResource($stock),
         ]);
     }
 

@@ -11,7 +11,12 @@ class WatchlistController extends Controller
      */
     public function index()
     {
-        //
+        $watchlists = auth()->user()->watchlists;
+        if(empty($watchlists)){
+            return response()->json([
+
+            ]);
+        }
     }
 
     /**
