@@ -14,9 +14,10 @@ class StockController extends Controller
     public function index()
     {
         $stocks = Stock::with('sector')->get();
+
         return response()->json([
             'message' => 'Successfully fetched all stocks',
-            'data' => StockResource::collection($stocks)
+            'data' => StockResource::collection($stocks),
         ]);
     }
 
@@ -28,13 +29,14 @@ class StockController extends Controller
         $data = $request->validate([
             'symbol' => 'required|max:6|unique:stocks,symbol',
             'name' => 'required|string',
-            'sector_id' => 'required|integer|exists:sectors,id'
+            'sector_id' => 'required|integer|exists:sectors,id',
         ]);
 
         $stock = Stock::create($data);
+
         return response()->json([
             'message' => 'Successfully registered stock',
-            'data' => $stock
+            'data' => $stock,
         ], 201);
     }
 
@@ -44,10 +46,10 @@ class StockController extends Controller
     public function show(string $id)
     {
         $stock = Stock::with('sector')->find($id);
-        if(empty($stock)){
+        if (empty($stock)) {
             return response()->json([
-                'message' => 'No Stock found with ID ' . $id,
-            ],404);
+                'message' => 'No Stock found with ID '.$id,
+            ], 404);
         }
 
         return response()->json([
@@ -63,16 +65,16 @@ class StockController extends Controller
     {
         $stock = Stock::find($id);
 
-        if (!$stock) {
+        if (! $stock) {
             return response()->json([
-                'message' => 'No Stock found with ID ' . $id,
+                'message' => 'No Stock found with ID '.$id,
             ], 404);
         }
 
         $data = $request->validate([
-            'symbol' => 'sometimes|string|max:6|unique:stocks,symbol,' . $id,
+            'symbol' => 'sometimes|string|max:6|unique:stocks,symbol,'.$id,
             'name' => 'sometimes|string',
-            'sector_id' => 'sometimes|integer|exists:sectors,id'
+            'sector_id' => 'sometimes|integer|exists:sectors,id',
         ]);
 
         $stock->update($data);
@@ -90,14 +92,15 @@ class StockController extends Controller
     {
         $stock = Stock::find($id);
 
-        if(empty($stock)){
+        if (empty($stock)) {
             return response()->json([
-                'message' => 'No Stock found with ID ' . $id,
-            ],404);
+                'message' => 'No Stock found with ID '.$id,
+            ], 404);
         }
         $stock->delete();
+
         return response()->json([
-            'message' => 'Successfully deleted stock with ID ' . $id,
+            'message' => 'Successfully deleted stock with ID '.$id,
         ]);
     }
 }

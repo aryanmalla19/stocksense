@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class UserSetting extends Model
 {
     use HasFactory; // ✅ Required for factory()
+
     protected $fillable = [
         'user_id',
         'notification_enabled',
-        'currency'
+        'currency',
     ];
 
     public function user()

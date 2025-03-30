@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\UserSettingResource;
-use Illuminate\Http\Request;
 use App\Models\UserSetting;
+use Illuminate\Http\Request;
 
 class UserSettingController extends Controller
 {
@@ -13,9 +13,9 @@ class UserSettingController extends Controller
      */
     public function index()
     {
-//        if (!auth()->user()->is_admin) {
-//            return response()->json(['message' => 'Unauthorized'], 403);
-//        }
+        //        if (!auth()->user()->is_admin) {
+        //            return response()->json(['message' => 'Unauthorized'], 403);
+        //        }
 
         return UserSettingResource::collection(UserSetting::all());
     }
@@ -34,7 +34,7 @@ class UserSettingController extends Controller
         $user = auth()->user();
         if ($user->id != $data['user_id']) {
             return response()->json([
-                'message' => 'You cannot create settings for another user'
+                'message' => 'You cannot create settings for another user',
             ], 403);
         }
 
@@ -51,9 +51,9 @@ class UserSettingController extends Controller
         $user = auth()->user();
         $setting = $user->setting;
 
-        if (!$setting) {
+        if (! $setting) {
             return response()->json([
-                'message' => 'No settings found for this user'
+                'message' => 'No settings found for this user',
             ], 404);
         }
 
@@ -73,9 +73,9 @@ class UserSettingController extends Controller
         $user = auth()->user();
         $setting = $user->setting;
 
-        if (!$setting) {
+        if (! $setting) {
             return response()->json([
-                'message' => 'No settings found for this user'
+                'message' => 'No settings found for this user',
             ], 404);
         }
 
@@ -92,16 +92,16 @@ class UserSettingController extends Controller
         $user = auth()->user();
         $setting = $user->setting;
 
-        if (!$setting) {
+        if (! $setting) {
             return response()->json([
-                'message' => 'No settings found for this user'
+                'message' => 'No settings found for this user',
             ], 404);
         }
 
         $setting->delete();
 
         return response()->json([
-            'message' => 'Successfully deleted user settings'
+            'message' => 'Successfully deleted user settings',
         ]);
     }
 }

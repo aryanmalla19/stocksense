@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\StockPriceResource;
 use App\Http\Resources\StockWithPriceResource;
 use App\Models\Stock;
 use App\Models\StockPrice;
@@ -16,6 +15,7 @@ class StockPriceController extends Controller
     public function index()
     {
         $stocks = Stock::with('prices')->get();
+
         return response()->json([
             'message' => 'Successfully fetched all stock with its prices',
             'data' => StockWithPriceResource::collection($stocks),
@@ -29,25 +29,24 @@ class StockPriceController extends Controller
     {
         $data = $request->validate([
             'stock_id' => 'required|exists:stocks,id',
-            'price' => 'required|numeric'
+            'price' => 'required|numeric',
         ]);
 
         $stock = Stock::find($data['stock_id']);
 
-        if (!$stock) {
+        if (! $stock) {
             return response()->json([
-                'message' => 'Could not find stock with Id ' . $data['stock_id'],
+                'message' => 'Could not find stock with Id '.$data['stock_id'],
             ], 404);
+        }
+
+        $newPrice = $stock->prices()->create($data);
+
+        return response()->json([
+            'message' => 'Successfully created new stock price',
+            'data' => $newPrice,
+        ], 201);
     }
-
-    $newPrice = $stock->prices()->create($data);
-
-    return response()->json([
-        'message' => 'Successfully created new stock price',
-        'data' => $newPrice,
-    ], 201);
-}
-
 
     /**
      * Display the specified resource.
@@ -55,15 +54,15 @@ class StockPriceController extends Controller
     public function show(string $id)
     {
         $stockPrice = StockPrice::with('stock')->where('id', $id)->first();
-        if(empty($stockPrice)){
+        if (empty($stockPrice)) {
             return response()->json([
-                'message' => 'Could not find stock price data with ID ' . $id,
+                'message' => 'Could not find stock price data with ID '.$id,
             ], 404);
         }
 
         return response()->json([
-            'message' => 'Successfully fetched stock price data with ID ' . $id,
-            'data' => $stockPrice
+            'message' => 'Successfully fetched stock price data with ID '.$id,
+            'data' => $stockPrice,
         ]);
     }
 
@@ -73,7 +72,7 @@ class StockPriceController extends Controller
     public function update(Request $request, string $id)
     {
         return response()->json([
-            'message' => 'You cannot change stock previous price'
+            'message' => 'You cannot change stock previous price',
         ], 400);
     }
 
@@ -83,7 +82,7 @@ class StockPriceController extends Controller
     public function destroy(string $id)
     {
         return response()->json([
-            'message' => 'You cannot delete stock previous price'
+            'message' => 'You cannot delete stock previous price',
         ], 400);
     }
 }
