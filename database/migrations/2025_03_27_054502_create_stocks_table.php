@@ -11,7 +11,7 @@ class CreateStocksTable extends Migration
         Schema::create('stocks', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('symbol')->unique();
-            $table->string('name');
+            $table->string('company_name');
             $table->foreignId('sector_id')->nullable()->constrained('sectors')->onDelete('set null');
             $table->timestamps();
         });
