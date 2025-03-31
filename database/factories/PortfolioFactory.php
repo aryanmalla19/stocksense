@@ -18,7 +18,7 @@ class PortfolioFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(),
+            'user_id' => User::inRandomOrder()->first()->id ?? User::factory()->create()->id,
             'created_at' => $this->faker->dateTimeThisYear(),
             'updated_at' => $this->faker->dateTimeThisYear(),
         ];

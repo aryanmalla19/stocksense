@@ -22,7 +22,7 @@ class IpoDetailFactory extends Factory
         $listingDate = $this->faker->dateTimeBetween($closeDate, '+2 months');
 
         return [
-            'stock_id' => Stock::factory(),
+            'stock_id' => Stock::inRandomOrder()->first()?->id ?? Stock::factory()->create()->id,
             'issue_price' => $this->faker->randomFloat(2, 10, 1000),
             'total_shares' => $this->faker->numberBetween(1000, 100000),
             'open_date' => $openDate,

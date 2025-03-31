@@ -9,31 +9,25 @@ class SectorFactory extends Factory
 {
     protected $model = Sector::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         static $sectors = [
-            'banking',
-            'hydropower',
-            'life Insurance',
-            'non-life Insurance',
-            'health',
-            'manufacturing',
-            'hotel',
-            'trading',
-            'microfinance',
-            'finance',
-            'investment',
-            'others',
+            'Banking',
+            'Hydropower',
+            'Life Insurance',
+            'Non-Life Insurance',
+            'Health',
+            'Manufacturing',
+            'Hotel',
+            'Trading',
+            'Microfinance',
+            'Finance',
+            'Investment',
+            'Others',
         ];
-        static $index = 0;
 
         return [
-            'name' => $sectors[$index++ % count($sectors)],
+            'name' => $this->faker->unique()->randomElement($sectors),
         ];
     }
 }

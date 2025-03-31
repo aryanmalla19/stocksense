@@ -19,12 +19,13 @@ class HoldingFactory extends Factory
     public function definition(): array
     {
         return [
-            'portfolio_id' => Portfolio::factory(),
-            'stock_id' => Stock::factory(),
+            'portfolio_id' => Portfolio::inRandomOrder()->first()?->id ?? Portfolio::factory()->create()->id,
+            'stock_id' => Stock::inRandomOrder()->first()?->id ?? Stock::factory()->create()->id,
             'quantity' => $this->faker->numberBetween(1, 100),
-            'average_price' => $this->faker->randomFloat(2, 10, 1000),
+            'average_price' => $this->faker->randomFloat(2, 100, 10000),
             'created_at' => $this->faker->dateTimeThisYear(),
             'updated_at' => $this->faker->dateTimeThisYear(),
         ];
+
     }
 }

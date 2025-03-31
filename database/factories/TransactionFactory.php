@@ -19,8 +19,8 @@ class TransactionFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(),
-            'stock_id' => Stock::factory(),
+            'user_id' => User::inRandomOrder()->first()->id ?? User::factory()->create()->id,
+            'stock_id' => Stock::inRandomOrder()->first()?->id ?? Stock::factory()->create()->id,
             'type' => $this->faker->randomElement(['buy', 'sell', 'ipo_allotted']),
             'quantity' => $this->faker->numberBetween(1, 100),
             'price' => $this->faker->randomFloat(2, 10, 1000),

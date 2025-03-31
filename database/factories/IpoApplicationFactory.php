@@ -19,8 +19,8 @@ class IpoApplicationFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(),
-            'ipo_id' => IpoDetail::factory(),
+            'user_id' => User::inRandomOrder()->first()->id ?? User::factory()->create()->id,
+            'ipo_id' => IpoDetail::inRandomOrder()->first()->id ?? IpoDetail::factory()->create()->id,
             'applied_shares' => $this->faker->numberBetween(10, 100),
             'status' => $this->faker->randomElement(['pending', 'approved', 'rejected']),
             'applied_date' => $this->faker->dateTimeThisMonth(),

@@ -20,7 +20,7 @@ class StockPriceFactory extends Factory
         $basePrice = $this->faker->randomFloat(2, 10, 1000); // Base for consistency
 
         return [
-            'stock_id' => Stock::factory(),
+            'stock_id' => Stock::inRandomOrder()->first()?->id ?? Stock::factory()->create()->id,
             'open_price' => $basePrice,
             'close_price' => $basePrice + $this->faker->randomFloat(2, -50, 50),
             'high_price' => $basePrice + $this->faker->randomFloat(2, 0, 100),

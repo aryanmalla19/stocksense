@@ -19,8 +19,8 @@ class WatchlistFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(),
-            'stock_id' => Stock::factory(),
+            'user_id' => User::inRandomOrder()->first()->id ?? User::factory()->create()->id,
+            'stock_id' => Stock::inRandomOrder()->first()?->id ?? Stock::factory()->create()->id,
             'created_at' => $this->faker->dateTimeThisYear(),
             'updated_at' => $this->faker->dateTimeThisYear(),
         ];
