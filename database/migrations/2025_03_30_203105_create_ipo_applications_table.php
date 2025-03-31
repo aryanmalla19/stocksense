@@ -14,11 +14,13 @@ return new class extends Migration
         Schema::create('ipo_applications', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('ipo_id')->constrained('ipo_details');
+            $table->foreignId('ipo_id')->constrained('ipo_details')->onDelete('cascade');
             $table->integer('applied_shares');
             $table->string('status');
-            $table->decimal('amount');
-            $table->timestamp('application_date');
+            // $table->decimal('amount');
+            $table->timestamp('applied_date')->useCurrent()->useCurrentOnUpdate();
+
+            $table->integer('allotted_shares');
             $table->timestamps();
         });
     }

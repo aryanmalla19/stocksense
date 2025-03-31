@@ -16,8 +16,8 @@ return new class extends Migration
             $table->foreignId('portfolio_id')->constrained('portfolios');
             $table->foreignId('stock_id')->constrained('stocks');
             $table->integer('quantity');
-            $table->decimal('average_price');
-            $table->decimal('current_value');
+            $table->decimal('average_price',15,2);
+            // $table->decimal('current_value');
             $table->timestamps();
         });
     }

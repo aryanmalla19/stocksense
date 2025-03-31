@@ -10,10 +10,25 @@ class Sector extends Model
 {
     use HasFactory;
 
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
     public $timestamps = false;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<string>
+     */
     protected $fillable = ['name'];
 
+    /**
+     * Get the stocks belonging to this sector.
+     *
+     * @return HasMany
+     */
     public function stocks(): HasMany
     {
         return $this->hasMany(Stock::class);

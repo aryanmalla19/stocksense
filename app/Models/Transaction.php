@@ -10,19 +10,47 @@ class Transaction extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<string>
+     */
     protected $fillable = [
         'user_id',
         'stock_id',
         'type',
         'quantity',
         'price',
+        'transaction_fee',
     ];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'quantity' => 'integer',
+        'price' => 'decimal:2',
+        'transaction_fee' => 'decimal:2',
+        'type' => 'string',
+    ];
+
+    /**
+     * Get the user who made this transaction.
+     *
+     * @return BelongsTo
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Get the stock involved in this transaction.
+     *
+     * @return BelongsTo
+     */
     public function stock(): BelongsTo
     {
         return $this->belongsTo(Stock::class);

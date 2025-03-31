@@ -3,14 +3,14 @@
 namespace Database\Factories;
 
 use App\Models\Stock;
+use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Transaction>
- */
 class TransactionFactory extends Factory
 {
+    protected $model = Transaction::class;
+
     /**
      * Define the model's default state.
      *
@@ -19,11 +19,44 @@ class TransactionFactory extends Factory
     public function definition(): array
     {
         return [
-            'type' => $this->faker->randomElement(['buy', 'sell']),
-            'quantity' => $this->faker->numberBetween(1, 1000), // Ensuring quantity is at least 1
-            'price' => $this->faker->numberBetween(100, 1000000), // More realistic stock price range
-            'user_id' => User::query()->inRandomOrder()->first()->id ?? User::factory()->create()->id,
-            'stock_id' => Stock::query()->inRandomOrder()->first()->id ?? Stock::factory()->create()->id,
+            'user_id' => User::factory(),
+            'stock_id' => Stock::factory(),
+            'type' => $this->faker->randomElement(['buy', 'sell', 'ipo_allotted']),
+            'quantity' => $this->faker->numberBetween(1, 100),
+            'price' => $this->faker->randomFloat(2, 10, 1000),
+            'transaction_fee' => $this->faker->randomFloat(2, 0.5, 50), // Fee between 0.5 and 50
+            'created_at' => $this->faker->dateTimeThisMonth(),
+            'updated_at' => $this->faker->dateTimeThisMonth(),
         ];
+    }
+
+    /**
+     * Indicate that the transaction is a buy.
+     *
+     * @return static
+     */
+    public function buy()
+    {
+        return $this->state(['type' => 'buy']);
+    }
+
+    /**
+     * Indicate that the transaction is a sell.
+     *
+     * @return static
+     */
+    public function sell()
+    {
+        return $this->state(['type' => 'sell']);
+    }
+
+    /**
+     * Indicate that the transaction is an IPO allotment.
+     *
+     * @return static
+     */
+    public function ipoAllotted()
+    {
+        return $this->state(['type' => 'ipo_allotted']);
     }
 }
