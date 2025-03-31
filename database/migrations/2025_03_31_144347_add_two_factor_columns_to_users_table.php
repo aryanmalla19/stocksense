@@ -23,6 +23,13 @@ return new class extends Migration
             $table->text('two_factor_recovery_codes')
                 ->after('two_factor_secret')
                 ->nullable();
+
+            $table->string('two_factor_otp')
+                ->after('password')
+                ->nullable();
+
+            $table->timestamp('two_factor_expires_at')
+                ->nullable();
         });
     }
 
@@ -33,9 +40,11 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn([
-                'two_factor_enabled',
+                'two_factor_enables',
                 'two_factor_secret',
-                'two_factor_recovery_codes'
+                'two_factor_recovery_codes',
+                'two_factor_otp',
+                'two_factor_expires_at'
             ]);
         });
     }
