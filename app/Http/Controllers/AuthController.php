@@ -96,7 +96,7 @@ class AuthController extends Controller
         }
 
         if (!$user->hasVerifiedEmail()) {
-            auth('api')->logout();
+//            auth('api')->logout();
             return response()->json(['message' => 'Please verify your email before logging in.'], 403);
         }
 
