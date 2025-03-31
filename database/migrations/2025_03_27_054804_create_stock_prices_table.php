@@ -11,7 +11,11 @@ class CreateStockPricesTable extends Migration
         Schema::create('stock_prices', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->foreignId('stock_id')->constrained('stocks')->onDelete('cascade');
-            $table->decimal('price', 15, 2);
+            $table->decimal('open_price');
+            $table->decimal('close_price');
+            $table->decimal('high_price');
+            $table->decimal('low_price');
+            $table->integer('volume');
             $table->timestamps();
         });
     }

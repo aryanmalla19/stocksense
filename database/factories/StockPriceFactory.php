@@ -19,7 +19,11 @@ class StockPriceFactory extends Factory
     {
         return [
             'stock_id' => Stock::query()->inRandomOrder()->first()->id ?? Stock::factory()->create()->id,
-            'price' => $this->faker->numberBetween(100, 999999),
+            'open_price' => $this->faker->numberBetween(100, 999999),
+            'close_price' => $this->faker->numberBetween(100, 999999),
+            'high_price' => $this->faker->numberBetween(100, 999999),
+            'low_price' => $this->faker->numberBetween(100, 999999),
+            'volume' => $this->faker->numberBetween(100, 999999),
         ];
     }
 }

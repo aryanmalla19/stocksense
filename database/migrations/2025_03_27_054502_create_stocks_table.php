@@ -11,8 +11,12 @@ class CreateStocksTable extends Migration
         Schema::create('stocks', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('symbol')->unique();
-            $table->string('name');
+            $table->string('company_name');
             $table->foreignId('sector_id')->nullable()->constrained('sectors')->onDelete('set null');
+            $table->text('description')->nullable();
+            $table->decimal('current_price');
+            $table->boolean('is_ipo')->default(false);
+            $table->enum('ipo_status', ['pending', 'opened', 'closed'])->nullable();
             $table->timestamps();
         });
     }
