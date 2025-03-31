@@ -10,11 +10,12 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
-
+use Laravel\Fortify\TwoFactorAuthenticatable;
+use Carbon\Carbon;
 class User extends Authenticatable implements JWTSubject, MustVerifyEmail 
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, CanResetPassword, Notifiable;
+    use HasFactory, CanResetPassword, Notifiable, TwoFactorAuthenticatable;
 
     /**
      * The attributes that are mass assignable.
@@ -25,6 +26,11 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         'name',
         'email',
         'password',
+        'two_factor_enables',
+        'two_factor_otp',
+        'two_factor_expires_at',
+        'two_factor_secret',
+        'two_factor_recovery_codes'
     ];
 
     /**
@@ -47,6 +53,9 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'two_factor_enables' => 'boolean',
+            'two_factor_expires_at' => 'datetime',
+            'two_factor_recovery_codes' => 'array'
         ];
     }
 
@@ -93,5 +102,20 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class);
+    }
+
+    public function generateOtp()
+    {
+        $otp = rand(100000, 999999);
+        $this->otp = $otp;
+        $this->otp_expires_at = Carbon::now()->addMinutes(5);
+        $this->save();
+
+        return $otp;
+    }
+
+    public function validateOtp($otp)
+    {
+        return $this->otp === $otp && $this->otp_expires_at && $this->otp_expires_at->isFuture();
     }
 }
