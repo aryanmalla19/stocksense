@@ -12,18 +12,18 @@ class SectorFactory extends Factory
     public function definition(): array
     {
         static $sectors = [
-            'Banking',
-            'Hydropower',
-            'Life Insurance',
-            'Non-Life Insurance',
-            'Health',
-            'Manufacturing',
-            'Hotel',
-            'Trading',
-            'Microfinance',
-            'Finance',
-            'Investment',
-            'Others',
+            'banking',
+            'hydropower',
+            'life Insurance',
+            'non-life Insurance',
+            'health',
+            'manufacturing',
+            'hotel',
+            'trading',
+            'microfinance',
+            'finance',
+            'investment',
+            'others',
         ];
 
         return [

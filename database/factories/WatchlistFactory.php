@@ -20,7 +20,7 @@ class WatchlistFactory extends Factory
     {
         return [
             'user_id' => User::inRandomOrder()->first()->id ?? User::factory()->create()->id,
-            'stock_id' => Stock::inRandomOrder()->first()?->id ?? Stock::factory()->create()->id,
+            'stock_id' => $this->faker->unique()->randomElement(Stock::pluck('id')->toArray()) ?? Stock::factory()->create()->id,
             'created_at' => $this->faker->dateTimeThisYear(),
             'updated_at' => $this->faker->dateTimeThisYear(),
         ];
