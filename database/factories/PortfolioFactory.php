@@ -2,15 +2,14 @@
 
 namespace Database\Factories;
 
-use App\Models\Stock;
+use App\Models\Portfolio;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Protfolio>
- */
 class PortfolioFactory extends Factory
 {
+    protected $model = Portfolio::class;
+
     /**
      * Define the model's default state.
      *
@@ -19,10 +18,9 @@ class PortfolioFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::query()->inRandomOrder()->first()->id ?? User::factory()->create()->id,
-            'stock_id' => Stock::query()->inRandomOrder()->first()->id ?? Stock::factory()->create()->id,
-            'quantity' => $this->faker->numberBetween(1, 10000),
-            'average_purchase_price' => $this->faker->numberBetween(1, 10000000),
+            'user_id' => User::inRandomOrder()->first()->id ?? User::factory()->create()->id,
+            'created_at' => $this->faker->dateTimeThisYear(),
+            'updated_at' => $this->faker->dateTimeThisYear(),
         ];
     }
 }

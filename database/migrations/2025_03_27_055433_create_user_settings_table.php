@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('user_settings', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade')->unique();
+            $table->foreignId('user_id')->unique()->constrained('users')->onDelete('cascade');
             $table->boolean('notification_enabled')->default(true);
             $table->enum('mode', ['dark', 'light']);
             $table->timestamps();

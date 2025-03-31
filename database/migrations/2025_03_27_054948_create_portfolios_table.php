@@ -14,10 +14,6 @@ return new class extends Migration
         Schema::create('portfolios', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('stock_id')->constrained('stocks')->onDelete('cascade');
-            $table->integer('quantity');
-            $table->decimal('average_purchase_price', 15, 2);
-            $table->index('user_id', 'idx_user_portfolio');
             $table->timestamps();
         });
     }

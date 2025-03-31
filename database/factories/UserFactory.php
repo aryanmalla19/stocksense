@@ -2,19 +2,14 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
- */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
-    protected static ?string $password;
+    protected $model = User::class;
 
     /**
      * Define the model's default state.
@@ -24,21 +19,40 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'name' => $this->faker->name(),
+            'email' => $this->faker->unique()->safeEmail(),
+            'email_verified_at' => $this->faker->optional(0.7)->dateTimeThisYear(), // 70% verified
+            'password' => Hash::make('password'), // Default password
             'remember_token' => Str::random(10),
+            'is_active' => $this->faker->boolean(90), // 90% active
+            'role' => $this->faker->randomElement(['admin', 'user']),
+            'created_at' => $this->faker->dateTimeThisYear(),
+            'updated_at' => $this->faker->dateTimeThisYear(),
         ];
     }
 
     /**
-     * Indicate that the model's email address should be unverified.
+     * Indicate that the user is an admin.
+     *
+     * @return static
      */
-    public function unverified(): static
+    public function admin()
     {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
+        return $this->state([
+            'role' => 'admin',
+            'is_active' => true,
+        ]);
+    }
+
+    /**
+     * Indicate that the user is inactive.
+     *
+     * @return static
+     */
+    public function inactive()
+    {
+        return $this->state([
+            'is_active' => false,
         ]);
     }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -11,26 +11,27 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable implements JWTSubject, MustVerifyEmail 
+class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, CanResetPassword, Notifiable;
+    use CanResetPassword, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var list<string>
+     * @var array<string>
      */
-     protected $fillable = [
+    protected $fillable = [
         'name',
         'email',
         'password',
+        'is_active',
+        'role',
     ];
 
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected $hidden = [
         'password',
@@ -38,17 +39,16 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
-     * @return array<string, string>
+     * @var array<string, string>
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'is_active' => 'boolean',
+        'role' => 'string',
+    ];
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
@@ -67,7 +67,25 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
      */
     public function getJWTCustomClaims()
     {
-        return [];
+        return [
+            'role' => $this->role,
+        ];
+    }
+
+    /**
+     * Check if the user is an admin.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Check if the user is active.
+     */
+    public function isActive(): bool
+    {
+        return $this->is_active;
     }
 
     public function portfolio(): HasOne
@@ -75,23 +93,23 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         return $this->hasOne(Portfolio::class);
     }
 
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
     public function watchlists(): HasMany
     {
         return $this->hasMany(Watchlist::class);
     }
 
-    public function notifications(): HasMany
+    public function setting(): HasOne
     {
-        return $this->hasMany(Notifiable::class, 'user_id');
+        return $this->hasOne(UserSetting::class);
     }
 
-    public function setting()
+    public function ipoApplications(): HasMany
     {
-        return $this->hasOne(UserSetting::class, 'user_id');
-    }
-
-    public function transactions(): HasMany
-    {
-        return $this->hasMany(Transaction::class);
+        return $this->hasMany(IpoApplication::class);
     }
 }

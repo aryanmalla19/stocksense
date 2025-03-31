@@ -2,18 +2,18 @@
 
 namespace Database\Seeders;
 
-use App\Models\Notification;
+use App\Models\IpoApplication;
+use App\Models\IpoDetail;
 use App\Models\Portfolio;
 use App\Models\Sector;
 use App\Models\Stock;
 use App\Models\StockPrice;
 use App\Models\Transaction;
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\UserSetting;
 use App\Models\Watchlist;
-use Carbon\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
@@ -24,30 +24,49 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         DB::table('sectors')->truncate();
-        Sector::factory(12)->create();
+        // Fixing the typo and ensuring correct sector count
+        Sector::factory(11)->sequence(
+            ['name' => 'banking'],
+            ['name' => 'hydropower'],
+            ['name' => 'life Insurance'],
+            ['name' => 'health'],
+            ['name' => 'manufacturing'],
+            ['name' => 'hotel'],
+            ['name' => 'trading'],
+            ['name' => 'microfinance'],
+            ['name' => 'finance'],
+            ['name' => 'investment'],
+            ['name' => 'others'],
+        )->create();
 
-        Stock::factory(100)->create()->each(function ($stock) {
-            StockPrice::factory(5)->create([
-                'stock_id' => $stock->id,
-                'created_at' => Carbon::now()->subDays(rand(1, 30)), // Random past 30 days
-            ]);
-        });
+        // Optimized stock seeding
+        Stock::factory(50)
+            ->has(StockPrice::factory(5), 'prices')
+            ->create();
 
-        User::factory(15)->create()->each(function ($user) {
+        // Seed users & their related models
+        User::factory(10)->create()->each(function ($user) {
             UserSetting::factory()->create(['user_id' => $user->id]);
-            Portfolio::factory()->create(['user_id' => $user->id]);
+            Portfolio::factory(3)->create(['user_id' => $user->id]);
             Transaction::factory(5)->create(['user_id' => $user->id]);
 
-            // Ensure unique stocks in the watchlist
-            $stockIds = Stock::inRandomOrder()->limit(4)->pluck('id');
-            foreach ($stockIds as $stockId) {
+            // Get all available stock IDs.
+            $stockIds = Stock::pluck('id')->toArray();
+
+            // Prevent errors if there are fewer stocks than needed
+            $selectedStockIds = Arr::random($stockIds, min(4, count($stockIds)));
+
+            foreach ($selectedStockIds as $stockId) {
                 Watchlist::factory()->create([
-                    'user_id' => $user->id,
+                    'user_id'  => $user->id,
                     'stock_id' => $stockId,
                 ]);
             }
         });
 
-        Notification::factory(10)->create();
+        // Seed IPO details & applications
+        IpoDetail::factory(5)
+            ->has(IpoApplication::factory(3), 'applications')
+            ->create();
     }
 }
