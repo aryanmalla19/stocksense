@@ -5,6 +5,7 @@ use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\SectorController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\StockPriceController;
+use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\UserSettingController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VerificationController;
@@ -45,3 +46,8 @@ Route::group([
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::post('me', [AuthController::class, 'me']);
 });
+
+
+// two factor
+Route::post('/auth/two-factor/enable',[TwoFactorController::class, 'enable'])->middleware('auth:api');
+Route::post('/auth/two-factor/disable',[TwoFactorController::class, 'disable'])->middleware('auth:api');
