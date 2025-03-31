@@ -12,7 +12,7 @@ class CreateStockPricesTable extends Migration
             $table->bigIncrements('id');
             $table->foreignId('stock_id')->constrained('stocks')->onDelete('cascade');
             $table->decimal('open_price',15,2);
-            $table->decimal('close_price',15,2);
+            $table->decimal('close_price',15,2)->nullable();
             $table->decimal('high_price',15,2);
             $table->decimal('low_price',15,2);
             $table->integer('volume');
