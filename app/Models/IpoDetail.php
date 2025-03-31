@@ -42,8 +42,6 @@ class IpoDetail extends Model
 
     /**
      * Get the stock associated with this IPO.
-     *
-     * @return BelongsTo
      */
     public function stock(): BelongsTo
     {
@@ -52,8 +50,6 @@ class IpoDetail extends Model
 
     /**
      * Get the applications for this IPO.
-     *
-     * @return HasMany
      */
     public function applications(): HasMany
     {

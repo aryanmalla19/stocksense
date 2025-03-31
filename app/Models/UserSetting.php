@@ -33,8 +33,6 @@ class UserSetting extends Model
 
     /**
      * Get the user this setting belongs to.
-     *
-     * @return BelongsTo
      */
     public function user(): BelongsTo
     {

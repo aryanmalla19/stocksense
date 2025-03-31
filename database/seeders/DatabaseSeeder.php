@@ -2,12 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Holding;
 use App\Models\IpoApplication;
 use App\Models\IpoDetail;
-use App\Models\Notification;
 use App\Models\Portfolio;
-use App\Models\Sector;
 use App\Models\Stock;
 use App\Models\StockPrice;
 use App\Models\Transaction;
@@ -15,7 +12,6 @@ use App\Models\User;
 use App\Models\UserSetting;
 use App\Models\Watchlist;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -24,10 +20,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        
+
         // Seed stocks & stock prices
-        Stock::factory(50)->create()->each(fn($stock) =>
-            StockPrice::factory(5)->create(['stock_id' => $stock->id])
+        Stock::factory(50)->create()->each(fn ($stock) => StockPrice::factory(5)->create(['stock_id' => $stock->id])
         );
 
         // Seed users & their related models
@@ -39,8 +34,7 @@ class DatabaseSeeder extends Seeder
         });
 
         // Seed IPO details & applications
-        IpoDetail::factory(5)->create()->each(fn($ipo) =>
-            IpoApplication::factory(3)->create(['ipo_id' => $ipo->id])
+        IpoDetail::factory(5)->create()->each(fn ($ipo) => IpoApplication::factory(3)->create(['ipo_id' => $ipo->id])
         );
     }
 }

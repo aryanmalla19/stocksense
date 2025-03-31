@@ -34,8 +34,6 @@ class Holding extends Model
 
     /**
      * Get the portfolio this holding belongs to.
-     *
-     * @return BelongsTo
      */
     public function portfolio(): BelongsTo
     {
@@ -44,8 +42,6 @@ class Holding extends Model
 
     /**
      * Get the stock this holding represents.
-     *
-     * @return BelongsTo
      */
     public function stock(): BelongsTo
     {

@@ -26,8 +26,6 @@ class Sector extends Model
 
     /**
      * Get the stocks belonging to this sector.
-     *
-     * @return HasMany
      */
     public function stocks(): HasMany
     {

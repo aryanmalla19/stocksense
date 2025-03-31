@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -13,7 +13,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 {
-    use HasFactory, CanResetPassword, Notifiable;
+    use CanResetPassword, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -68,14 +68,12 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     public function getJWTCustomClaims()
     {
         return [
-            'role' => $this->role, 
+            'role' => $this->role,
         ];
     }
 
     /**
      * Check if the user is an admin.
-     *
-     * @return bool
      */
     public function isAdmin(): bool
     {
@@ -84,42 +82,31 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 
     /**
      * Check if the user is active.
-     *
-     * @return bool
      */
     public function isActive(): bool
     {
         return $this->is_active;
     }
 
-    public function portfolios():HasOne
+    public function portfolio(): HasOne
     {
-       return $this->hasOne(Portfolio::class);
+        return $this->hasOne(Portfolio::class);
     }
-
 
     public function transactions(): HasMany
     {
-       return $this->hasMany(Transaction::class);
+        return $this->hasMany(Transaction::class);
     }
-
 
     public function watchlists(): HasMany
     {
-       return $this->hasMany(Watchlist::class);
-    }
-
-
-    public function notifications(): HasMany
-    {
-        return $this->hasMany(Notification::class);
+        return $this->hasMany(Watchlist::class);
     }
 
     public function setting(): HasOne
     {
         return $this->hasOne(UserSetting::class);
     }
-
 
     public function ipoApplications(): HasMany
     {

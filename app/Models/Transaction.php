@@ -38,8 +38,6 @@ class Transaction extends Model
 
     /**
      * Get the user who made this transaction.
-     *
-     * @return BelongsTo
      */
     public function user(): BelongsTo
     {
@@ -48,8 +46,6 @@ class Transaction extends Model
 
     /**
      * Get the stock involved in this transaction.
-     *
-     * @return BelongsTo
      */
     public function stock(): BelongsTo
     {

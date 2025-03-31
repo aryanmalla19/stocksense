@@ -37,8 +37,6 @@ class IpoApplication extends Model
 
     /**
      * Get the user who submitted this IPO application.
-     *
-     * @return BelongsTo
      */
     public function user(): BelongsTo
     {
@@ -47,8 +45,6 @@ class IpoApplication extends Model
 
     /**
      * Get the IPO details for this application.
-     *
-     * @return BelongsTo
      */
     public function ipo(): BelongsTo
     {

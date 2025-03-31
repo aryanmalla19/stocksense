@@ -36,8 +36,6 @@ class Watchlist extends Model
 
     /**
      * Get the user who owns this watchlist entry.
-     *
-     * @return BelongsTo
      */
     public function user(): BelongsTo
     {
@@ -46,8 +44,6 @@ class Watchlist extends Model
 
     /**
      * Get the stock in this watchlist entry.
-     *
-     * @return BelongsTo
      */
     public function stock(): BelongsTo
     {

@@ -48,8 +48,6 @@ class StockPrice extends Model
 
     /**
      * Get the stock this price belongs to.
-     *
-     * @return BelongsTo
      */
     public function stock(): BelongsTo
     {

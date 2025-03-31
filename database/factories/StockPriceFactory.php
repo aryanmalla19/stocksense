@@ -18,6 +18,7 @@ class StockPriceFactory extends Factory
     public function definition(): array
     {
         $basePrice = $this->faker->randomFloat(2, 10, 1000); // Base for consistency
+
         return [
             'stock_id' => Stock::factory(),
             'open_price' => $basePrice,

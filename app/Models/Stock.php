@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Stock extends Model
 {
@@ -24,8 +26,6 @@ class Stock extends Model
 
     /**
      * Get the sector this stock belongs to.
-     *
-     * @return BelongsTo
      */
     public function sector(): BelongsTo
     {
@@ -33,16 +33,15 @@ class Stock extends Model
 
     }
 
-
-
     public function prices(): HasMany
     {
-        return $this->hasMany(StockPrice::class);
-     
+        return $this->hasMany(StockPrice::class, 'stock_id');
     }
 
-
-
+    public function latestPrice(): HasOne
+    {
+        return $this->hasOne(StockPrice::class, 'stock_id')->latest();
+    }
 
     public function transactions(): HasMany
     {
@@ -55,15 +54,12 @@ class Stock extends Model
     }
 
     public function ipoDetails(): HasMany
-    {  
-        return $this->hasMany(IpoDetail::class);
+    {
+        return $this->hasMany(IpoDetail::class, 'stock_id');
     }
 
     public function holdings(): HasMany
     {
-       return $this->hasMany(Holding::class);
+        return $this->hasMany(Holding::class);
     }
-
-
-    
 }

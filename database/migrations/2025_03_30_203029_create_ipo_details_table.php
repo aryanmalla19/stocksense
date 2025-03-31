@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('ipo_details', function (Blueprint $table) {
             $table->id();
             $table->foreignId('stock_id')->constrained('stocks')->onDelete('cascade');
-            $table->decimal('issue_price',15,2);
+            $table->decimal('issue_price', 15, 2);
             $table->integer('total_shares');
             $table->timestamp('open_date');
             $table->timestamp('close_date');
