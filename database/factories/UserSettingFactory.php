@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class UserSettingFactory extends Factory
 {
     protected $model = UserSetting::class;
+
     /**
      * Define the model's default state.
      *

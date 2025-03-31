@@ -24,7 +24,7 @@ class SectorFactory extends Factory
                 'microfinance',
                 'finance',
                 'investment',
-                'others'
+                'others',
             ]),
         ];
     }

@@ -6,15 +6,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Stock extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'symbol',
         'name',
-        'sector_id'
+        'sector_id',
     ];
 
     public function prices(): HasMany
@@ -22,9 +22,9 @@ class Stock extends Model
         return $this->hasMany(StockPrice::class);
     }
 
-    public function price(): HasOne
+    public function latestPrice()
     {
-        return $this->hasOne(StockPrice::class)->where('created_at', now());
+        return $this->hasOne(StockPrice::class, 'stock_id')->latest();
     }
 
     public function sector(): BelongsTo
@@ -46,5 +46,4 @@ class Stock extends Model
     {
         return $this->hasMany(Watchlist::class);
     }
-
 }

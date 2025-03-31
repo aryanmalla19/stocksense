@@ -25,7 +25,7 @@ return new class extends Migration
                 'microfinance',
                 'finance',
                 'investment',
-                'others'
+                'others',
             ])->unique();
         });
     }

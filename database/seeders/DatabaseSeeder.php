@@ -48,7 +48,6 @@ class DatabaseSeeder extends Seeder
             }
         });
 
-
         Notification::factory(10)->create();
     }
 }

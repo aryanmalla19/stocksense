@@ -9,7 +9,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Sector extends Model
 {
     use HasFactory;
+
     public $timestamps = false;
+
     protected $fillable = ['name'];
 
     public function stocks(): HasMany

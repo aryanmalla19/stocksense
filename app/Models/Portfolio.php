@@ -9,11 +9,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Portfolio extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'user_id',
         'stock_id',
         'quantity',
-        'average_purchase_price'
+        'average_purchase_price',
     ];
 
     public function user(): BelongsTo
