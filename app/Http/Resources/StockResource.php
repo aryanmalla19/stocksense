@@ -14,12 +14,18 @@ class StockResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $latestPrice = $this->whenLoaded('latestPrice');
+
         return [
             'id' => $this->id,
             'symbol' => $this->symbol,
-            'name' => $this->name,
+            'company_name' => $this->company_name,
             'sector_id' => $this->sector_id,
-            'sector' => new SectorResource($this->whenLoaded('sector')),
+            'sector' => $this->whenLoaded('sector', fn() => $this->sector->name, null),
+            'open_price' => $latestPrice?->open_price,
+            'close_price' => $latestPrice?->close_price,
+            'high_price' => $latestPrice?->high_price,
+            'low_price' => $latestPrice?->low_price,
         ];
     }
 }

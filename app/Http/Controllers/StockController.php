@@ -13,7 +13,7 @@ class StockController extends Controller
      */
     public function index()
     {
-        $stocks = Stock::with('sector')->get();
+        $stocks = Stock::with(['sector', 'latestPrice'])->get();
 
         return response()->json([
             'message' => 'Successfully fetched all stocks',
@@ -45,7 +45,7 @@ class StockController extends Controller
      */
     public function show(string $id)
     {
-        $stock = Stock::with('sector')->find($id);
+        $stock = Stock::with(['sector','latestPrice'])->find($id);
         if (empty($stock)) {
             return response()->json([
                 'message' => 'No Stock found with ID '.$id,

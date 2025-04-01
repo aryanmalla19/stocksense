@@ -40,7 +40,7 @@ class Stock extends Model
 
     public function latestPrice(): HasOne
     {
-        return $this->hasOne(StockPrice::class, 'stock_id')->latest();
+        return $this->hasOne(StockPrice::class)->latest('date');
     }
 
     public function transactions(): HasMany
