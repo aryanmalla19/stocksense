@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\IpoApplicationController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\SectorController;
 use App\Http\Controllers\StockController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\IpoDetailController;
 use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\UserSettingController;
 use App\Http\Controllers\VerificationController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 
 Route::apiResource('/stocks', StockController::class);
@@ -59,6 +61,9 @@ Route::post('/verify-token', [AuthController::class, 'verify'])->middleware('aut
 //Ipo Detail Route
 Route::get('/ipo-detail',[IpoDetailController::class,'fetch']);
 Route::post('/ipo-detail',[IpoDetailController::class,'store']);
+
+//Ipo Application
+Route::post('/api/ipo-application',[IpoApplicationController::class,'store']);
 
 //Transaction route
 Route::post('/api/portfolio/buy', [TransactionController::class,'buy']);
