@@ -59,3 +59,7 @@ Route::post('/verify-token', [AuthController::class, 'verify'])->middleware('aut
 //Ipo Detail Route
 Route::get('/ipo-detail',[IpoDetailController::class,'fetch']);
 Route::post('/ipo-detail',[IpoDetailController::class,'store']);
+
+//Transaction route
+Route::post('/api/portfolio/buy', [TransactionController::class,'buy']);
+Route::post('/api/portfolio/sell', [TransactionController::class,'sell']);
