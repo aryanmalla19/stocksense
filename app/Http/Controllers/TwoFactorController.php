@@ -22,7 +22,7 @@ class TwoFactorController extends Controller
 
         $user = JWTAuth::parseToken()->authenticate();
         
-        if ($user->two_factor_enables) {
+        if ($user->two_factor_enabled) {
             return "Already enabled";
         }
 
@@ -35,7 +35,7 @@ class TwoFactorController extends Controller
         }
 
         $user->forceFill([
-            'two_factor_enables' => true
+            'two_factor_enabled' => true
         ])->save();
 
         return response()->json(['message' => '2FA enabled successfully'], 200);
@@ -53,7 +53,7 @@ class TwoFactorController extends Controller
 
         $user = JWTAuth::parseToken()->authenticate();
 
-        if (!$user->two_factor_enables) {
+        if (!$user->two_factor_enabled) {
             return "Already disabled";
         }
 
@@ -66,7 +66,7 @@ class TwoFactorController extends Controller
         }
 
         $user->forceFill([
-            'two_factor_enables' => false
+            'two_factor_enabled' => false
         ])->save();
 
         return response()->json(['message' => '2FA disabled successfully'], 200);
