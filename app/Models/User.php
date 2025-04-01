@@ -10,10 +10,13 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Laravel\Fortify\TwoFactorAuthenticatable;
 
 class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 {
-    use CanResetPassword, HasFactory, Notifiable;
+    /** @use HasFactory<\Database\Factories\UserFactory> */
+    use HasFactory, CanResetPassword, Notifiable, TwoFactorAuthenticatable;
+
 
     /**
      * The attributes that are mass assignable.
@@ -24,6 +27,11 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         'name',
         'email',
         'password',
+        'two_factor_enables',
+        'two_factor_otp',
+        'two_factor_expires_at',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
         'is_active',
         'role',
     ];
@@ -43,12 +51,19 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
      *
      * @var array<string, string>
      */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-        'is_active' => 'boolean',
-        'role' => 'string',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'two_factor_enabled' => 'boolean',
+            'two_factor_expires_at' => 'datetime',
+            'two_factor_otp' => 'string',
+            'two_factor_recovery_codes' => 'array',
+            'is_active' => 'boolean',
+            'role' => 'string',
+        ];
+    }
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
@@ -112,4 +127,5 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     {
         return $this->hasMany(IpoApplication::class);
     }
+
 }

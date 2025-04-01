@@ -7,7 +7,12 @@ use App\Http\Requests\UserLoginRequest;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Hash;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
@@ -60,6 +65,16 @@ class AuthController extends Controller
         if (! $token = auth('api')->attempt($credentials)) {
             return response()->json(['error' => 'Error generating token'], 401);
         }
+        if ($user->two_factor_enabled){
+            $otp = rand(100000, 999999);
+
+            $user->forceFill([
+                'two_factor_otp' => $otp,
+                'two_factor_expires_at' => Carbon::now()->addMinutes(5)
+            ])->save();
+
+            return $this->respondWithToken($token);
+        }
 
         return $this->respondWithToken($token);
     }
@@ -100,5 +115,35 @@ class AuthController extends Controller
             'token_type' => 'bearer',
             'expires_in' => auth('api')->factory()->getTTL() * 60,
         ]);
+    }
+
+    public function verify(Request $request){
+        $request->validate([
+            'token' => 'required | string'
+        ]);
+
+        $token = $request->bearerToken();
+
+        if (!$token) {
+            return response()->json(['error' => 'Token not provided'], 400);
+        }
+
+        $user = JWTAuth::parseToken()->authenticate();
+
+        if($user->two_factor_otp != $request->token){
+            return response()->json([
+                'message' => 'OTP not matched'
+            ], 200);
+        }
+
+        if ($user->two_factor_expires_at && $user->two_factor_expires_at->isFuture()) {
+            return response()->json([
+                'message' => 'Successfully login'
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => 'OTP expired'
+            ], 200);
+        }
     }
 }
