@@ -6,9 +6,6 @@ use App\Models\User;
 use App\Models\UserSetting;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\UserSetting>
- */
 class UserSettingFactory extends Factory
 {
     protected $model = UserSetting::class;
@@ -21,9 +18,21 @@ class UserSettingFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::query()->inRandomOrder()->first()->id ?? User::factory()->create()->id,
-            'notification_enabled' => $this->faker->randomElement([true, false]),
+            'user_id' => User::inRandomOrder()->first()->id ?? User::factory()->create()->id,
+            'notification_enabled' => $this->faker->boolean(80), // 80% chance enabled
             'mode' => $this->faker->randomElement(['dark', 'light']),
+            'created_at' => $this->faker->dateTimeThisYear(),
+            'updated_at' => $this->faker->dateTimeThisYear(),
         ];
+    }
+
+    /**
+     * Indicate that notifications are disabled.
+     *
+     * @return static
+     */
+    public function notificationsDisabled()
+    {
+        return $this->state(['notification_enabled' => false]);
     }
 }

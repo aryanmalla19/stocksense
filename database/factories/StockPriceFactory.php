@@ -3,13 +3,13 @@
 namespace Database\Factories;
 
 use App\Models\Stock;
+use App\Models\StockPrice;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\StockPrice>
- */
 class StockPriceFactory extends Factory
 {
+    protected $model = StockPrice::class;
+
     /**
      * Define the model's default state.
      *
@@ -17,9 +17,16 @@ class StockPriceFactory extends Factory
      */
     public function definition(): array
     {
+        $basePrice = $this->faker->randomFloat(2, 10, 1000); // Base for consistency
+
         return [
-            'stock_id' => Stock::query()->inRandomOrder()->first()->id ?? Stock::factory()->create()->id,
-            'price' => $this->faker->numberBetween(100, 999999),
+            'stock_id' => Stock::inRandomOrder()->first()?->id ?? Stock::factory()->create()->id,
+            'open_price' => $basePrice,
+            'close_price' => $basePrice + $this->faker->randomFloat(2, -50, 50),
+            'high_price' => $basePrice + $this->faker->randomFloat(2, 0, 100),
+            'low_price' => $basePrice - $this->faker->randomFloat(2, 0, 100),
+            'volume' => $this->faker->numberBetween(1000, 1000000),
+            'date' => $this->faker->dateTimeThisYear(),
         ];
     }
 }

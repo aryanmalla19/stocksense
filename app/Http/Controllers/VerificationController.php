@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Auth\Events\Verified;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class VerificationController extends Controller
 {
     public function verify(Request $request)
     {
-        $user = User::where('id', $request->id)->first(); 
+        $user = User::where('id', $request->id)->first();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json(['message' => 'User not found.'], 404);
         }
 
@@ -36,7 +36,7 @@ class VerificationController extends Controller
         $request->user()->sendEmailVerificationNotification();
 
         return response()->json([
-            'message' => 'Verification link sent!'
+            'message' => 'Verification link sent!',
         ], 200);
     }
 }

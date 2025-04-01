@@ -17,7 +17,8 @@ class StockWithPriceResource extends JsonResource
         return [
             'id' => $this->id,
             'symbol' => $this->symbol,
-            'name' => $this->name,
+            'company_name' => $this->company_name,
+            'sector' => $this->whenLoaded('sector', fn () => $this->sector->name, null),
             'sector_id' => $this->sector_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

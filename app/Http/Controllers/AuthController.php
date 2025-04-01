@@ -7,8 +7,10 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
+
 class AuthController extends Controller
 {
     public function register(Request $request): JsonResponse
@@ -84,20 +86,19 @@ class AuthController extends Controller
 
         $user = User::where('email', $credentials['email'])->first();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'message' => 'Invalid email',
             ], 401);
         }
 
-        if (!Hash::check($credentials['password'], $user->password)) {
+        if (! Hash::check($credentials['password'], $user->password)) {
             return response()->json([
                 'message' => 'Invalid password',
             ], 401);
         }
 
-        if (!$user->hasVerifiedEmail()) {
-            auth('api')->logout();
+        if (! $user->hasVerifiedEmail()) {
             return response()->json(['message' => 'Please verify your email before logging in.'], 403);
         }
 
@@ -118,23 +119,23 @@ class AuthController extends Controller
         return $this->respondWithToken($token);
     }
 
-/**
- * Get the authenticated User.
- *
- * @return \Illuminate\Http\JsonResponse
- */
-public function me()
-{
-    return response()->json(auth('api')->user());
-}
+    /**
+     * Get the authenticated User.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function me()
+    {
+        return response()->json(auth('api')->user());
+    }
 
-/**
- * Log the user out (Invalidate the token).
- *
- * @return \Illuminate\Http\JsonResponse
- */
-public function logout()
-{
+    /**
+     * Log the user out (Invalidate the token).
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function logout()
+    {
         auth('api')->logout();
 
         return response()->json(['message' => 'Successfully logged out']);
@@ -164,7 +165,7 @@ public function logout()
             'expires_in' => auth('api')->factory()->getTTL() * 60,
         ]);
     }
-
+  
     public function verify(Request $request){
         $request->validate([
             'token' => 'required | string'

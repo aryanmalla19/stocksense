@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\StockPriceResource;
+use App\Http\Resources\StockResource;
 use App\Http\Resources\StockWithPriceResource;
 use App\Models\Stock;
 use App\Models\StockPrice;
@@ -62,7 +64,7 @@ class StockPriceController extends Controller
 
         return response()->json([
             'message' => 'Successfully fetched stock price data with ID '.$id,
-            'data' => $stockPrice,
+            'data' => new StockPriceResource($stockPrice),
         ]);
     }
 
@@ -84,5 +86,25 @@ class StockPriceController extends Controller
         return response()->json([
             'message' => 'You cannot delete stock previous price',
         ], 400);
+    }
+
+    public function historyStockPrices(string $id)
+    {
+        $stock = Stock::with(['prices', 'latestPrice', 'sector'])->find($id);
+
+        if (! $stock) {
+            return response()->json([
+                'message' => 'Stock not found',
+                'data' => null,
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Successfully rendered stock all historically data',
+            'data' => [
+                'stock' => new StockResource($stock),
+                'historic' => StockPriceResource::collection($stock->prices),
+            ],
+        ]);
     }
 }

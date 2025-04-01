@@ -7,13 +7,14 @@ use App\Http\Controllers\StockController;
 use App\Http\Controllers\StockPriceController;
 use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\UserSettingController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VerificationController;
+use Illuminate\Support\Facades\Route;
 
 Route::apiResource('/stocks', StockController::class);
 Route::apiResource('/sectors', SectorController::class);
 Route::apiResource('stock_prices', StockPriceController::class);
 Route::apiResource('/user/settings', UserSettingController::class);
+Route::get('/stocks/{id}/historic', [StockPriceController::class, 'historyStockPrices']);
 
 // User authentication route api
 Route::post('login', [AuthController::class, 'login']);
@@ -31,11 +32,11 @@ Route::post('email/verification-notification', [VerificationController::class, '
 // Reset Password
 Route::post('/forgot-password', [PasswordResetController::class, 'sendResetPassword'])
     ->middleware('guest')
-    ->name('password.email'); 
+    ->name('password.email');
 
 Route::post('/reset-password', [PasswordResetController::class, 'reset'])
     ->middleware('guest')
-    ->name('password.reset'); 
+    ->name('password.reset');
 
 // protected route
 Route::group([

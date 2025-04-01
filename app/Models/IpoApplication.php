@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class UserSetting extends Model
+class IpoApplication extends Model
 {
     use HasFactory;
 
@@ -17,8 +17,11 @@ class UserSetting extends Model
      */
     protected $fillable = [
         'user_id',
-        'notification_enabled',
-        'mode',
+        'ipo_id',
+        'applied_shares',
+        'status',
+        'applied_date',
+        'allotted_shares',
     ];
 
     /**
@@ -27,15 +30,24 @@ class UserSetting extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'notification_enabled' => 'boolean',
-        'mode' => 'string',
+        'applied_shares' => 'integer',
+        'allotted_shares' => 'integer',
+        'applied_date' => 'datetime',
     ];
 
     /**
-     * Get the user this setting belongs to.
+     * Get the user who submitted this IPO application.
      */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the IPO details for this application.
+     */
+    public function ipo(): BelongsTo
+    {
+        return $this->belongsTo(IpoDetail::class, 'ipo_id');
     }
 }

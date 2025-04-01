@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class UserSetting extends Model
+class Holding extends Model
 {
     use HasFactory;
 
@@ -16,9 +16,10 @@ class UserSetting extends Model
      * @var array<string>
      */
     protected $fillable = [
-        'user_id',
-        'notification_enabled',
-        'mode',
+        'portfolio_id',
+        'stock_id',
+        'quantity',
+        'average_price',
     ];
 
     /**
@@ -27,15 +28,23 @@ class UserSetting extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'notification_enabled' => 'boolean',
-        'mode' => 'string',
+        'quantity' => 'integer',
+        'average_price' => 'decimal:2',
     ];
 
     /**
-     * Get the user this setting belongs to.
+     * Get the portfolio this holding belongs to.
      */
-    public function user(): BelongsTo
+    public function portfolio(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Portfolio::class);
+    }
+
+    /**
+     * Get the stock this holding represents.
+     */
+    public function stock(): BelongsTo
+    {
+        return $this->belongsTo(Stock::class);
     }
 }
