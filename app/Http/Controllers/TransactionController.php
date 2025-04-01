@@ -57,7 +57,6 @@ class TransactionController extends Controller
             ]);
         }
         $stock = Stock::find($stockId);
-        broadcast(new StockUpdated($stock));
               
     }
 
@@ -97,7 +96,7 @@ class TransactionController extends Controller
                     'price'    => $adjustedPrice
                 ]);
             } else {
-                $portfolio->delete(); // ✅ Remove stock from portfolio if fully sold
+                $portfolio->delete(); 
             }
 
             return response()->json(['message' => 'Stock sold successfully.'], 200);
