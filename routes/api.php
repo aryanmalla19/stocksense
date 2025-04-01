@@ -51,3 +51,5 @@ Route::group([
 // two factor
 Route::post('/auth/two-factor/enable',[TwoFactorController::class, 'enable'])->middleware('auth:api');
 Route::post('/auth/two-factor/disable',[TwoFactorController::class, 'disable'])->middleware('auth:api');
+
+Route::post('/verify-token', [AuthController::class, 'verify'])->middleware('auth:api');
