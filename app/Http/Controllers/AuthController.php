@@ -16,9 +16,6 @@ class AuthController extends Controller
         $this->authService = $authService;
     }
 
-    /**
-     * Register a new user.
-     */
     public function register(RegisterRequest $request): JsonResponse
     {
         $result = $this->authService->register($request->validated());
@@ -29,9 +26,6 @@ class AuthController extends Controller
         );
     }
 
-    /**
-     * User login.
-     */
     public function login(LoginRequest $request): JsonResponse
     {
         $result = $this->authService->login($request->validated());
@@ -42,9 +36,6 @@ class AuthController extends Controller
         );
     }
 
-    /**
-     * Logout the user.
-     */
     public function logout(): JsonResponse
     {
         $result = $this->authService->logout();

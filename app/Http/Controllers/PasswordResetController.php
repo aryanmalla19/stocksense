@@ -24,7 +24,7 @@ class PasswordResetController extends Controller
             : response()->json(['error' => __('We cannot find a user with that email address.')], 400);
     }
 
-    public function reset(Request $request)
+    public function resetPassword(Request $request)
     {
         $request->validate([
             'token' => 'required',
@@ -45,8 +45,11 @@ class PasswordResetController extends Controller
             }
         );
 
-        return $status === Password::PASSWORD_RESET
-            ? response()->json(['message' => __('Your password has been successfully reset.')], 200)
-            : response()->json(['error' => __('Failed to reset the password.')], 400);
+        return match ($status) {
+            Password::PASSWORD_RESET => response()->json(['message' => __('Your password has been successfully reset.')], 200),
+            Password::INVALID_TOKEN => response()->json(['error' => __('The reset token is invalid or has expired.')], 400),
+            Password::INVALID_USER => response()->json(['error' => __('No user found with this email address.')], 400),
+            default => response()->json(['error' => __('Failed to reset the password.')], 400),
+        };
     }
 }

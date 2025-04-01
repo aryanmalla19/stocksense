@@ -10,34 +10,48 @@ use App\Http\Controllers\UserSettingController;
 use App\Http\Controllers\VerificationEmailController;
 use Illuminate\Support\Facades\Route;
 
-Route::apiResource('/stocks', StockController::class);
-Route::get('/stocks/{id}/historic', [StockPriceController::class, 'historyStockPrices']);
-Route::apiResource('/sectors', SectorController::class);
-Route::apiResource('stock_prices', StockPriceController::class);
-Route::apiResource('/user/settings', UserSettingController::class);
+Route::prefix('v1')->group(function () {
+    // Public Authentication Routes
+    Route::prefix('auth')->group(function () {
+        Route::post('/login', [AuthController::class, 'login'])
+            ->middleware('throttle:10,1')
+            ->name('auth.login');
 
+        // Rate limit registration to prevent spam
+        Route::post('/register', [AuthController::class, 'register'])
+            ->middleware('throttle:10,1')
+            ->name('auth.register');
 
-// User authentication route api
-Route::prefix('auth')->group(function() {
-    Route::post('login', [AuthController::class, 'login']);
-    Route::post('register', [AuthController::class, 'register']);
-    Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:api');
-    Route::post('refresh', [AuthController::class, 'refresh'])->middleware('auth:api');
+        Route::get('/email/verify/{id}/{hash}', [VerificationEmailController::class, 'verify'])
+            ->name('verification.verify');
+
+        Route::post('/email/resend', [VerificationEmailController::class, 'resend'])
+            ->middleware(['auth:api', 'throttle:5,1'])
+            ->name('verification.resend');
+
+        Route::post('/forgot-password', [PasswordResetController::class, 'sendResetPassword'])
+            ->middleware('throttle:5,1')
+            ->name('password.email');
+
+        Route::post('/reset-password', [PasswordResetController::class, 'resetPassword'])
+            ->middleware('throttle:5,1')
+            ->name('password.reset');
+    });
+
+    // Protected Routes (no rate limiting unless specific need arises)
+    Route::middleware('auth:api')->group(function () {
+        Route::prefix('auth')->group(function () {
+            Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
+            Route::post('/refresh', [AuthController::class, 'refresh'])->name('auth.refresh');
+            Route::post('/verify-token', [TwoFactorController::class, 'verify'])->name('auth.2fa.verify');
+        });
+        // LEFT PUBLIC ROUTES BELOW
+    });
 });
 
-// email verification
-Route::get('email/verify/{id}/{hash}', [VerificationEmailController::class, 'verify'])
-    ->name('verification.verify');
-
-// Reset Password
-Route::post('/forgot-password', [PasswordResetController::class, 'sendResetPassword'])
-    ->name('password.email');
-
-Route::post('/reset-password', [PasswordResetController::class, 'reset'])
-    ->name('password.reset');
-
-// Two factor
-Route::post('/auth/two-factor/enable',[TwoFactorController::class, 'enable'])->middleware('auth:api');
-Route::post('/auth/two-factor/disable',[TwoFactorController::class, 'disable'])->middleware('auth:api');
-
-Route::post('/verify-token', [AuthController::class, 'verify'])->middleware('auth:api');
+Route::apiResource('/settings', UserSettingController::class)->names('user.settings');
+Route::apiResource('/stocks', StockController::class)->names('stocks');
+Route::get('/stocks/{stock}/history', [StockPriceController::class, 'historyStockPrices'])
+    ->name('stocks.history');
+Route::apiResource('/sectors', SectorController::class)->names('sectors');
+Route::apiResource('/stock-prices', StockPriceController::class)->names('stock-prices');

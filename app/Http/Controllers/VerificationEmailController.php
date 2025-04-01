@@ -2,41 +2,74 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use App\Models\User;
+use Illuminate\Support\Facades\URL;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class VerificationEmailController extends Controller
 {
-    public function verify(Request $request)
+    /**
+     * Verify the user's email address.
+     *
+     * @param Request $request
+     * @param int $id
+     * @param string $hash
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function verify(Request $request, $id, $hash)
     {
-        $user = User::where('id', $request->id)->first();
+        $user = User::findOrFail($id);
 
-        if (! $user) {
-            return response()->json(['message' => 'User not found.'], 404);
+        // Validate the signed URL
+        if (!URL::hasValidSignature($request)) {
+            return response()->json(['error' => 'Invalid or expired verification link'], 401);
         }
 
-        // if (!Hash::check($user->getEmailForVerification(), $request->hash)) {
-        //     return response()->json(['message' => 'Invalid verification link.'], 400);
-        // }
+        // Verify the hash matches the user's email
+        if (!hash_equals((string) $hash, sha1($user->email))) {
+            return response()->json(['error' => 'Invalid verification link'], 401);
+        }
 
+        // Check if already verified
         if ($user->hasVerifiedEmail()) {
-            return response()->json(['message' => 'Email already verified.'], 200);
+            return response()->json(['message' => 'Email already verified'], 400);
         }
 
+        // Mark email as verified and fire event
         $user->markEmailAsVerified();
         event(new Verified($user));
 
-        return response()->json(['message' => 'Email verified successfully.'], 200);
-    }
-
-    public function resend(Request $request)
-    {
-        $request->user()->sendEmailVerificationNotification();
+        // Optionally generate a JWT token for immediate login
+        $token = JWTAuth::fromUser($user);
 
         return response()->json([
-            'message' => 'Verification link sent!',
+            'message' => 'Email verified successfully',
+            'token' => $token, // Return JWT token for API clients
         ], 200);
+    }
+
+    /**
+     * Resend the email verification notification.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function resend(Request $request)
+    {
+        $user = $request->user(); // Assumes user is authenticated via JWT
+
+        if (!$user) {
+            return response()->json(['error' => 'Unauthenticated'], 401);
+        }
+
+        if ($user->hasVerifiedEmail()) {
+            return response()->json(['message' => 'Email already verified'], 400);
+        }
+
+        $user->sendEmailVerificationNotification();
+
+        return response()->json(['message' => 'Verification email resent'], 200);
     }
 }

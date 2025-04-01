@@ -25,7 +25,7 @@ class AuthService
             return ['error' => 'Error registering user', 'status' => 500];
         }
 
-        event(new Registered($user));
+        $user->sendEmailVerificationNotification();
 
         return [
             'message' => 'User registered successfully. Check email for verification',
