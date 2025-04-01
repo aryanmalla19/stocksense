@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->boolean('two_factor_enables')
+            $table->boolean('two_factor_enabled')
                 ->after('password')
                 ->default(false);
 
@@ -40,7 +40,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn([
-                'two_factor_enables',
+                'two_factor_enabled',
                 'two_factor_secret',
                 'two_factor_recovery_codes',
                 'two_factor_otp',
