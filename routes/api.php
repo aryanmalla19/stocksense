@@ -5,6 +5,7 @@ use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\SectorController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\StockPriceController;
+use App\Http\Controllers\IpoDetailController;
 use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\UserSettingController;
 use App\Http\Controllers\VerificationController;
@@ -54,3 +55,7 @@ Route::post('/auth/two-factor/enable',[TwoFactorController::class, 'enable'])->m
 Route::post('/auth/two-factor/disable',[TwoFactorController::class, 'disable'])->middleware('auth:api');
 
 Route::post('/verify-token', [AuthController::class, 'verify'])->middleware('auth:api');
+
+//Ipo Detail Route
+Route::get('/ipo-detail',[IpoDetailController::class,'fetch']);
+Route::post('/ipo-detail',[IpoDetailController::class,'store']);
