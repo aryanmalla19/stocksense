@@ -17,9 +17,11 @@ class StockPriceResource extends JsonResource
         return [
             'id' => $this->id,
             'stock_id' => $this->stock_id,
-            'price' => $this->price,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'open_price' => $this->open_price,
+            'close_price' => $this->close_price,
+            'high_price' => $this->high_price,
+            'low_price' => $this->low_price,
+            'date' => $this->date,
         ];
     }
 }

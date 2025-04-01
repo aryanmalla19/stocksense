@@ -13,6 +13,7 @@ Route::apiResource('/stocks', StockController::class);
 Route::apiResource('/sectors', SectorController::class);
 Route::apiResource('stock_prices', StockPriceController::class);
 Route::apiResource('/user/settings', UserSettingController::class);
+Route::get('/stocks/{id}/historic', [StockPriceController::class, 'historyStockPrices']);
 
 // User authentication route api
 Route::post('login', [AuthController::class, 'login']);

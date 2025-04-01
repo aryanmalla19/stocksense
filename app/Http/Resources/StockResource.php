@@ -14,7 +14,7 @@ class StockResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $latestPrice = $this->whenLoaded('latestPrice');
+        $latestPrice = $this->whenLoaded('latestPrice', fn() => $this->latestPrice, null);
 
         return [
             'id' => $this->id,
@@ -22,10 +22,10 @@ class StockResource extends JsonResource
             'company_name' => $this->company_name,
             'sector_id' => $this->sector_id,
             'sector' => $this->whenLoaded('sector', fn() => $this->sector->name, null),
-            'open_price' => $latestPrice?->open_price,
-            'close_price' => $latestPrice?->close_price,
-            'high_price' => $latestPrice?->high_price,
-            'low_price' => $latestPrice?->low_price,
+            'open_price' => $latestPrice ? $latestPrice->open_price : null,
+            'close_price' => $latestPrice ? $latestPrice->close_price : null,
+            'high_price' => $latestPrice ? $latestPrice->high_price : null,
+            'low_price' => $latestPrice ? $latestPrice->low_price : null,
         ];
     }
 }
