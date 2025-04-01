@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\MailVerifyOtp;
 
 class AuthController extends Controller
 {
@@ -106,6 +108,14 @@ class AuthController extends Controller
         }
         if ($user->two_factor_enabled){
             $otp = rand(100000, 999999);
+
+            $success = Mail::raw('Your OTP: ' . $otp, function ($message) use ($user) {
+                $message->to($user['email'])
+                    ->subject("OTP Email");
+            });
+
+
+            if(! $success) return response()->json(['Error sending OTP']);
 
             $user->forceFill([
                 'two_factor_otp' => $otp,
