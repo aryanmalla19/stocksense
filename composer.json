@@ -18,6 +18,7 @@
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
+        "ibex/crud-generator": "^2.1",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.41",

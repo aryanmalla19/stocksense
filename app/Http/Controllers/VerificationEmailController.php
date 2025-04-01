@@ -7,7 +7,7 @@ use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
-class VerificationController extends Controller
+class VerificationEmailController extends Controller
 {
     public function verify(Request $request)
     {
