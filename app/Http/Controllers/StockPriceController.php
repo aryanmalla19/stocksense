@@ -92,10 +92,10 @@ class StockPriceController extends Controller
     {
         $stock = Stock::with(['prices', 'latestPrice', 'sector'])->find($id);
 
-        if (!$stock) {
+        if (! $stock) {
             return response()->json([
                 'message' => 'Stock not found',
-                'data' => null
+                'data' => null,
             ], 404);
         }
 
@@ -104,7 +104,7 @@ class StockPriceController extends Controller
             'data' => [
                 'stock' => new StockResource($stock),
                 'historic' => StockPriceResource::collection($stock->prices),
-            ]
+            ],
         ]);
     }
 }

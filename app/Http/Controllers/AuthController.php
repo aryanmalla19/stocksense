@@ -95,8 +95,7 @@ class AuthController extends Controller
             ], 401);
         }
 
-
-        if (!$user->hasVerifiedEmail()) {
+        if (! $user->hasVerifiedEmail()) {
             return response()->json(['message' => 'Please verify your email before logging in.'], 403);
         }
 

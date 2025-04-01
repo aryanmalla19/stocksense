@@ -45,7 +45,7 @@ class StockController extends Controller
      */
     public function show(string $id)
     {
-        $stock = Stock::with(['sector','latestPrice'])->find($id);
+        $stock = Stock::with(['sector', 'latestPrice'])->find($id);
         if (empty($stock)) {
             return response()->json([
                 'message' => 'No Stock found with ID '.$id,

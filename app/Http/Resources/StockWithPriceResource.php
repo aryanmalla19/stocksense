@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Sector;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -19,7 +18,7 @@ class StockWithPriceResource extends JsonResource
             'id' => $this->id,
             'symbol' => $this->symbol,
             'company_name' => $this->company_name,
-            'sector' => $this->whenLoaded('sector', fn() => $this->sector->name, null),
+            'sector' => $this->whenLoaded('sector', fn () => $this->sector->name, null),
             'sector_id' => $this->sector_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

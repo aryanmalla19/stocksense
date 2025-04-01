@@ -58,7 +58,7 @@ class DatabaseSeeder extends Seeder
 
             foreach ($selectedStockIds as $stockId) {
                 Watchlist::factory()->create([
-                    'user_id'  => $user->id,
+                    'user_id' => $user->id,
                     'stock_id' => $stockId,
                 ]);
             }
