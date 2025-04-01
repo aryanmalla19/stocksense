@@ -7,7 +7,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -112,10 +111,10 @@ class AuthController extends Controller
                 'two_factor_otp' => $otp,
                 'two_factor_expires_at' => Carbon::now()->addMinutes(5)
             ])->save();
-            
+
             return $this->respondWithToken($token);
         }
-        
+
         return $this->respondWithToken($token);
     }
 
@@ -165,7 +164,7 @@ class AuthController extends Controller
             'expires_in' => auth('api')->factory()->getTTL() * 60,
         ]);
     }
-  
+
     public function verify(Request $request){
         $request->validate([
             'token' => 'required | string'
