@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\IpoDetailResource;
 use Illuminate\Http\Request;
 use App\Models\IpoDetail;
 
@@ -9,15 +10,24 @@ class  IpoDetailController extends Controller{
     
     public function index(){
         $allIpoDetail = IpoDetail::all();
-        return response()->json($$allIpoDetail);
+
+        return response()->json([
+            'message' => 'Successfully fetched all ipo details',
+            'data' => IpoDetailResource::collection($$allIpoDetail),
+        ]);
     }
     public function show($id){
         $ipoDetail = IpoDetail::find($id);
 
         if(!$ipoDetail){
-            return response()->json(['error'=>'IPO Detail not found'],404);
+            return response()->json([
+                'message' => 'IPO detail not found for ' . $id,
+            ], 404);
         }
-        return response()->json($ipoDetail);
+        return response()->json([
+            'message' => 'Successfully fetched ipo details',
+            'data' => new IpoDetailResource($ipoDetail),
+        ]);
     }
     public function store(Request $request){
         $attributes = $request->validate([
@@ -33,7 +43,10 @@ class  IpoDetailController extends Controller{
         ]);
 
         $ipoDetail = IpoDetail::create($attributes);
-        return response()->json($ipoDetail,201);
+        return response()->json([
+            'message' => 'Successfully created new ipo details',
+            'data' => new IpoDetailResource($ipoDetail),
+        ]);
     }
 
     public function update(Request $request){
@@ -51,20 +64,23 @@ class  IpoDetailController extends Controller{
 
         $ipoDetail = IpoDetail::find($request->id);
         $ipoDetail->update($attributes);
-        return response()->json(['message' => 'successfully updated sector with ID']);
+        return response()->json([
+            'message' => 'Successfully updated IPO details ' ,
+            'data' => new IpoDetailResource($ipoDetail),
+        ]);
 
     }
 
     public function destroy($id){
         $ipoDetail = ipoDetail::find($id);
         if(empty($ipoDetail)){
-            return response()->json(['message'=> 'could not find sector with ID'],404);
+            return response()->json(['message'=> 'could not find ipo with ID'],404);
         }
 
         $ipoDetail->delete();
 
         return response()->json([
-            'message' => 'Successfully deleted sector with ID'
+            'message' => 'Successfully deleted IPO details with ID ' . $id,
         ]);
     }
 }
