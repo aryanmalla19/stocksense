@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Notifications\CustomResetPassword;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -126,5 +127,10 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     public function ipoApplications(): HasMany
     {
         return $this->hasMany(IpoApplication::class);
+    }
+
+        public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new CustomResetPassword($token,$this));
     }
 }
