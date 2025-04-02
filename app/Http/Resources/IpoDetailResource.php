@@ -16,13 +16,14 @@ class IpoDetailResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'stock_id' => $this->stock_id,
             'issue_price' => $this->issue_price,
             'total_shares' => $this->total_shares,
             'open_date' => $this->open_date,
             'close_date' => $this->close_date,
             'listing_date' => $this->listing_date,
-            'ipo_status' => $this->ipo_status
+            'ipo_status' => $this->ipo_status,
+            'stock_id' => $this->stock_id,
+            'company_name' =>$this->whenLoaded('stock')->company_name,
         ];
     }
 }
