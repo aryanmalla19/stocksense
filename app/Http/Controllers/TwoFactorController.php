@@ -7,32 +7,16 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Carbon\Carbon;
+
 class TwoFactorController extends Controller
 {
     public function enable(Request $request)
     {
-        $request->validate([
-            'password' => 'required'
-        ]);
-
-        $token = $request->bearerToken();
-
-        if (!$token) {
-            return response()->json(['error' => 'Token not provided'], 400);
-        }
-
-        $user = JWTAuth::parseToken()->authenticate();
-
-        if ($user->two_factor_enabled) {
-            return "Already enabled";
-        }
+        $user = Auth::user();
 
         if (!$user) {
             return response()->json(['error' => 'User not found'], 404);
-        }
-
-        if (!Hash::check($request->password, $user->password)) {
-            return response()->json(['error' => 'Invalid password'], 400);
         }
 
         $user->forceFill([
@@ -41,29 +25,13 @@ class TwoFactorController extends Controller
 
         return response()->json(['message' => '2FA enabled successfully'], 200);
     }
-    public function  disable(Request $request){
-        $request->validate([
-            'password' => 'required'
-        ]);
 
-        $token = $request->bearerToken();
-
-        if (!$token) {
-            return response()->json(['error' => 'Token not provided'], 400);
-        }
-
-        $user = JWTAuth::parseToken()->authenticate();
-
-        if (!$user->two_factor_enabled) {
-            return "Already disabled";
-        }
+    public function disable(Request $request)
+    {
+        $user = Auth::user();
 
         if (!$user) {
             return response()->json(['error' => 'User not found'], 404);
-        }
-
-        if (!Hash::check($request->password, $user->password)) {
-            return response()->json(['error' => 'Invalid password'], 400);
         }
 
         $user->forceFill([
@@ -73,7 +41,6 @@ class TwoFactorController extends Controller
         return response()->json(['message' => '2FA disabled successfully']);
     }
 
-
     public function verifyOtp(Request $request)
     {
         $request->validate([
@@ -81,18 +48,20 @@ class TwoFactorController extends Controller
             'private_token' => 'required|string|size:32'
         ]);
 
+        // Authenticate user first before verifying OTP
         $user = Auth::user() ?? User::where('two_factor_secret', $request->private_token)->first();
 
         if (!$user) {
-            return response()->json(['error' => 'Invalid token', 'status' => 401], 401);
+            return response()->json(['error' => 'Invalid token'], 401);
         }
 
-        if ($user->two_factor_expires_at < now()) {
-            return response()->json(['error' => 'OTP expired', 'status' => 401], 401);
+        // Ensure OTP has not expired
+        if (!$user->two_factor_expires_at || $user->two_factor_expires_at->lt(Carbon::now())) {
+            return response()->json(['error' => 'OTP expired'], 401);
         }
 
-        if ($user->two_factor_otp !== $request->otp) {
-            return response()->json(['error' => 'Invalid OTP', 'status' => 401], 401);
+        if ($request->otp !== $user->two_factor_otp) {
+            return response()->json(['error' => 'Invalid OTP'], 401);
         }
 
         // Clear 2FA fields after successful verification
@@ -102,7 +71,8 @@ class TwoFactorController extends Controller
             'two_factor_expires_at' => null
         ])->save();
 
-        $token = Auth::login($user);
+        // Generate new JWT token
+        $token = JWTAuth::fromUser($user);
 
         return response()->json([
             'access_token' => $token,
