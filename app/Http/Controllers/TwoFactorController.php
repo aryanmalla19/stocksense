@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
 class TwoFactorController extends Controller
@@ -69,37 +70,44 @@ class TwoFactorController extends Controller
             'two_factor_enabled' => false
         ])->save();
 
-        return response()->json(['message' => '2FA disabled successfully'], 200);
+        return response()->json(['message' => '2FA disabled successfully']);
     }
 
 
-    public function verify(Request $request){
+    public function verifyOtp(Request $request)
+    {
         $request->validate([
-            'token' => 'required|string'
+            'otp' => 'required|string|size:6',
+            'private_token' => 'required|string|size:32'
         ]);
 
-        $token = $request->bearerToken();
+        $user = Auth::user() ?? User::where('two_factor_secret', $request->private_token)->first();
 
-        if (!$token) {
-            return response()->json(['error' => 'Token not provided'], 400);
+        if (!$user) {
+            return response()->json(['error' => 'Invalid token', 'status' => 401], 401);
         }
 
-        $user = JWTAuth::parseToken()->authenticate();
-
-        if($user->two_factor_otp != $request->token){
-            return response()->json([
-                'message' => 'OTP not matched'
-            ], 200);
+        if ($user->two_factor_expires_at < now()) {
+            return response()->json(['error' => 'OTP expired', 'status' => 401], 401);
         }
 
-        if ($user->two_factor_expires_at && $user->two_factor_expires_at->isFuture()) {
-            return response()->json([
-                'message' => 'Successfully login'
-            ], 200);
-        } else {
-            return response()->json([
-                'message' => 'OTP expired'
-            ], 200);
+        if ($user->two_factor_otp !== $request->otp) {
+            return response()->json(['error' => 'Invalid OTP', 'status' => 401], 401);
         }
+
+        // Clear 2FA fields after successful verification
+        $user->forceFill([
+            'two_factor_otp' => null,
+            'two_factor_secret' => null,
+            'two_factor_expires_at' => null
+        ])->save();
+
+        $token = Auth::login($user);
+
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => Auth::factory()->getTTL() * 60,
+        ]);
     }
 }

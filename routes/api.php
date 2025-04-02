@@ -36,6 +36,8 @@ Route::prefix('v1')->group(function () {
         Route::post('/reset-password', [PasswordResetController::class, 'resetPassword'])
             ->middleware('throttle:5,1')
             ->name('password.reset');
+
+        Route::post('/verify-otp', [TwoFactorController::class, 'verifyOtp'])->name('auth.2fa.verify');
     });
 
     // Protected Routes (no rate limiting unless specific need arises)
@@ -43,7 +45,6 @@ Route::prefix('v1')->group(function () {
         Route::prefix('auth')->group(function () {
             Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
             Route::post('/refresh', [AuthController::class, 'refresh'])->name('auth.refresh');
-            Route::post('/verify-token', [TwoFactorController::class, 'verify'])->name('auth.2fa.verify');
         });
         // LEFT PUBLIC ROUTES BELOW
     });

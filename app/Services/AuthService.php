@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -62,13 +63,27 @@ class AuthService
 
         if ($user->two_factor_enabled) {
             $otp = Str::random(6, '0123456789');
+            // Generate a private token for 2FA verification
+            $privateToken = Str::random(32); // Generate a secure random token
+
             $user->forceFill([
                 'two_factor_otp' => $otp,
+                'two_factor_secret' => $privateToken, // Add this new field to store the private token
                 'two_factor_expires_at' => Carbon::now()->addMinutes(5)
             ])->save();
 
+            $success = Mail::raw('Your OTP: ' . $otp, function ($message) use ($user) {
+                $message->to($user['email'])
+                    ->subject("OTP Email");
+            });
+
+            if (!$success) {
+                return ['error' => 'Error sending OTP', 'status' => 500];
+            }
+
             return [
                 'message' => 'OTP required for 2FA authentication.',
+                'private_token' => $privateToken, // Return the private token to the client
                 'otp_length' => 6,
                 'expires_in' => 300, // 5 minutes
                 'status' => 202
