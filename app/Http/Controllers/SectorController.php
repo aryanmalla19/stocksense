@@ -6,10 +6,38 @@ use App\Http\Resources\SectorResource;
 use App\Models\Sector;
 use Illuminate\Http\Request;
 
+/**
+ * @OA\Tag(
+ *     name="Sectors",
+ *     description="Endpoints for managing sectors"
+ * )
+ */
 class SectorController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     *     path="/v1/sectors",
+     *     tags={"Sectors"},
+     *     summary="Get a list of all sectors",
+     *     operationId="getSectors",
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of sectors retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Successfully fetched all sectors data"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="name", type="string", example="banking"),
+     *                     @OA\Property(property="created_at", type="string", format="date-time", example="2025-04-01T12:00:00Z"),
+     *                     @OA\Property(property="updated_at", type="string", format="date-time", example="2025-04-01T12:00:00Z")
+     *                 )
+     *             )
+     *         )
+     *     )
+     * )
      */
     public function index()
     {
@@ -22,7 +50,59 @@ class SectorController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     *     path="/v1/sectors",
+     *     tags={"Sectors"},
+     *     summary="Create a new sector",
+     *     operationId="createSector",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name"},
+     *             @OA\Property(
+     *                 property="name",
+     *                 type="string",
+     *                 enum={"banking", "hydropower", "life Insurance", "non-life Insurance", "health", "manufacturing", "hotel", "trading", "microfinance", "finance", "investment", "others"},
+     *                 example="banking",
+     *                 description="The name of the sector"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Sector created successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Successfully created sector"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="name", type="string", example="banking"),
+     *                 @OA\Property(property="created_at", type="string", format="date-time", example="2025-04-01T12:00:00Z"),
+     *                 @OA\Property(property="updated_at", type="string", format="date-time", example="2025-04-01T12:00:00Z")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *             @OA\Property(
+     *                 property="errors",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="name",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="string",
+     *                         example="The name field is required."
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     )
+     * )
      */
     public function store(Request $request)
     {
@@ -39,7 +119,41 @@ class SectorController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * @OA\Get(
+     *     path="/v1/sectors/{id}",
+     *     tags={"Sectors"},
+     *     summary="Get a specific sector",
+     *     operationId="getSector",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="The ID of the sector",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Sector retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Successfully fetched sector data"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="name", type="string", example="banking"),
+     *                 @OA\Property(property="created_at", type="string", format="date-time", example="2025-04-01T12:00:00Z"),
+     *                 @OA\Property(property="updated_at", type="string", format="date-time", example="2025-04-01T12:00:00Z")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Sector not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Could not find sector with ID 1")
+     *         )
+     *     )
+     * )
      */
     public function show(string $id)
     {
@@ -57,7 +171,73 @@ class SectorController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * @OA\Put(
+     *     path="/v1/sectors/{id}",
+     *     tags={"Sectors"},
+     *     summary="Update a specific sector",
+     *     operationId="updateSector",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="The ID of the sector",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name"},
+     *             @OA\Property(
+     *                 property="name",
+     *                 type="string",
+     *                 enum={"banking", "hydropower", "life Insurance", "non-life Insurance", "health", "manufacturing", "hotel", "trading", "microfinance", "finance", "investment", "others"},
+     *                 example="hydropower",
+     *                 description="The updated name of the sector"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Sector updated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Successfully updated sector with ID 1"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="name", type="string", example="hydropower"),
+     *                 @OA\Property(property="created_at", type="string", format="date-time", example="2025-04-01T12:00:00Z"),
+     *                 @OA\Property(property="updated_at", type="string", format="date-time", example="2025-04-01T12:30:00Z")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Sector not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Could not find sector with ID 1")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *             @OA\Property(
+     *                 property="errors",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="name",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="string",
+     *                         example="The name field is required."
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     )
+     * )
      */
     public function update(Request $request, string $id)
     {
@@ -81,7 +261,33 @@ class SectorController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * @OA\Delete(
+     *     path="/v1/sectors/{id}",
+     *     tags={"Sectors"},
+     *     summary="Delete a specific sector",
+     *     operationId="deleteSector",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="The ID of the sector",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Sector deleted successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Successfully deleted sector with ID 1")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Sector not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Could not find sector with ID 1")
+     *         )
+     *     )
+     * )
      */
     public function destroy(string $id)
     {
