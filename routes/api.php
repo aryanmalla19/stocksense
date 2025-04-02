@@ -25,8 +25,8 @@ Route::prefix('v1')->middleware('api.exception')->group(function () {
         });
 
         // Rate-limited email & password management actions
-        Route::middleware('throttle:3,1')->group(function () {
-            Route::get('/email/verify/{id}/{hash}', [VerificationEmailController::class, 'verify']);
+        Route::middleware('throttle:100,1')->group(function () {
+            Route::get('/email/verify/{id}/{hash}', [VerificationEmailController::class, 'verify'])->name('verification.verify');
             Route::post('/email/resend', [VerificationEmailController::class, 'resend']);
             Route::post('/forgot-password', [PasswordResetController::class, 'sendResetPassword']);
             Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);

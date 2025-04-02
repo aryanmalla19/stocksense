@@ -19,9 +19,7 @@ class TwoFactorController extends Controller
             return response()->json(['error' => 'User not found'], 404);
         }
 
-        $user->forceFill([
-            'two_factor_enabled' => true
-        ])->save();
+        $user->update(['two_factor_enabled' => true]);
 
         return response()->json(['message' => '2FA enabled successfully'], 200);
     }
@@ -34,29 +32,30 @@ class TwoFactorController extends Controller
             return response()->json(['error' => 'User not found'], 404);
         }
 
-        $user->forceFill([
-            'two_factor_enabled' => false
-        ])->save();
+        $user->update(['two_factor_enabled' => false]);
 
-        return response()->json(['message' => '2FA disabled successfully']);
+        return response()->json(['message' => '2FA disabled successfully'], 200);
     }
 
     public function verifyOtp(Request $request)
     {
         $request->validate([
             'otp' => 'required|string|size:6',
+            'email' => 'required|email',
             'private_token' => 'required|string|size:32'
         ]);
 
-        // Authenticate user first before verifying OTP
-        $user = Auth::user() ?? User::where('two_factor_secret', $request->private_token)->first();
+        // Find user by authentication or private_token
+        $user = Auth::user() ?? User::where([
+            'two_factor_secret' => $request->private_token,
+            'email' => $request->email
+        ])->first();
 
         if (!$user) {
-            return response()->json(['error' => 'Invalid token'], 401);
+            return response()->json(['error' => 'User not found or invalid token'], 401);
         }
-
         // Ensure OTP has not expired
-        if (!$user->two_factor_expires_at || $user->two_factor_expires_at->lt(Carbon::now())) {
+        if (!$user->two_factor_expires_at || Carbon::parse($user->two_factor_expires_at)->lt(Carbon::now())) {
             return response()->json(['error' => 'OTP expired'], 401);
         }
 
@@ -65,11 +64,11 @@ class TwoFactorController extends Controller
         }
 
         // Clear 2FA fields after successful verification
-        $user->forceFill([
+        $user->update([
             'two_factor_otp' => null,
             'two_factor_secret' => null,
             'two_factor_expires_at' => null
-        ])->save();
+        ]);
 
         // Generate new JWT token
         $token = JWTAuth::fromUser($user);
@@ -77,7 +76,7 @@ class TwoFactorController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => Auth::factory()->getTTL() * 60,
+            'expires_in' => JWTAuth::factory()->getTTL() * 60,
         ]);
     }
 }

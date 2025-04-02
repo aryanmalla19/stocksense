@@ -69,7 +69,7 @@ class AuthService
             $user->forceFill([
                 'two_factor_otp' => $otp,
                 'two_factor_secret' => $privateToken, // Add this new field to store the private token
-                'two_factor_expires_at' => Carbon::now()->addMinutes(5)
+                'two_factor_expires_at' => Carbon::now()->addMinutes(51)
             ])->save();
 
             $success = Mail::raw('Your OTP: ' . $otp, function ($message) use ($user) {
