@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\IpoApplicationController;
+use App\Http\Controllers\IpoDetailController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\SectorController;
 use App\Http\Controllers\StockController;
@@ -55,3 +57,7 @@ Route::get('/stocks/{stock}/history', [StockPriceController::class, 'historyStoc
     ->name('stocks.history');
 Route::apiResource('/sectors', SectorController::class)->names('sectors');
 Route::apiResource('/stock-prices', StockPriceController::class)->names('stock-prices');
+Route::apiResource('/ipo-details', IpoDetailController::class)->names('ipo-details');
+Route::apiResource('/ipo-application', IpoApplicationController::class)->names('ipo-application');
+
+
