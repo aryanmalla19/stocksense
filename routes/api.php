@@ -7,50 +7,51 @@ use App\Http\Controllers\StockController;
 use App\Http\Controllers\StockPriceController;
 use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\UserSettingController;
-use App\Http\Controllers\VerificationController;
+use App\Http\Controllers\VerificationEmailController;
 use Illuminate\Support\Facades\Route;
 
-Route::apiResource('/stocks', StockController::class);
-Route::apiResource('/sectors', SectorController::class);
-Route::apiResource('stock_prices', StockPriceController::class);
-Route::apiResource('/user/settings', UserSettingController::class);
-Route::get('/stocks/{id}/historic', [StockPriceController::class, 'historyStockPrices']);
+Route::prefix('v1')->group(function () {
+    // Public Authentication Routes
+    Route::prefix('auth')->group(function () {
+        Route::post('/login', [AuthController::class, 'login'])
+            ->middleware('throttle:10,1')
+            ->name('auth.login');
 
-// User authentication route api
-Route::post('login', [AuthController::class, 'login']);
-Route::post('register', [AuthController::class, 'register']);
+        // Rate limit registration to prevent spam
+        Route::post('/register', [AuthController::class, 'register'])
+            ->middleware('throttle:10,1')
+            ->name('auth.register');
 
-// email verification
-Route::get('email/verify/{id}/{hash}', [VerificationController::class, 'verify'])
-    ->middleware(['signed'])
-    ->name('verification.verify');
+        Route::get('/email/verify/{id}/{hash}', [VerificationEmailController::class, 'verify'])
+            ->name('verification.verify');
 
-Route::post('email/verification-notification', [VerificationController::class, 'resend'])
-    ->middleware(['throttle:6,1'])
-    ->name('verification.send');
+        Route::post('/email/resend', [VerificationEmailController::class, 'resend'])
+            ->middleware(['auth:api', 'throttle:5,1'])
+            ->name('verification.resend');
 
-// Reset Password
-Route::post('/forgot-password', [PasswordResetController::class, 'sendResetPassword'])
-    ->middleware('guest')
-    ->name('password.email');
+        Route::post('/forgot-password', [PasswordResetController::class, 'sendResetPassword'])
+            ->middleware('throttle:5,1')
+            ->name('password.email');
 
-Route::post('/reset-password', [PasswordResetController::class, 'reset'])
-    ->middleware('guest')
-    ->name('password.reset');
+        Route::post('/reset-password', [PasswordResetController::class, 'resetPassword'])
+            ->middleware('throttle:5,1')
+            ->name('password.reset');
+    });
 
-// protected route
-Route::group([
-    'middleware' => 'auth:api',
-    'prefix' => 'auth',
-], function () {
-    Route::post('logout', [AuthController::class, 'logout']);
-    Route::post('refresh', [AuthController::class, 'refresh']);
-    Route::post('me', [AuthController::class, 'me']);
+    // Protected Routes (no rate limiting unless specific need arises)
+    Route::middleware('auth:api')->group(function () {
+        Route::prefix('auth')->group(function () {
+            Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
+            Route::post('/refresh', [AuthController::class, 'refresh'])->name('auth.refresh');
+            Route::post('/verify-token', [TwoFactorController::class, 'verify'])->name('auth.2fa.verify');
+        });
+        // LEFT PUBLIC ROUTES BELOW
+    });
 });
 
-
-// two factor
-Route::post('/auth/two-factor/enable',[TwoFactorController::class, 'enable'])->middleware('auth:api');
-Route::post('/auth/two-factor/disable',[TwoFactorController::class, 'disable'])->middleware('auth:api');
-
-Route::post('/verify-token', [AuthController::class, 'verify'])->middleware('auth:api');
+Route::apiResource('/settings', UserSettingController::class)->names('user.settings');
+Route::apiResource('/stocks', StockController::class)->names('stocks');
+Route::get('/stocks/{stock}/history', [StockPriceController::class, 'historyStockPrices'])
+    ->name('stocks.history');
+Route::apiResource('/sectors', SectorController::class)->names('sectors');
+Route::apiResource('/stock-prices', StockPriceController::class)->names('stock-prices');

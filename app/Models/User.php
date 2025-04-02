@@ -11,23 +11,18 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Auth\Notifications\VerifyEmail;
 
 class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, CanResetPassword, Notifiable, TwoFactorAuthenticatable;
 
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<string>
-     */
     protected $fillable = [
         'name',
         'email',
         'password',
-        'two_factor_enables',
+        'two_factor_enabled',
         'two_factor_otp',
         'two_factor_expires_at',
         'two_factor_secret',
@@ -36,21 +31,11 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         'role',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -65,44 +50,59 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         ];
     }
 
-    /**
-     * Get the identifier that will be stored in the subject claim of the JWT.
-     *
-     * @return mixed
-     */
     public function getJWTIdentifier()
     {
         return $this->getKey();
     }
 
-    /**
-     * Return a key value array, containing any custom claims to be added to the JWT.
-     *
-     * @return array
-     */
     public function getJWTCustomClaims()
     {
-        return [
-            'role' => $this->role,
-        ];
+        return ['role' => $this->role];
     }
 
-    /**
-     * Check if the user is an admin.
-     */
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
     }
 
-    /**
-     * Check if the user is active.
-     */
     public function isActive(): bool
     {
         return $this->is_active;
     }
 
+    /**
+     * Send the email verification notification with a custom URL.
+     */
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new class($this->getEmailVerificationUrl()) extends VerifyEmail {
+            protected $verificationUrl;
+
+            public function __construct($url)
+            {
+                $this->verificationUrl = $url;
+            }
+
+            protected function verificationUrl($notifiable)
+            {
+                return $this->verificationUrl; // Use the custom URL from getEmailVerificationUrl()
+            }
+        });
+    }
+
+    /**
+     * Generate the email verification URL.
+     */
+    public function getEmailVerificationUrl()
+    {
+        return URL::temporarySignedRoute(
+            'verification.verify',
+            now()->addMinutes(60),
+            ['id' => $this->getKey(), 'hash' => sha1($this->email)]
+        );
+    }
+
+    // Relationships
     public function portfolio(): HasOne
     {
         return $this->hasOne(Portfolio::class);
@@ -127,5 +127,4 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     {
         return $this->hasMany(IpoApplication::class);
     }
-
 }
