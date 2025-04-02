@@ -9,11 +9,11 @@ use App\Models\IpoDetail;
 class  IpoDetailController extends Controller{
     
     public function index(){
-        $allIpoDetail = IpoDetail::all();
+        $ipoDetails = IpoDetail::with('stock')->get();
 
         return response()->json([
             'message' => 'Successfully fetched all ipo details',
-            'data' => IpoDetailResource::collection($$allIpoDetail),
+            'data' => IpoDetailResource::collection($ipoDetails),
         ]);
     }
     public function show($id){
@@ -31,15 +31,13 @@ class  IpoDetailController extends Controller{
     }
     public function store(Request $request){
         $attributes = $request->validate([
-            [
-                'stock_id' => 'required|integer',
+                'stock_id' => 'required|integer|exists:stocks,id',
                 'issue_price' => 'required|integer|min:100',
                 'total_shares' => 'required|integer|min:1000',
                 'open_date' => 'required|date',
                 'close_date'=> 'required|date|after:open_date',
                 'listing_date' => 'required|date|after:close_date',
                 'ipo_status' => 'required|string|in:open,close,pending',
-        ]
         ]);
 
         $ipoDetail = IpoDetail::create($attributes);
