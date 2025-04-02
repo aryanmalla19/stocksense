@@ -59,8 +59,7 @@ Route::post('/auth/two-factor/disable',[TwoFactorController::class, 'disable'])-
 Route::post('/verify-token', [AuthController::class, 'verify'])->middleware('auth:api');
 
 //Ipo Detail Route
-Route::get('/ipo-detail',[IpoDetailController::class,'fetch']);
-Route::post('/ipo-detail',[IpoDetailController::class,'store']);
+Route::resource('/api/ipo-detail',IpoDetailController::class)->only(['index','show','store','update','store']);
 
 //Ipo Application
 Route::post('/api/ipo-application',[IpoApplicationController::class,'store']);
