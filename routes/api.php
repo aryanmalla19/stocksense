@@ -12,7 +12,6 @@ use App\Http\Controllers\UserSettingController;
 use App\Http\Controllers\VerificationEmailController;
 use Illuminate\Support\Facades\Route;
 
-
 Route::prefix('v1')->middleware('api.exception')->group(function () {
 
     // Public Authentication Routes
@@ -20,17 +19,17 @@ Route::prefix('v1')->middleware('api.exception')->group(function () {
 
         // Rate-limited authentication actions
         Route::middleware('throttle:10,1')->group(function () {
-            Route::post('/login', [AuthController::class, 'login']);
-            Route::post('/register', [AuthController::class, 'register']);
+            Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
+            Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
         });
 
         // Rate-limited email & password management actions
         Route::middleware('throttle:100,1')->group(function () {
             Route::get('/email/verify/{id}/{hash}', [VerificationEmailController::class, 'verify'])->name('verification.verify');
-            Route::post('/email/resend', [VerificationEmailController::class, 'resend']);
-            Route::post('/forgot-password', [PasswordResetController::class, 'sendResetPassword']);
-            Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
-            Route::post('/verify-otp', [TwoFactorController::class, 'verifyOtp']);
+            Route::post('/email/resend', [VerificationEmailController::class, 'resend'])->name('verification.resend');
+            Route::post('/forgot-password', [PasswordResetController::class, 'sendResetPassword'])->name('password.forgot');
+            Route::post('/reset-password', [PasswordResetController::class, 'resetPassword'])->name('password.reset');
+            Route::post('/verify-otp', [TwoFactorController::class, 'verifyOtp'])->name('otp.verify');
         });
     });
 
@@ -48,7 +47,7 @@ Route::prefix('v1')->middleware('api.exception')->group(function () {
 
         // Stocks & Stock Prices
         Route::apiResource('/stocks', StockController::class)->names('stocks');
-        Route::get('/stocks/{stock}/history', [StockPriceController::class, 'historyStockPrices']);
+        Route::get('/stocks/{stock}/history', [StockPriceController::class, 'historyStockPrices'])->name('stocks.history');
         Route::apiResource('/stock-prices', StockPriceController::class)->names('stock-prices');
 
         // IPO Management
