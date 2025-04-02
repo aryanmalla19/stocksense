@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\ApiExceptionMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -17,6 +18,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'cors' => HandleCors::class,
         ]);
         $middleware->throttleApi('60,1');
+        $middleware->alias([
+            'api.exception' => ApiExceptionMiddleware::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
