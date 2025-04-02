@@ -12,53 +12,50 @@ use App\Http\Controllers\UserSettingController;
 use App\Http\Controllers\VerificationEmailController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('v1')->group(function () {
+
+Route::prefix('v1')->middleware('api.exception')->group(function () {
+
     // Public Authentication Routes
     Route::prefix('auth')->group(function () {
-        Route::post('/login', [AuthController::class, 'login'])
-            ->middleware('throttle:10,1')
-            ->name('auth.login');
 
-        // Rate limit registration to prevent spam
-        Route::post('/register', [AuthController::class, 'register'])
-            ->middleware('throttle:10,1')
-            ->name('auth.register');
+        // Rate-limited authentication actions
+        Route::middleware('throttle:10,1')->group(function () {
+            Route::post('/login', [AuthController::class, 'login']);
+            Route::post('/register', [AuthController::class, 'register']);
+        });
 
-        Route::get('/email/verify/{id}/{hash}', [VerificationEmailController::class, 'verify'])
-            ->name('verification.verify');
-
-        Route::post('/email/resend', [VerificationEmailController::class, 'resend'])
-            ->middleware(['auth:api', 'throttle:5,1'])
-            ->name('verification.resend');
-
-        Route::post('/forgot-password', [PasswordResetController::class, 'sendResetPassword'])
-            ->middleware('throttle:5,1')
-            ->name('password.email');
-
-        Route::post('/reset-password', [PasswordResetController::class, 'resetPassword'])
-            ->middleware('throttle:5,1')
-            ->name('password.reset');
-
-        Route::post('/verify-otp', [TwoFactorController::class, 'verifyOtp'])->name('auth.2fa.verify');
+        // Rate-limited email & password management actions
+        Route::middleware('throttle:3,1')->group(function () {
+            Route::get('/email/verify/{id}/{hash}', [VerificationEmailController::class, 'verify']);
+            Route::post('/email/resend', [VerificationEmailController::class, 'resend']);
+            Route::post('/forgot-password', [PasswordResetController::class, 'sendResetPassword']);
+            Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
+            Route::post('/verify-otp', [TwoFactorController::class, 'verifyOtp']);
+        });
     });
 
-    // Protected Routes (no rate limiting unless specific need arises)
+    // Protected Routes (Require Authentication)
     Route::middleware('auth:api')->group(function () {
+
+        // Authenticated User Actions
         Route::prefix('auth')->group(function () {
             Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
             Route::post('/refresh', [AuthController::class, 'refresh'])->name('auth.refresh');
         });
-        // LEFT PUBLIC ROUTES BELOW
+
+        // User Settings
+        Route::apiResource('/users/settings', UserSettingController::class)->names('user.settings');
+
+        // Stocks & Stock Prices
+        Route::apiResource('/stocks', StockController::class)->names('stocks');
+        Route::get('/stocks/{stock}/history', [StockPriceController::class, 'historyStockPrices']);
+        Route::apiResource('/stock-prices', StockPriceController::class)->names('stock-prices');
+
+        // IPO Management
+        Route::apiResource('/ipo-details', IpoDetailController::class)->names('ipo-details');
+        Route::apiResource('/ipo-application', IpoApplicationController::class)->names('ipo-application');
+
+        // Sectors
+        Route::apiResource('/sectors', SectorController::class)->names('sectors');
     });
 });
-
-Route::apiResource('/settings', UserSettingController::class)->names('user.settings');
-Route::apiResource('/stocks', StockController::class)->names('stocks');
-Route::get('/stocks/{stock}/history', [StockPriceController::class, 'historyStockPrices'])
-    ->name('stocks.history');
-Route::apiResource('/sectors', SectorController::class)->names('sectors');
-Route::apiResource('/stock-prices', StockPriceController::class)->names('stock-prices');
-Route::apiResource('/ipo-details', IpoDetailController::class)->names('ipo-details');
-Route::apiResource('/ipo-application', IpoApplicationController::class)->names('ipo-application');
-
-
