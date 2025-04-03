@@ -303,12 +303,3 @@ A stocksense web application developed as an internship project by a team of 7 i
   -d '{"email": "user@example.com", "password": "password"}'
   ```
 
----
-
-### Changes Made:
-- Fixed indentation in the **Requirements** section to use consistent bullet points (`-`) and nested levels (e.g., for Docker sub-items).
-- Ensured consistent spacing in code blocks (e.g., `.env` configuration, `docker-compose.yml`).
-- Aligned nested lists under **Installation** sections (e.g., Docker Installation steps) for clarity.
-- Fixed spacing around colons and dashes in lists for uniformity (e.g., in API Endpoints tables).
-
-No content was added or modified; only the indentation and formatting were corrected. Let me know if you need further adjustments!
