@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\TransactionResource;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 
 /**
@@ -51,7 +53,12 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        //
+        $transactions = Transaction::with(['user', 'stock'])->get();
+
+        return response()->json([
+            'message' => 'Successfully fetched all transactions',
+            'data' => TransactionResource::collection($transactions),
+        ]);
     }
 
     /**
@@ -144,7 +151,20 @@ class TransactionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $attributes = $request->validate([
+            'user_id' => 'required|integer|exists:users,id',
+            'stock_id' => 'required|integer|exists:stocks,id',
+            'type' => 'required|in:buy,sell,ipo_allotted',
+            'quantity' => 'required|integer|min:10',
+            'price' => 'required',
+            'transaction_fee' => 'required'
+        ]);
+
+        $transaction = Transaction::create($attributes);
+        return response()->json([
+            'message' => 'Successfully created new transaction',
+            'data' => new TransactionResource($transaction),
+        ]);
     }
 
     /**
@@ -198,7 +218,18 @@ class TransactionController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $transaction = Transaction::with(['user', 'stock'])->find($id);
+
+        if (empty($transaction)) {
+            return response()->json([
+                'message' => 'No transaction found with ID ' . $id,
+            ], 404);
+        }
+        
+        return response()->json([
+            'message' => 'Successfully fetched transaction data',
+            'data' => new TransactionResource($transaction),
+        ]);
     }
 
     /**
@@ -335,6 +366,17 @@ class TransactionController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $transaction = Transaction::find($id);
+
+        if (empty($transaction)) {
+            return response()->json([
+                'message' => 'No transaction found with ID ' . $id,
+            ], 404);
+        }
+        $transaction->delete();
+
+        return response()->json([
+            'message' => 'Successfully deleted transaction with ID ' . $id,
+        ]);
     }
 }
