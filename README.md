@@ -300,6 +300,6 @@ A stocksense web application developed as an internship project by a team of 7 i
   ```bash
   curl -X POST http://localhost:8000/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email": "user@example.com", "password": "password"}'
+  -d '{"email": "user@example.com", "password": "Password@123"}'
   ```
 
