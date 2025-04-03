@@ -1,5 +1,5 @@
 
-# Stock Market Web Application
+# StockSense Web Application
 
 ![Laravel](https://img.shields.io/badge/Laravel-v10.x-red.svg)  
 ![PHP](https://img.shields.io/badge/PHP-8.1+-blue.svg)  
