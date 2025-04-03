@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Auth\Notifications\ResetPassword as BaseResetPassword;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Symfony\Component\VarDumper\VarDumper;
 
 class CustomResetPassword extends BaseResetPassword
 {
@@ -41,7 +42,8 @@ class CustomResetPassword extends BaseResetPassword
             'token' => $this->token,
             'email' => $notifiable->email,
         ], false));
-
+        
+        // var_dump($notifiable);
         return (new MailMessage)
             ->subject('Reset Your Password')
             ->view('ResetPassword.custom-reset-password', [
