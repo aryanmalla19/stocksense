@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
-use Illuminate\Auth\Events\Registered;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\Facades\JWTFactory;
 
 class AuthService
 {
@@ -45,21 +46,34 @@ class AuthService
     {
         $user = User::where('email', $credentials['email'])->first();
 
-        if (! $user) {
+        if (!$user) {
             return ['error' => 'Invalid email', 'status' => 401];
         }
 
-        if (! Hash::check($credentials['password'], $user->password)) {
+        if (!Hash::check($credentials['password'], $user->password)) {
             return ['error' => 'Invalid password', 'status' => 401];
         }
 
-        if (! $user->hasVerifiedEmail()) {
+        if (!$user->hasVerifiedEmail()) {
             return ['error' => 'Please verify your email before logging in.', 'status' => 403];
         }
 
-        if (! $token = Auth::attempt($credentials)) {
+        if (!$token = Auth::attempt($credentials)) {
             return ['error' => 'Error generating token', 'status' => 401];
         }
+
+        $refreshToken = JWTFactory::customClaims([
+            'sub' => auth()->user()->id,
+            'iat' => now()->timestamp,
+            'exp' => now()->addDays(30)->timestamp, // Refresh token valid for 30 days
+        ])->make();
+
+        $refreshToken = JWTAuth::fromUser(auth()->user(), $refreshToken);
+
+        // Store the refresh token
+        $user->forceFill([
+            'refresh_token' => $refreshToken
+        ])->save();
 
         if ($user->two_factor_enabled) {
             $otp = Str::random(6, '0123456789');
@@ -90,11 +104,13 @@ class AuthService
             ];
         }
 
+        // Fix: Return an array instead of JsonResponse
         return [
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => Auth::factory()->getTTL() * 60,
-            'status' => 200
+            'expires_in' => config('jwt.ttl') * 60,
+            'refresh_token' => $refreshToken,
+            'status' => 200 // Add status key for consistency
         ];
     }
 
