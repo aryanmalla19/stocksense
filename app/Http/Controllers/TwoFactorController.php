@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Carbon\Carbon;
+use Tymon\JWTAuth\Facades\JWTFactory;
 
 class TwoFactorController extends Controller
 {
@@ -73,8 +74,16 @@ class TwoFactorController extends Controller
         // Generate new JWT token
         $token = JWTAuth::fromUser($user);
 
+        $refreshToken = JWTFactory::customClaims([
+            'sub' => $user->id,
+            'iat' => now()->timestamp,
+            'exp' => now()->addDays(30)->timestamp, // Refresh token valid for 30 days
+        ])->make();
+
+        $refreshToken = JWTAuth::fromUser($user, $refreshToken);
         return response()->json([
             'access_token' => $token,
+            'refresh_token' => $refreshToken,
             'token_type' => 'bearer',
             'expires_in' => JWTAuth::factory()->getTTL() * 60,
         ]);
