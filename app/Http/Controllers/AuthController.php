@@ -157,10 +157,10 @@ class AuthController extends Controller
     public function logout(): JsonResponse
     {
         $user = auth('api')->user();
-        
+
         $user->forceFill([
             'refresh_token' => null
-        ]);
+        ])->save();
 
         $result = $this->authService->logout();
         return response()->json(['message' => $result['message']], $result['status']);
