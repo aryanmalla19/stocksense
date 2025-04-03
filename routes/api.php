@@ -21,6 +21,7 @@ Route::prefix('v1')->middleware('api.exception')->group(function () {
         Route::middleware('throttle:10,1')->group(function () {
             Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
             Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
+            Route::post('/refresh', [AuthController::class, 'refresh'])->name('auth.refresh');      
         });
 
         // Rate-limited email & password management actions
@@ -39,7 +40,6 @@ Route::prefix('v1')->middleware('api.exception')->group(function () {
         // Authenticated User Actions
         Route::prefix('auth')->group(function () {
             Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
-            Route::post('/refresh', [AuthController::class, 'refresh'])->name('auth.refresh');
         });
 
         // User Settings
