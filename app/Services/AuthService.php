@@ -10,10 +10,8 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
-use Illuminate\Auth\Events\Registered;
-use App\Notifications\TwoFactorOtpNotification;
+use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use Tymon\JWTAuth\Facades\JWTFactory;
 
 class AuthService
 {
@@ -61,60 +59,45 @@ class AuthService
             return ['error' => 'Please verify your email before logging in.', 'status' => 403];
         }
 
-        if (!$token = Auth::attempt($credentials)) {
-            return ['error' => 'Error generating token', 'status' => 401];
-        }
-
         if ($user->two_factor_enabled) {
             $otp = Str::random(6, '0123456789');
-            // Generate a private token for 2FA verification
-            $privateToken = Str::random(32); // Generate a secure random token
+            $privateToken = Str::random(32); // Secure random token for 2FA
 
             $user->forceFill([
                 'two_factor_otp' => $otp,
-                'two_factor_secret' => $privateToken, // Add this new field to store the private token
-                'two_factor_expires_at' => Carbon::now()->addMinutes(51)
+                'two_factor_secret' => $privateToken,
+                'two_factor_expires_at' => Carbon::now()->addMinutes(5),
             ])->save();
-            Mail::to($user->email)->queue(new OtpVerification($user, $otp));
-//            $user->notify(new TwoFactorOtpNotification($otp));
 
+            Mail::to($user->email)->queue(new OtpVerification($user, $otp));
 
             return [
                 'message' => 'OTP required for 2FA authentication.',
-                'private_token' => $privateToken, // Return the private token to the client
+                'private_token' => $privateToken,
                 'otp_length' => 6,
                 'expires_in' => 300, // 5 minutes
-                'status' => 202
+                'status' => 202,
             ];
         }
 
-        $refreshToken = JWTFactory::customClaims([
-            'sub' => auth()->user()->id,
-            'iat' => now()->timestamp,
-            'exp' => now()->addDays(30)->timestamp, // Refresh token valid for 30 days
-        ])->make();
+        if (!$token = JWTAuth::attempt($credentials)) {
+            return ['error' => 'Invalid credentials', 'status' => 401];
+        }
 
-        $refreshToken = JWTAuth::fromUser(auth()->user(), $refreshToken);
+        // Generate a random alphanumeric refresh token
+        $refreshToken = Str::random(32);
 
         $user->forceFill([
-            'refresh_token' => $refreshToken
+            'refresh_token' => $refreshToken,
+            'refresh_token_expires_at' => Carbon::now()->addDays(30), // Server-side expiration
         ])->save();
-        // Fix: Return an array instead of JsonResponse
+
         return [
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => config('jwt.ttl') * 60,
             'refresh_token' => $refreshToken,
-            'status' => 200 // Add status key for consistency
+            'status' => 200,
         ];
-    }
-
-    /**
-     * Logout the user.
-     */
-    public function logout()
-    {
-        Auth::logout();
-        return ['message' => 'Successfully logged out', 'status' => 200];
     }
 }

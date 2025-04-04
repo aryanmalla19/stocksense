@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Carbon\Carbon;
 use Tymon\JWTAuth\Facades\JWTFactory;
@@ -15,26 +16,17 @@ class TwoFactorController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
-        }
-
         $user->update(['two_factor_enabled' => true]);
-
-        return response()->json(['message' => '2FA enabled successfully'], 200);
+        return response()->json(['message' => '2FA enabled successfully']);
     }
 
     public function disable()
     {
         $user = Auth::user();
 
-        if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
-        }
-
         $user->update(['two_factor_enabled' => false]);
 
-        return response()->json(['message' => '2FA disabled successfully'], 200);
+        return response()->json(['message' => '2FA disabled successfully']);
     }
 
     public function verifyOtp(Request $request)
@@ -73,13 +65,12 @@ class TwoFactorController extends Controller
         // Generate new JWT token
         $token = JWTAuth::fromUser($user);
 
-        $refreshToken = JWTFactory::customClaims([
-            'sub' => $user->id,
-            'iat' => now()->timestamp,
-            'exp' => now()->addDays(30)->timestamp, // Refresh token valid for 30 days
-        ])->make();
+        $refreshToken = Str::random(32);
+        $user->forceFill([
+            'refresh_token' => $refreshToken,
+            'refresh_token_expires_at' => Carbon::now()->addDays(30),
+        ])->save();
 
-        $refreshToken = JWTAuth::fromUser($user, $refreshToken);
         return response()->json([
             'access_token' => $token,
             'refresh_token' => $refreshToken,
