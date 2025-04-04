@@ -73,9 +73,7 @@ class AuthService
         $refreshToken = JWTAuth::fromUser(auth()->user(), $refreshToken);
 
         // Store the refresh token
-        $user->forceFill([
-            'refresh_token' => $refreshToken
-        ])->save();
+
 
         if ($user->two_factor_enabled) {
             $otp = Str::random(6, '0123456789');
@@ -90,6 +88,7 @@ class AuthService
 
             $user->notify(new TwoFactorOtpNotification($otp));
 
+
             return [
                 'message' => 'OTP required for 2FA authentication.',
                 'private_token' => $privateToken, // Return the private token to the client
@@ -99,6 +98,9 @@ class AuthService
             ];
         }
 
+        $user->forceFill([
+            'refresh_token' => $refreshToken
+        ])->save();
         // Fix: Return an array instead of JsonResponse
         return [
             'access_token' => $token,
