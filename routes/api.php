@@ -39,6 +39,7 @@ Route::prefix('v1')->middleware(ApiExceptionMiddleware::class)->group(function (
         Route::middleware('throttle:100,1')->group(function () {
             Route::get('/email/verify/{id}/{hash}', [VerificationEmailController::class, 'verify'])->name('verification.verify')->middleware('signed');
             Route::post('/email/resend', [VerificationEmailController::class, 'resend'])->name('verification.resend');
+            Route::get('/reset-password', [PasswordResetController::class, 'resetPasswordForm'])->name('password.reset.form');
             Route::post('/forgot-password', [PasswordResetController::class, 'sendResetPassword'])->name('password.forgot');
             Route::post('/reset-password', [PasswordResetController::class, 'resetPassword'])->name('password.reset');
             Route::post('/verify-otp', [TwoFactorController::class, 'verifyOtp'])->name('otp.verify');

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Mail\ResetPassword;
 use App\Notifications\CustomResetPassword;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Mail;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Auth\Notifications\VerifyEmail;
@@ -96,8 +98,9 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         return $this->hasMany(IpoApplication::class);
     }
 
-        public function sendPasswordResetNotification($token)
+    public function sendPasswordResetNotification($token)
     {
-        $this->notify(new CustomResetPassword($token,$this));
+        $resetUrl = route('password.reset.form', ['token' => $token, 'email' => $this->email]);
+        Mail::to($this->email)->queue(new ResetPassword($this, $resetUrl));
     }
 }
