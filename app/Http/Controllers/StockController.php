@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreStockRequest;
+use App\Http\Requests\UpdateStockRequest;
 use App\Http\Resources\StockResource;
 use App\Models\Stock;
-use Illuminate\Http\Request;
-
 
 class StockController extends Controller
 {
-       public function index()
+    public function index()
     {
         $stocks = Stock::with(['sector', 'latestPrice'])->get();
 
@@ -19,30 +19,22 @@ class StockController extends Controller
         ]);
     }
 
-    
-    public function store(Request $request)
+    public function store(StoreStockRequest $request)
     {
-        $data = $request->validate([
-            'symbol' => 'required|max:6|unique:stocks,symbol',
-            'name' => 'required|string',
-            'sector_id' => 'required|integer|exists:sectors,id',
-        ]);
-
-        $stock = Stock::create($data);
+        $stock = Stock::create($request->validated());
 
         return response()->json([
             'message' => 'Successfully registered stock',
-            'data' => $stock,
+            'data' => new StockResource($stock),
         ], 201);
     }
-
 
     public function show(string $id)
     {
         $stock = Stock::with(['sector', 'latestPrice'])->find($id);
-        if (empty($stock)) {
+        if (!$stock) {
             return response()->json([
-                'message' => 'No Stock found with ID '.$id,
+                'message' => 'No Stock found with ID ' . $id,
             ], 404);
         }
 
@@ -52,24 +44,16 @@ class StockController extends Controller
         ]);
     }
 
-    
-    public function update(Request $request, string $id)
+    public function update(UpdateStockRequest $request, string $id)
     {
         $stock = Stock::find($id);
-
-        if (! $stock) {
+        if (!$stock) {
             return response()->json([
-                'message' => 'No Stock found with ID '.$id,
+                'message' => 'No Stock found with ID ' . $id,
             ], 404);
         }
 
-        $data = $request->validate([
-            'symbol' => 'sometimes|string|max:6|unique:stocks,symbol,'.$id,
-            'name' => 'sometimes|string',
-            'sector_id' => 'sometimes|integer|exists:sectors,id',
-        ]);
-
-        $stock->update($data);
+        $stock->update($request->validated());
 
         return response()->json([
             'message' => 'Stock successfully updated',
@@ -77,20 +61,19 @@ class StockController extends Controller
         ]);
     }
 
-    
     public function destroy(string $id)
     {
         $stock = Stock::find($id);
-
-        if (empty($stock)) {
+        if (!$stock) {
             return response()->json([
-                'message' => 'No Stock found with ID '.$id,
+                'message' => 'No Stock found with ID ' . $id,
             ], 404);
         }
+
         $stock->delete();
 
         return response()->json([
-            'message' => 'Successfully deleted stock with ID '.$id,
+            'message' => 'Successfully deleted stock with ID ' . $id,
         ]);
     }
 }
