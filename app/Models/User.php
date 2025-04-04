@@ -70,38 +70,6 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         return $this->is_active;
     }
 
-    /**
-     * Send the email verification notification with a custom URL.
-     */
-    public function sendEmailVerificationNotification()
-    {
-        $this->notify(new class($this->getEmailVerificationUrl()) extends VerifyEmail {
-            protected $verificationUrl;
-
-            public function __construct($url)
-            {
-                $this->verificationUrl = $url;
-            }
-
-            protected function verificationUrl($notifiable)
-            {
-                return $this->verificationUrl; // Use the custom URL from getEmailVerificationUrl()
-            }
-        });
-    }
-
-    /**
-     * Generate the email verification URL.
-     */
-    public function getEmailVerificationUrl()
-    {
-        return URL::temporarySignedRoute(
-            'verification.verify',
-            now()->addMinutes(60),
-            ['id' => $this->getKey(), 'hash' => sha1($this->email)]
-        );
-    }
-
     // Relationships
     public function portfolio(): HasOne
     {
