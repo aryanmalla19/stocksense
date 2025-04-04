@@ -5,13 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Carbon\Carbon;
 
 class TwoFactorController extends Controller
 {
-    public function enable(Request $request)
+    public function enable()
     {
         $user = Auth::user();
 
@@ -24,7 +23,7 @@ class TwoFactorController extends Controller
         return response()->json(['message' => '2FA enabled successfully'], 200);
     }
 
-    public function disable(Request $request)
+    public function disable()
     {
         $user = Auth::user();
 

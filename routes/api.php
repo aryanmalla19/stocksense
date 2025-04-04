@@ -42,6 +42,8 @@ Route::prefix('v1')->middleware(\App\Http\Middleware\ApiExceptionMiddleware::cla
         // Authenticated User Actions
         Route::prefix('auth')->group(function () {
             Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
+            Route::post('/2fa/enable', [TwoFactorController::class, 'enable'])->name('2fa.enable');
+            Route::post('/2fa/disable', [TwoFactorController::class, 'disable'])->name('2fa.disable');
         });
 
         // User Settings
