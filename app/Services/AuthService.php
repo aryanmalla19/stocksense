@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Events\UserRegistered;
+use App\Mail\OtpVerification;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -64,17 +65,6 @@ class AuthService
             return ['error' => 'Error generating token', 'status' => 401];
         }
 
-        $refreshToken = JWTFactory::customClaims([
-            'sub' => auth()->user()->id,
-            'iat' => now()->timestamp,
-            'exp' => now()->addDays(30)->timestamp, // Refresh token valid for 30 days
-        ])->make();
-
-        $refreshToken = JWTAuth::fromUser(auth()->user(), $refreshToken);
-
-        // Store the refresh token
-
-
         if ($user->two_factor_enabled) {
             $otp = Str::random(6, '0123456789');
             // Generate a private token for 2FA verification
@@ -85,8 +75,8 @@ class AuthService
                 'two_factor_secret' => $privateToken, // Add this new field to store the private token
                 'two_factor_expires_at' => Carbon::now()->addMinutes(51)
             ])->save();
-
-            $user->notify(new TwoFactorOtpNotification($otp));
+            Mail::to($user->email)->queue(new OtpVerification($user, $otp));
+//            $user->notify(new TwoFactorOtpNotification($otp));
 
 
             return [
@@ -97,6 +87,14 @@ class AuthService
                 'status' => 202
             ];
         }
+
+        $refreshToken = JWTFactory::customClaims([
+            'sub' => auth()->user()->id,
+            'iat' => now()->timestamp,
+            'exp' => now()->addDays(30)->timestamp, // Refresh token valid for 30 days
+        ])->make();
+
+        $refreshToken = JWTAuth::fromUser(auth()->user(), $refreshToken);
 
         $user->forceFill([
             'refresh_token' => $refreshToken

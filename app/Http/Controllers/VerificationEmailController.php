@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\UserVerification;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -56,7 +58,7 @@ class VerificationEmailController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if ($user && !$user->hasVerifiedEmail()) {
-            $user->sendEmailVerificationNotification();
+            Mail::to($user->email)->queue(new UserVerification($user));
             return response()->json(['message' => 'Verification email resent.']);
         }
 

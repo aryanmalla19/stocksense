@@ -9,16 +9,15 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\URL;
 
-class UserVerification extends Mailable implements ShouldQueue
+class OtpVerification extends Mailable
 {
     use Queueable, SerializesModels;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(public User $user)
+    public function __construct(public User $user, public string $otp)
     {
         //
     }
@@ -29,25 +28,20 @@ class UserVerification extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'User Verification',
+            subject: 'Otp Verification',
         );
     }
 
     /**
      * Get the message content definition.
      */
-
     public function content(): Content
     {
         return new Content(
-            markdown: 'mail.user-verification', // Define your Markdown email view
+            view: 'mail.otp-verification',
             with: [
-                'user' => $this->user, // Pass user data to the view
-                'url' => URL::temporarySignedRoute(
-                    'verification.verify',
-                    now()->addMinutes(60), // Set expiry time
-                    ['id' => $this->user->id, 'hash' => sha1($this->user->email)] // Parameters to pass
-                )
+                'user' => $this->user,
+                'otp' => $this->otp,
             ]
         );
     }

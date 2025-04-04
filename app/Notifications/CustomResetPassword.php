@@ -42,15 +42,15 @@ class CustomResetPassword extends BaseResetPassword
             'token' => $this->token,
             'email' => $notifiable->email,
         ], false));
-        
+
         // var_dump($notifiable);
         return (new MailMessage)
             ->subject('Reset Your Password')
-            ->view('ResetPassword.custom-reset-password', [
+            ->view('ResendVerification.custom-reset-password', [
                 'url' => $resetUrl,
                 'user' => $notifiable
             ]);
-    
+
     }
 
     /**

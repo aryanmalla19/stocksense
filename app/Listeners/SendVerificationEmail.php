@@ -7,7 +7,7 @@ use App\Mail\UserVerification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Mail;
 
-class SendVerificationEmail implements  ShouldQueue
+class SendVerificationEmail implements ShouldQueue
 {
     /**
      * Create the event listener.
