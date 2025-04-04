@@ -11,13 +11,12 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
-use Laravel\Fortify\TwoFactorAuthenticatable;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Auth\Notifications\VerifyEmail;
 
 class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 {
-    use HasFactory, CanResetPassword, Notifiable, TwoFactorAuthenticatable;
+    use HasFactory, CanResetPassword, Notifiable;
 
     protected $fillable = [
         'name',

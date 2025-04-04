@@ -58,18 +58,14 @@ class VerificationEmailController extends Controller
      */
     public function resend(Request $request)
     {
-        $user = $request->user(); // Assumes user is authenticated via JWT
+        $request->validate(['email' => 'required|email']);
+        $user = User::where('email', $request->email)->first();
 
-        if (!$user) {
-            return response()->json(['error' => 'Unauthenticated'], 401);
+        if ($user && !$user->hasVerifiedEmail()) {
+            $user->sendEmailVerificationNotification();
+            return response()->json(['message' => 'Verification email resent.']);
         }
 
-        if ($user->hasVerifiedEmail()) {
-            return response()->json(['message' => 'Email already verified'], 400);
-        }
-
-        $user->sendEmailVerificationNotification();
-
-        return response()->json(['message' => 'Verification email resent'], 200);
+        return response()->json(['message' => 'User not found or already verified.'], 400);
     }
 }
