@@ -9,6 +9,7 @@ use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\SectorController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\StockPriceController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\UserSettingController;
 use App\Http\Controllers\VerificationEmailController;
@@ -61,5 +62,8 @@ Route::prefix('v1')->middleware(\App\Http\Middleware\ApiExceptionMiddleware::cla
 
         // Sectors
         Route::apiResource('/sectors', SectorController::class)->names('sectors');
+
+        // Transaction
+        Route::apiResource('/transactions', TransactionController::class)->names('transactions');
     });
 });
