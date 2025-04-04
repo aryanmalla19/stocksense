@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Auth\Events\Registered;
+use App\Notifications\TwoFactorOtpNotification;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Facades\JWTFactory;
 
@@ -86,14 +88,7 @@ class AuthService
                 'two_factor_expires_at' => Carbon::now()->addMinutes(51)
             ])->save();
 
-            $success = Mail::raw('Your OTP: ' . $otp, function ($message) use ($user) {
-                $message->to($user['email'])
-                    ->subject("OTP Email");
-            });
-
-            if (!$success) {
-                return ['error' => 'Error sending OTP', 'status' => 500];
-            }
+            $user->notify(new TwoFactorOtpNotification($otp));
 
             return [
                 'message' => 'OTP required for 2FA authentication.',
