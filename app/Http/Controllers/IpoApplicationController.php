@@ -2,24 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreIpoApplicationRequest;
 use App\Http\Resources\IpoApplicationResource;
 use Illuminate\Http\Request;
 use App\Models\IpoApplication;
 
 class IpoApplicationController extends Controller
 {
-    public function store(Request $request)
+    public function store(StoreIpoApplicationRequest $request)
     {
-        $attributes = $request->validate([
-            'user_id' => 'required|integer',
-            'ipo_id' => 'required|integer',
-            'applied_shares' => 'required|integer|min:10',
-            'status' => 'required|string|in:open,close,pending',
-            'applied_date' => 'required|date',
-            'allotted_shares' => 'nullable|integer',
-        ]);
-
-        $ipoApplication = IpoApplication::create($attributes);
+        $ipoApplication = IpoApplication::create($request->validated());
+    
         return response()->json([
             'message' => 'Successfully ipo applied',
             'data' => new IpoApplicationResource($ipoApplication),
