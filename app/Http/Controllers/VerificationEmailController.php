@@ -41,13 +41,9 @@ class VerificationEmailController extends Controller
         $user->markEmailAsVerified();
         event(new Verified($user));
 
-        // Optionally generate a JWT token for immediate login
-        $token = JWTAuth::fromUser($user);
-
         return response()->json([
             'message' => 'Email verified successfully',
-            'token' => $token, // Return JWT token for API clients
-        ], 200);
+        ]);
     }
 
     /**
