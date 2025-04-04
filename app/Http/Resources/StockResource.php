@@ -22,10 +22,10 @@ class StockResource extends JsonResource
             'company_name' => $this->company_name,
             'sector_id' => $this->sector_id,
             'sector' => $this->whenLoaded('sector', fn () => $this->sector->name, null),
-            'open_price' => $latestPrice ? $latestPrice->open_price : null,
-            'close_price' => $latestPrice ? $latestPrice->close_price : null,
-            'high_price' => $latestPrice ? $latestPrice->high_price : null,
-            'low_price' => $latestPrice ? $latestPrice->low_price : null,
+            'open_price' => $latestPrice ? $latestPrice -> open_price : null,
+            'close_price' => $latestPrice ? $latestPrice -> close_price : null,
+            'high_price' => $latestPrice ? $latestPrice -> high_price : null,
+            'low_price' => $latestPrice ? $latestPrice -> low_price : null,
         ];
     }
 

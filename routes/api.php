@@ -57,7 +57,7 @@ Route::prefix('v1')->middleware(\App\Http\Middleware\ApiExceptionMiddleware::cla
         Route::apiResource('/ipo-details', IpoDetailController::class)->names('ipo-details');
         Route::apiResource('/ipo-applications', IpoApplicationController::class)->names('ipo-applications');
 
-        // Sectors
+        // Sectorsa
         Route::apiResource('/sectors', SectorController::class)->names('sectors');
     });
 });
