@@ -23,7 +23,13 @@ class LoginRequest extends FormRequest
     {
         return [
             'email' => 'required|email',
-            'password' => 'required',
+            'password' => [
+                'required',
+                'min:8',
+                'max:50',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/',
+                'confirmed',
+            ],
         ];
     }
 
@@ -33,6 +39,11 @@ class LoginRequest extends FormRequest
             'email.required' => 'Email is missing',
             'email.email' => 'Not a valid email format',
             'password.required' => 'Password is missing',
+            'password.min' => 'Password must be at least 8 characters',
+            'password.max' => 'Password must not exceed 50 characters',
+            'password.regex' => 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
+            'password.confirmed' => 'Password confirmation does not match',
+            'password_confirmation.required_with' => 'Password confirmation is required',
         ];
     }
 
