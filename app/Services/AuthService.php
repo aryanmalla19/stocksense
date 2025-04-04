@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\UserRegistered;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -28,8 +29,7 @@ class AuthService
         if (! $user->save()) {
             return ['error' => 'Error registering user', 'status' => 500];
         }
-
-        $user->sendEmailVerificationNotification();
+        event(new UserRegistered($user));
 
         return [
             'message' => 'User registered successfully. Check email for verification',

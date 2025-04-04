@@ -13,9 +13,17 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\UserSettingController;
 use App\Http\Controllers\VerificationEmailController;
+use App\Http\Middleware\ApiExceptionMiddleware;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('v1')->middleware(\App\Http\Middleware\ApiExceptionMiddleware::class)->group(function () {
+Route::get('test', function (){
+    return url('/test');
+});
+
+
+Route::prefix('v1')->middleware(ApiExceptionMiddleware::class)->group(function () {
+
+
 
     // Public Authentication Routes
     Route::prefix('auth')->group(function () {
@@ -24,12 +32,12 @@ Route::prefix('v1')->middleware(\App\Http\Middleware\ApiExceptionMiddleware::cla
         Route::middleware('throttle:10,1')->group(function () {
             Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
             Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
-            Route::post('/refresh', [AuthController::class, 'refresh'])->name('auth.refresh');      
+            Route::post('/refresh', [AuthController::class, 'refresh'])->name('auth.refresh');
         });
 
         // Rate-limited email & password management actions
         Route::middleware('throttle:100,1')->group(function () {
-            Route::get('/email/verify/{id}/{hash}', [VerificationEmailController::class, 'verify'])->name('verification.verify');
+            Route::get('/email/verify/{id}/{hash}', [VerificationEmailController::class, 'verify'])->name('verification.verify')->middleware('signed');
             Route::post('/email/resend', [VerificationEmailController::class, 'resend'])->name('verification.resend');
             Route::post('/forgot-password', [PasswordResetController::class, 'sendResetPassword'])->name('password.forgot');
             Route::post('/reset-password', [PasswordResetController::class, 'resetPassword'])->name('password.reset');
