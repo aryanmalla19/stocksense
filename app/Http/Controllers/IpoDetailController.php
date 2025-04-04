@@ -2,83 +2,84 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreIpoDetailRequest;
+use App\Http\Requests\UpdateIpoDetailRequest;
 use App\Http\Resources\IpoDetailResource;
 use Illuminate\Http\Request;
 use App\Models\IpoDetail;
 
-class  IpoDetailController extends Controller{
+class IpoDetailController extends Controller
+{
+    public function index()
+    {
+        // Eager load the 'stock' and 'sector' relationships
+        $ipoDetails = IpoDetail::with(['stock.sector', 'stock.latestPrice'])->get();
     
-    public function index(){
-        $ipoDetails = IpoDetail::with('stock')->get();
-
         return response()->json([
             'message' => 'Successfully fetched all ipo details',
             'data' => IpoDetailResource::collection($ipoDetails),
         ]);
     }
-    public function show($id){
-        $ipoDetail = IpoDetail::find($id);
 
-        if(!$ipoDetail){
+    public function show($id)
+    {
+        // Eager load the 'stock' and 'sector' relationships
+        $ipoDetail = IpoDetail::with(['stock.sector', 'stock.latestPrice'])->find($id);
+    
+        if (!$ipoDetail) {
             return response()->json([
                 'message' => 'IPO detail not found for ' . $id,
             ], 404);
         }
+    
         return response()->json([
             'message' => 'Successfully fetched ipo details',
             'data' => new IpoDetailResource($ipoDetail),
         ]);
     }
-    public function store(Request $request){
-        $attributes = $request->validate([
-                'stock_id' => 'required|integer|exists:stocks,id',
-                'issue_price' => 'required|integer|min:100',
-                'total_shares' => 'required|integer|min:1000',
-                'open_date' => 'required|date',
-                'close_date'=> 'required|date|after:open_date',
-                'listing_date' => 'required|date|after:close_date',
-                'ipo_status' => 'required|string|in:open,close,pending',
-        ]);
 
-        $ipoDetail = IpoDetail::create($attributes);
+    public function store(StoreIpoDetailRequest $request)
+    {
+        $ipoDetail = IpoDetail::create($request->validated());
+
         return response()->json([
-            'message' => 'Successfully created new ipo details',
+            'message' => 'Successfully created new IPO detail',
             'data' => new IpoDetailResource($ipoDetail),
         ]);
     }
 
-    public function update(Request $request){
-                $attributes = $request->validate([
-            [
-                'stock_id' => 'required|integer',
-                'issue_price' => 'required|integer|min:100',
-                'total_shares' => 'required|integer|min:1000',
-                'open_date' => 'required|date',
-                'close_date'=> 'required|date|after:open_date',
-                'listing_date' => 'required|date|after:close_date',
-                'ipo_status' => 'required|string|in:open,close,pending',
-        ]
-        ]);
+    public function update(UpdateIpoDetailRequest $request, $id)
+    {
+        $ipoDetail = IpoDetail::find($id);
 
-        $ipoDetail = IpoDetail::find($request->id);
-        $ipoDetail->update($attributes);
+        if (!$ipoDetail) {
+            return response()->json([
+                'message' => 'IPO detail not found for ID: ' . $id,
+            ], 404);
+        }
+
+        $ipoDetail->update($request->validated());
+
         return response()->json([
-            'message' => 'Successfully updated IPO details ' ,
+            'message' => 'Successfully updated IPO detail',
             'data' => new IpoDetailResource($ipoDetail),
         ]);
-
     }
 
-    public function destroy($id){
-        $ipoDetail = ipoDetail::find($id);
-        if(empty($ipoDetail)){
-            return response()->json(['message'=> 'could not find ipo with ID'],404);
+    public function destroy($id)
+    {
+        $ipoDetail = IpoDetail::find($id);
+
+        if (!$ipoDetail) {
+            return response()->json([
+                'message' => 'Could not find IPO detail with ID: ' . $id,
+            ], 404);
         }
 
         $ipoDetail->delete();
 
         return response()->json([
-            'message' => 'Successfully deleted IPO details with ID ' . $id,
+            'message' => 'Successfully deleted IPO detail with ID: ' . $id,
         ]);
     }
 }
