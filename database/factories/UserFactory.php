@@ -22,7 +22,7 @@ class UserFactory extends Factory
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => $this->faker->optional(0.7)->dateTimeThisYear(), // 70% verified
-            'password' => Hash::make('password'), // Default password
+            'password' => Hash::make('Password@123'), // Default password
             'remember_token' => Str::random(10),
             'is_active' => $this->faker->boolean(90), // 90% active
             'role' => $this->faker->randomElement(['admin', 'user']),
