@@ -24,7 +24,7 @@ class HoldingFactory extends Factory
             'quantity' => $this->faker->numberBetween(1, 100),
             'average_price' => $this->faker->randomFloat(2, 100, 10000),
             'created_at' => $this->faker->dateTimeThisYear(),
-            'updated_at' => $this->faker->dateTimeThisYear(),
+            'updated_at' => $this->faker->dateTimeThisMonth(),
         ];
 
     }

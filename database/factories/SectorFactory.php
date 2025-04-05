@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class SectorFactory extends Factory
 {
     protected $model = Sector::class;
-
     public function definition(): array
     {
         static $sectors = [
