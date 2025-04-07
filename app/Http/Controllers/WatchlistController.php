@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\WatchListResource;
 use Illuminate\Http\Request;
 
 class WatchlistController extends Controller
@@ -12,11 +13,11 @@ class WatchlistController extends Controller
     public function index()
     {
         $watchlists = auth()->user()->watchlists;
-        if (empty($watchlists)) {
-            return response()->json([
 
-            ]);
-        }
+        return response()->json([
+            'message' => 'Successfully fetched all watchlist data',
+            'data' => WatchListResource::collection($watchlists),
+        ]);
     }
 
     /**
@@ -24,7 +25,24 @@ class WatchlistController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'stock_id' => 'required|exists:stocks,id',
+        ]);
+        $user = auth()->user();
+        $exists = $user->watchlists()->where($data)->exists();
+        if ($exists) {
+            return response()->json(
+            [
+            'message' => 'Same watchlist already exists',
+            ],
+            409);
+        }
+
+        $watchlist = $user->watchlists()->create($data);
+        return response()->json([
+            'message' => 'Successfully added watchlist',
+            'data' => new WatchListResource($watchlist), 
+        ]);
     }
 
     /**
