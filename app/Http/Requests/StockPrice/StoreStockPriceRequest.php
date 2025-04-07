@@ -2,7 +2,7 @@
 
 
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\StockPrice;
 
 use Illuminate\Foundation\Http\FormRequest;
 

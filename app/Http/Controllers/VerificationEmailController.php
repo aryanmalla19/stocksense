@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ResendVerificationRequest;
+use App\Http\Requests\VerifyEmail\ResendVerificationRequest;
 use App\Mail\UserVerification;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreStockPriceRequest;
-use App\Http\Resources\StockPriceResource;
+use App\Http\Requests\StockPrice\StoreStockPriceRequest;
+use \App\Http\Resources\StockPriceResource;
 use App\Http\Resources\StockResource;
 use App\Http\Resources\StockWithPriceResource;
 use App\Models\Stock;

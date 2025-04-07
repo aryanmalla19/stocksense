@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\IPODetails;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateIpoDetailRequest extends FormRequest
+class StoreIpoDetailRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,7 @@ class UpdateIpoDetailRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'stock_id' => 'required|integer',
+            'stock_id' => 'required|integer|exists:stocks,id',
             'issue_price' => 'required|integer|min:100',
             'total_shares' => 'required|integer|min:1000',
             'open_date' => 'required|date',
@@ -32,16 +32,21 @@ class UpdateIpoDetailRequest extends FormRequest
         ];
     }
 
-    public function messages(): array
+    public function messages():array
+    
     {
-        return [
-            'stock_id.required' => 'Stock ID is required.',
-            'issue_price.required' => 'Issue price is required.',
-            'total_shares.required' => 'Total shares are required.',
-            'open_date.required' => 'Open date is required.',
+        return[
+            'stock_id' => 'Stock id is required.',
+            'stock_id.exists' => 'The selected stock deosnot exist.',
+            'issue_price.min' => 'Issue price must be at least :min.',
+
+            'total_shares.min' => 'Total shares must be at least :min.',
             'close_date.after' => 'Close date must be after open date.',
             'listing_date.after' => 'Listing date must be after close date.',
             'ipo_status.in' => 'IPO status must be one of: open, close, pending.',
+            
+
+
         ];
     }
 }
