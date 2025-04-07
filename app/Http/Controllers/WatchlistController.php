@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\WatchListResource;
+use App\Models\Watchlist;
 use Illuminate\Http\Request;
 
 class WatchlistController extends Controller
@@ -50,15 +51,19 @@ class WatchlistController extends Controller
      */
     public function show(string $id)
     {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
+        $watchlist = Watchlist::where('id', $id)->with(['user', 'stock'])->first();
+
+        if (!$watchlist) {
+            return response()->json([
+                'message' => 'No Watchlist found with ID ' . $id,
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Successfully fetched watchlist data',
+            'data' => new WatchListResource($watchlist),
+        ]);
     }
 
     /**
@@ -66,6 +71,30 @@ class WatchlistController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $watchlist = Watchlist::where('id', $id)->first();
+        if (!$watchlist) {
+            return response()->json([
+                'message' => 'No watchlist found with ID ' . $id,
+            ], 404);
+        }
+
+        Watchlist::where('id', $id)->delete();
+
+        return response()->json([
+            'message' => 'Successfully deleted watchlist with ID ' . $id,
+        ]);
+    }
+
+    public function showAll(){
+        $watchlists = Watchlist::with(['user', 'stock'])->get();
+        if(empty($watchlists)){
+            return response()->json([
+                'message' => 'No any watchlist found'
+            ]);
+        }
+        return response()->json([
+            'message' => 'Successfully fetched all watchlist data',
+            'data' => WatchListResource::collection($watchlists)
+        ]);
     }
 }
