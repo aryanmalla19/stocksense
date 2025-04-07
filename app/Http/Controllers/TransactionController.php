@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\BroughtStock;
 use App\Http\Resources\TransactionResource;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
@@ -178,17 +179,15 @@ class TransactionController extends Controller
     public function store(Request $request)
     {
         $attributes = $request->validate([
-            'user_id' => 'required|integer|exists:users,id',
             'stock_id' => 'required|integer|exists:stocks,id',
             'type' => 'required|in:buy,sell,ipo_allotted',
             'quantity' => 'required|integer|min:10',
             'price' => 'required',
             'transaction_fee' => 'required',
         ]);
-
-        $transaction = Transaction::create($attributes);
-
+        $transaction = auth()->user()->transactions()->create($attributes);
         $transaction->load('stock');
+        event(new BroughtStock($transaction, auth()->user()));
 
         return response()->json([
             'message' => 'Successfully created new transaction',
