@@ -1,22 +1,24 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Stock;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreStockRequest extends FormRequest
+class UpdateStockRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true; 
+        return true;
     }
 
     public function rules(): array
     {
+        $id = $this->route('stock'); // Gets the ID from the route
+
         return [
-            'symbol' => 'required|string|max:6|unique:stocks,symbol',
-            'name' => 'required|string',
-            'sector_id' => 'required|integer|exists:sectors,id',
+            'symbol' => 'sometimes|string|max:6|unique:stocks,symbol,' . $id,
+            'name' => 'sometimes|string',
+            'sector_id' => 'sometimes|integer|exists:sectors,id',
         ];
     }
 
@@ -32,6 +34,5 @@ class StoreStockRequest extends FormRequest
         ];
     }
 
-
-
-}
+    
+}    

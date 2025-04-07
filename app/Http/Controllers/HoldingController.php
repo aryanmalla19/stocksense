@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreHoldingRequest;
-use App\Http\Requests\UpdateHoldingRequest;
+use App\Http\Requests\Holding\StoreHoldingRequest;
+use App\Http\Requests\Holding\UpdateHoldingRequest;
 use App\Http\Resources\HoldingResource;
 use App\Models\User;
 use App\Models\Holding;

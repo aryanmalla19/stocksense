@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreIpoApplicationRequest;
+use App\Http\Requests\IPOAppllication\StoreIpoApplicationRequest;
 use App\Http\Resources\IpoApplicationResource;
-use Illuminate\Http\Request;
+
 use App\Models\IpoApplication;
 
 class IpoApplicationController extends Controller
