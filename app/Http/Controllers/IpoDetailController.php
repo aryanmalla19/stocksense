@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IPODetails\UpdateIpoDetailRequest;
 use App\Http\Requests\StoreIpoDetailRequest;
-use App\Http\Requests\UpdateIpoDetailRequest;
 use App\Http\Resources\IpoDetailResource;
 use App\Models\IpoDetail;
 

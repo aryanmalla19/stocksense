@@ -41,7 +41,7 @@ class UserSettingController extends Controller
         $user = auth()->user();
         $setting = $user->setting;
 
-        if (!$setting) {
+        if (! $setting) {
             return response()->json([
                 'message' => 'No settings found for this user',
             ], 404);
@@ -59,7 +59,7 @@ class UserSettingController extends Controller
         $user = auth()->user();
         $setting = $user->setting;
 
-        if (!$setting) {
+        if (! $setting) {
             return response()->json([
                 'message' => 'No settings found for this user',
             ], 404);
@@ -78,7 +78,7 @@ class UserSettingController extends Controller
         $user = auth()->user();
         $setting = $user->setting;
 
-        if (!$setting) {
+        if (! $setting) {
             return response()->json([
                 'message' => 'No settings found for this user',
             ], 404);

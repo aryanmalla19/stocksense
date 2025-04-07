@@ -70,11 +70,10 @@ Route::prefix('v1')->middleware(ApiExceptionMiddleware::class)->group(function (
 
         // Transaction
         Route::apiResource('/transactions', TransactionController::class)->names('transactions');
-        
-        //Watchlist
+
+        // Watchlist
         Route::apiResource('/users/watchlists', WatchlistController::class);
     });
 });
-
 
 Route::get('/watchlists', [WatchlistController::class, 'showAll'])->name('all-watchlists');

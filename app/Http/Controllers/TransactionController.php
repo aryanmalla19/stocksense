@@ -177,7 +177,7 @@ class TransactionController extends Controller
      *     )
      * )
      */
-        public function store(Request $request)
+    public function store(Request $request)
     {
         $attributes = $request->validate([
             'stock_id' => 'required|integer|exists:stocks,id',
@@ -191,7 +191,7 @@ class TransactionController extends Controller
         $total_price = $attributes['price'] * $attributes['quantity'];
 
         if ($attributes['type'] === 'buy') {
-            if (!$user->portfolio || $user->portfolio->amount < $total_price) {
+            if (! $user->portfolio || $user->portfolio->amount < $total_price) {
                 return response()->json([
                     'message' => 'You do not have enough balance in your portfolio.',
                 ], 400);
@@ -203,7 +203,7 @@ class TransactionController extends Controller
                 ->where('stock_id', $attributes['stock_id'])
                 ->first();
 
-            if (!$holding || $holding->quantity < $attributes['quantity']) {
+            if (! $holding || $holding->quantity < $attributes['quantity']) {
                 return response()->json([
                     'message' => 'You are trying to sell more shares than you own.',
                 ], 400);
@@ -412,35 +412,35 @@ class TransactionController extends Controller
      */
     public function update(Request $request, string $id)
     {
-//        $transaction = Transaction::find($id);
-//
-//        if (! $transaction) {
-//            return response()->json([
-//                'message' => 'No Stock found with ID '.$id,
-//            ], 404);
-//        }
-//
-//        $data = $request->validate([
-//            'symbol' => 'sometimes|string|max:6|unique:stocks,symbol,'.$id,
-//            'name' => 'sometimes|string',
-//            'sector_id' => 'sometimes|integer|exists:sectors,id',
-//        ]);
-//
-//        $transaction->forceFill([
-//            'user_id' => $request->user_id,
-//            'stock_id' => $request->stock_id,
-//            'type' => $request->type,
-//            'quantity' => $request->quantity,
-//            'price' => $request->price,
-//            'transaction_fee' => $request->transaction_fee,
-//        ]);
-//        $transaction->save();
-//        $transaction->load('stock');
-//
-//        return response()->json([
-//            'message' => 'Stock successfully updated',
-//            'data' => new TransactionResource($transaction),
-//        ]);
+        //        $transaction = Transaction::find($id);
+        //
+        //        if (! $transaction) {
+        //            return response()->json([
+        //                'message' => 'No Stock found with ID '.$id,
+        //            ], 404);
+        //        }
+        //
+        //        $data = $request->validate([
+        //            'symbol' => 'sometimes|string|max:6|unique:stocks,symbol,'.$id,
+        //            'name' => 'sometimes|string',
+        //            'sector_id' => 'sometimes|integer|exists:sectors,id',
+        //        ]);
+        //
+        //        $transaction->forceFill([
+        //            'user_id' => $request->user_id,
+        //            'stock_id' => $request->stock_id,
+        //            'type' => $request->type,
+        //            'quantity' => $request->quantity,
+        //            'price' => $request->price,
+        //            'transaction_fee' => $request->transaction_fee,
+        //        ]);
+        //        $transaction->save();
+        //        $transaction->load('stock');
+        //
+        //        return response()->json([
+        //            'message' => 'Stock successfully updated',
+        //            'data' => new TransactionResource($transaction),
+        //        ]);
     }
 
     /**

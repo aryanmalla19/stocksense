@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\PortfolioResource;
 use App\Models\Portfolio;
-use App\Models\User;
 
 /**
  * @OA\Tag(

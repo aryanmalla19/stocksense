@@ -1,10 +1,10 @@
 <?php
+
 namespace App\Listeners;
 
 use App\Events\SoldStock;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use Exception;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 class RemoveHolding implements ShouldQueue
 {
@@ -19,13 +19,13 @@ class RemoveHolding implements ShouldQueue
         $transaction = $event->transaction;
         $portfolio = $user->portfolio;
 
-        if (!$portfolio) {
+        if (! $portfolio) {
             throw new Exception('User does not have a portfolio.');
         }
 
         $holding = $portfolio->holdings()->where('stock_id', $transaction->stock_id)->first();
 
-        if (!$holding) {
+        if (! $holding) {
             throw new Exception("You don't own this stock to sell.");
         }
 

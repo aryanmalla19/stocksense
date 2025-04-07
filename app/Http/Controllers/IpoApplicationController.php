@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreIpoApplicationRequest;
+use App\Http\Requests\IPOApplication\StoreIpoApplicationRequest;
 use App\Http\Resources\IpoApplicationResource;
 use App\Models\IpoApplication;
 

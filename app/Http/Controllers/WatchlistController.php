@@ -29,7 +29,7 @@ class WatchlistController extends Controller
         $data = $request->validated();
         $user = auth()->user();
         $exists = $user->watchlists()->where($data)->exists();
-        
+
         if ($exists) {
             return response()->json([
                 'message' => 'Same watchlist already exists',
@@ -37,9 +37,10 @@ class WatchlistController extends Controller
         }
 
         $watchlist = $user->watchlists()->create($data);
+
         return response()->json([
             'message' => 'Successfully added watchlist',
-            'data' => new WatchListResource($watchlist), 
+            'data' => new WatchListResource($watchlist),
         ]);
     }
 
@@ -50,9 +51,9 @@ class WatchlistController extends Controller
     {
         $watchlist = Watchlist::where('id', $id)->with(['user', 'stock'])->first();
 
-        if (!$watchlist) {
+        if (! $watchlist) {
             return response()->json([
-                'message' => 'No Watchlist found with ID ' . $id,
+                'message' => 'No Watchlist found with ID '.$id,
             ], 404);
         }
 
@@ -68,16 +69,16 @@ class WatchlistController extends Controller
     public function destroy(string $id)
     {
         $watchlist = Watchlist::where('id', $id)->first();
-        if (!$watchlist) {
+        if (! $watchlist) {
             return response()->json([
-                'message' => 'No watchlist found with ID ' . $id,
+                'message' => 'No watchlist found with ID '.$id,
             ], 404);
         }
 
         $watchlist->delete();
 
         return response()->json([
-            'message' => 'Successfully deleted watchlist with ID ' . $id,
+            'message' => 'Successfully deleted watchlist with ID '.$id,
         ]);
     }
 
@@ -86,12 +87,13 @@ class WatchlistController extends Controller
         $watchlists = Watchlist::with(['user', 'stock'])->get();
         if ($watchlists->isEmpty()) {
             return response()->json([
-                'message' => 'No any watchlist found'
+                'message' => 'No any watchlist found',
             ]);
         }
+
         return response()->json([
             'message' => 'Successfully fetched all watchlist data',
-            'data' => WatchListResource::collection($watchlists)
+            'data' => WatchListResource::collection($watchlists),
         ]);
     }
 }

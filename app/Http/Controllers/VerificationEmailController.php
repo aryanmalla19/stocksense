@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Mail\UserVerification;
 use App\Models\User;
-use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;

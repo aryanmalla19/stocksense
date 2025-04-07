@@ -19,7 +19,7 @@ class WatchListResource extends JsonResource
             'stock_id' => $this->stock_id,
             'user_id' => $this->user_id,
             'symbol' => $this->whenLoaded('stock')->symbol,
-            'company_name' => $this->whenLoaded('stock')->company_name
+            'company_name' => $this->whenLoaded('stock')->company_name,
         ];
     }
 }

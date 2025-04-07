@@ -28,10 +28,9 @@ class UpdateTransactionRequest extends FormRequest
             'type' => ['sometimes', Rule::in(['buy', 'sell', 'ipo_allotted'])],
             'quantity' => 'sometimes|integer|min:10',
             'price' => 'sometimes',
-            'transaction_fee' => 'sometimes'
+            'transaction_fee' => 'sometimes',
         ];
     }
-
 
     public function messages(): array
     {

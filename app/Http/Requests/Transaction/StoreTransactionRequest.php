@@ -28,10 +28,9 @@ class StoreTransactionRequest extends FormRequest
             'type' => ['required', Rule::in(['buy', 'sell', 'ipo_allotted'])],
             'quantity' => 'required|integer|min:10',
             'price' => 'required',
-            'transaction_fee' => 'required'
+            'transaction_fee' => 'required',
         ];
     }
-
 
     public function messages(): array
     {
