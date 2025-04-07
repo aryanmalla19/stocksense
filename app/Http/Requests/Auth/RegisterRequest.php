@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Auth;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -14,7 +14,6 @@ class RegisterRequest extends FormRequest
         return true;
     }
 
-   
     public function rules(): array
     {
         return [
@@ -30,24 +29,16 @@ class RegisterRequest extends FormRequest
         ];
     }
 
-
-
-
     public function messages(): array
     {
         return [
-            'name.required' => 'Name is missing',
-            'name.max' => 'Name must not exceed 50 characters',
-            'name.min' => 'Name must be at least 5 characters',
             'email.required' => 'Email is missing',
-            'email.email' => 'Invalid email format',
-            'email.unique' => 'Email is already taken',
+            'email.email' => 'Not a valid email format',
             'password.required' => 'Password is missing',
             'password.min' => 'Password must be at least 8 characters',
             'password.max' => 'Password must not exceed 50 characters',
             'password.regex' => 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
             'password.confirmed' => 'Password confirmation does not match',
-            'password_confirmation.required_with' => 'Password confirmation is required',
         ];
     }
 }

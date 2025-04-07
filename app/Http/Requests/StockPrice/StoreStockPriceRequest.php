@@ -1,8 +1,6 @@
 <?php
 
-
-
-namespace App\Http\Requests\StockPrice;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -31,4 +29,3 @@ class StoreStockPriceRequest extends FormRequest
         ];
     }
 }
-

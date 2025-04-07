@@ -28,5 +28,4 @@ class StockResource extends JsonResource
             'low_price' => $latestPrice ? $latestPrice->low_price : null,
         ];
     }
-
 }
