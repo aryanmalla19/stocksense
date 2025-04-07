@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('portfolio_id')->constrained('portfolios');
             $table->foreignId('stock_id')->constrained('stocks');
             $table->index('portfolio_id', 'stock_id');
-            $table->unique('portfolio_id', 'stock_id');
+//            $table->unique('portfolio_id', 'stock_id');
             $table->integer('quantity');
             $table->decimal('average_price', 15, 2);
             $table->timestamps();
