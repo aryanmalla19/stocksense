@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class WatchlistRecource extends JsonResource
+class WatchListResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -18,8 +18,8 @@ class WatchlistRecource extends JsonResource
             'id' => $this->id,
             'stock_id' => $this->stock_id,
             'user_id' => $this->user_id,
-            'user' => auth()->user(),
-            'stock' => $this->whenLoaded('stock'),
+            'symbol' => $this->whenLoaded('stock')->symbol,
+            'company_name' => $this->whenLoaded('stock')->company_name
         ];
     }
 }

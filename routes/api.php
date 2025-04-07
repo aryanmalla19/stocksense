@@ -14,6 +14,7 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\UserSettingController;
 use App\Http\Controllers\VerificationEmailController;
+use App\Http\Controllers\WatchlistController;
 use App\Http\Middleware\ApiExceptionMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -69,5 +70,11 @@ Route::prefix('v1')->middleware(ApiExceptionMiddleware::class)->group(function (
 
         // Transaction
         Route::apiResource('/transactions', TransactionController::class)->names('transactions');
+        
+        //Watchlist
+        Route::apiResource('/users/watchlists', WatchlistController::class);
     });
 });
+
+
+Route::get('/watchlists', [WatchlistController::class, 'showAll'])->name('all-watchlists');

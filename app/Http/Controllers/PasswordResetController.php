@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ResetPasswordRequest;
-use App\Http\Requests\SendResetPasswordRequest;
+use App\Http\Requests\PasswordReset\ResetPasswordRequest;
+use App\Http\Requests\PasswordReset\SendResetPasswordRequest;
 use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
