@@ -5,12 +5,10 @@ namespace App\Services;
 use App\Events\UserRegistered;
 use App\Mail\OtpVerification;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
-use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthService
@@ -20,7 +18,7 @@ class AuthService
      */
     public function register(array $data)
     {
-        $user = new User();
+        $user = new User;
         $user->name = $data['name'];
         $user->email = $data['email'];
         $user->password = Hash::make($data['password']);
@@ -36,7 +34,7 @@ class AuthService
                 'name' => $user->name,
                 'email' => $user->email,
             ],
-            'status' => 201
+            'status' => 201,
         ];
     }
 
@@ -47,15 +45,15 @@ class AuthService
     {
         $user = User::where('email', $credentials['email'])->first();
 
-        if (!$user) {
+        if (! $user) {
             return ['error' => 'Invalid email', 'status' => 401];
         }
 
-        if (!Hash::check($credentials['password'], $user->password)) {
+        if (! Hash::check($credentials['password'], $user->password)) {
             return ['error' => 'Invalid password', 'status' => 401];
         }
 
-        if (!$user->hasVerifiedEmail()) {
+        if (! $user->hasVerifiedEmail()) {
             return ['error' => 'Please verify your email before logging in.', 'status' => 403];
         }
 
@@ -80,7 +78,7 @@ class AuthService
             ];
         }
 
-        if (!$token = JWTAuth::attempt($credentials)) {
+        if (! $token = JWTAuth::attempt($credentials)) {
             return ['error' => 'Invalid credentials', 'status' => 401];
         }
 

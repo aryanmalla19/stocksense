@@ -32,10 +32,9 @@ class StoreIpoDetailRequest extends FormRequest
         ];
     }
 
-    public function messages():array
-    
+    public function messages(): array
     {
-        return[
+        return [
             'stock_id' => 'Stock id is required.',
             'stock_id.exists' => 'The selected stock deosnot exist.',
             'issue_price.min' => 'Issue price must be at least :min.',
@@ -44,8 +43,6 @@ class StoreIpoDetailRequest extends FormRequest
             'close_date.after' => 'Close date must be after open date.',
             'listing_date.after' => 'Listing date must be after close date.',
             'ipo_status.in' => 'IPO status must be one of: open, close, pending.',
-            
-
 
         ];
     }

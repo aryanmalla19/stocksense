@@ -14,8 +14,6 @@ class UserRegistered
 
     /**
      * Create a new event instance.
-     *
-     * @param \App\Models\User $user
      */
     public function __construct(User $user)
     {

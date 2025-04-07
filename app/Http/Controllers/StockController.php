@@ -32,9 +32,9 @@ class StockController extends Controller
     public function show(string $id)
     {
         $stock = Stock::with(['sector', 'latestPrice'])->find($id);
-        if (!$stock) {
+        if (! $stock) {
             return response()->json([
-                'message' => 'No Stock found with ID ' . $id,
+                'message' => 'No Stock found with ID '.$id,
             ], 404);
         }
 
@@ -47,9 +47,9 @@ class StockController extends Controller
     public function update(UpdateStockRequest $request, string $id)
     {
         $stock = Stock::find($id);
-        if (!$stock) {
+        if (! $stock) {
             return response()->json([
-                'message' => 'No Stock found with ID ' . $id,
+                'message' => 'No Stock found with ID '.$id,
             ], 404);
         }
 
@@ -64,16 +64,16 @@ class StockController extends Controller
     public function destroy(string $id)
     {
         $stock = Stock::find($id);
-        if (!$stock) {
+        if (! $stock) {
             return response()->json([
-                'message' => 'No Stock found with ID ' . $id,
+                'message' => 'No Stock found with ID '.$id,
             ], 404);
         }
 
         $stock->delete();
 
         return response()->json([
-            'message' => 'Successfully deleted stock with ID ' . $id,
+            'message' => 'Successfully deleted stock with ID '.$id,
         ]);
     }
 }

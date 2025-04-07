@@ -11,29 +11,22 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 
-
 class PasswordResetController extends Controller
 {
-    
     public function sendResetPassword(SendResetPasswordRequest $request)
     {
-       
 
         $status = Password::sendResetLink(
             $request->only('email')
         );
-
-
 
         return $status === Password::RESET_LINK_SENT
             ? response()->json(['message' => __('A password reset link has been sent to your email.')], 200)
             : response()->json(['error' => __('We cannot find a user with that email address.')], 400);
     }
 
-    
     public function resetPassword(ResetPasswordRequest $request)
     {
-      
 
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),

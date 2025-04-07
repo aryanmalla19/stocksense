@@ -17,7 +17,6 @@ use App\Http\Controllers\VerificationEmailController;
 use App\Http\Middleware\ApiExceptionMiddleware;
 use Illuminate\Support\Facades\Route;
 
-
 Route::prefix('v1')->middleware(ApiExceptionMiddleware::class)->group(function () {
     // Public Authentication Routes
     Route::prefix('auth')->group(function () {

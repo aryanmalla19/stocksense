@@ -21,15 +21,20 @@ class TransactionController extends Controller
      *     summary="Get a list of user transactions",
      *     operationId="getTransactions",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Response(
      *         response=200,
      *         description="List of transactions retrieved successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="Successfully fetched all transactions"),
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
+     *
      *                 @OA\Items(
+     *
      *                     @OA\Property(property="id", type="integer", example=1),
      *                     @OA\Property(property="user_id", type="integer", example=1),
      *                     @OA\Property(property="stock_id", type="integer", example=1),
@@ -42,10 +47,13 @@ class TransactionController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=401,
      *         description="Unauthenticated",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="Unauthenticated")
      *         )
      *     )
@@ -53,7 +61,10 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        $transactions = Transaction::with(['user', 'stock'])->get();
+        $transactions = auth()->user()
+            ->transactions()
+            ->with('stock')
+            ->get();
 
         return response()->json([
             'message' => 'Successfully fetched all transactions',
@@ -68,10 +79,13 @@ class TransactionController extends Controller
      *     summary="Create a new transaction",
      *     operationId="createTransaction",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
      *             required={"stock_id", "quantity", "price", "type"},
+     *
      *             @OA\Property(
      *                 property="stock_id",
      *                 type="integer",
@@ -100,10 +114,13 @@ class TransactionController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=201,
      *         description="Transaction created successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="Successfully created transaction"),
      *             @OA\Property(
      *                 property="data",
@@ -119,17 +136,23 @@ class TransactionController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=401,
      *         description="Unauthenticated",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="Unauthenticated")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=422,
      *         description="Validation error",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="The given data was invalid."),
      *             @OA\Property(
      *                 property="errors",
@@ -137,11 +160,14 @@ class TransactionController extends Controller
      *                 @OA\Property(
      *                     property="stock_id",
      *                     type="array",
+     *
      *                     @OA\Items(type="string", example="The stock id field is required.")
      *                 ),
+     *
      *                 @OA\Property(
      *                     property="quantity",
      *                     type="array",
+     *
      *                     @OA\Items(type="string", example="The quantity field is required.")
      *                 )
      *             )
@@ -157,7 +183,7 @@ class TransactionController extends Controller
             'type' => 'required|in:buy,sell,ipo_allotted',
             'quantity' => 'required|integer|min:10',
             'price' => 'required',
-            'transaction_fee' => 'required'
+            'transaction_fee' => 'required',
         ]);
 
         $transaction = Transaction::create($attributes);
@@ -177,17 +203,22 @@ class TransactionController extends Controller
      *     summary="Get a specific transaction",
      *     operationId="getTransaction",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="The ID of the transaction",
+     *
      *         @OA\Schema(type="string")
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Transaction retrieved successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="Successfully fetched transaction"),
      *             @OA\Property(
      *                 property="data",
@@ -203,17 +234,23 @@ class TransactionController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=401,
      *         description="Unauthenticated",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="Unauthenticated")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="Transaction not found",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="Transaction not found")
      *         )
      *     )
@@ -225,7 +262,7 @@ class TransactionController extends Controller
 
         if (empty($transaction)) {
             return response()->json([
-                'message' => 'No transaction found with ID ' . $id,
+                'message' => 'No transaction found with ID '.$id,
             ], 404);
         }
 
@@ -242,16 +279,21 @@ class TransactionController extends Controller
      *     summary="Update a specific transaction",
      *     operationId="updateTransaction",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="The ID of the transaction",
+     *
      *         @OA\Schema(type="string")
      *     ),
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(
      *                 property="quantity",
      *                 type="integer",
@@ -274,10 +316,13 @@ class TransactionController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Transaction updated successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="Successfully updated transaction"),
      *             @OA\Property(
      *                 property="data",
@@ -293,24 +338,33 @@ class TransactionController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=401,
      *         description="Unauthenticated",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="Unauthenticated")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="Transaction not found",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="Transaction not found")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=422,
      *         description="Validation error",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="The given data was invalid."),
      *             @OA\Property(
      *                 property="errors",
@@ -318,6 +372,7 @@ class TransactionController extends Controller
      *                 @OA\Property(
      *                     property="quantity",
      *                     type="array",
+     *
      *                     @OA\Items(type="string", example="The quantity must be an integer.")
      *                 )
      *             )
@@ -329,14 +384,14 @@ class TransactionController extends Controller
     {
         $transaction = Transaction::find($id);
 
-        if (!$transaction) {
+        if (! $transaction) {
             return response()->json([
-                'message' => 'No Stock found with ID ' . $id,
+                'message' => 'No Stock found with ID '.$id,
             ], 404);
         }
 
         $data = $request->validate([
-            'symbol' => 'sometimes|string|max:6|unique:stocks,symbol,' . $id,
+            'symbol' => 'sometimes|string|max:6|unique:stocks,symbol,'.$id,
             'name' => 'sometimes|string',
             'sector_id' => 'sometimes|integer|exists:sectors,id',
         ]);
@@ -347,7 +402,7 @@ class TransactionController extends Controller
             'type' => $request->type,
             'quantity' => $request->quantity,
             'price' => $request->price,
-            'transaction_fee' => $request->transaction_fee
+            'transaction_fee' => $request->transaction_fee,
         ]);
         $transaction->save();
         $transaction->load('stock');
@@ -365,31 +420,42 @@ class TransactionController extends Controller
      *     summary="Delete a specific transaction",
      *     operationId="deleteTransaction",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="The ID of the transaction",
+     *
      *         @OA\Schema(type="string")
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Transaction deleted successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="Successfully deleted transaction")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=401,
      *         description="Unauthenticated",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="Unauthenticated")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="Transaction not found",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="Transaction not found")
      *         )
      *     )
@@ -401,13 +467,13 @@ class TransactionController extends Controller
 
         if (empty($transaction)) {
             return response()->json([
-                'message' => 'No transaction found with ID ' . $id,
+                'message' => 'No transaction found with ID '.$id,
             ], 404);
         }
         $transaction->delete();
 
         return response()->json([
-            'message' => 'Successfully deleted transaction with ID ' . $id,
+            'message' => 'Successfully deleted transaction with ID '.$id,
         ]);
     }
 }

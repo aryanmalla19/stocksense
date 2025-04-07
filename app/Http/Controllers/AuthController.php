@@ -2,31 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
-use App\Http\Requests\UserLoginRequest;
-use App\Http\Requests\UserRegisterRequest;
+use App\Http\Requests\RegisterRequest;
+use App\Models\User;
 use App\Services\AuthService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use App\Models\User;
 
 /**
  * @OA\Info(
  *     title="StockSense API",
  *     version="1.0.0",
  *     description="API for managing stocks, sectors, and user authentication",
+ *
  *     @OA\Contact(
  *         email="support@example.com"
  *     )
  * )
+ *
  * @OA\Server(
  *     url="http://localhost:8080/api",
  *     description="Local Development Server"
  * )
+ *
  * @OA\SecurityScheme(
  *     securityScheme="JWT",
  *     type="apiKey",
@@ -50,10 +51,13 @@ class AuthController extends Controller
      *     tags={"Authentication"},
      *     summary="Register a new user",
      *     operationId="registerUser",
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
      *             required={"name", "email", "password", "password_confirmation"},
+     *
      *             @OA\Property(
      *                 property="name",
      *                 type="string",
@@ -87,10 +91,13 @@ class AuthController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=201,
      *         description="User registered successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="User registered successfully"),
      *             @OA\Property(
      *                 property="user",
@@ -101,10 +108,13 @@ class AuthController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=422,
      *         description="Validation error",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="The given data was invalid."),
      *             @OA\Property(property="errors", type="object")
      *         )
@@ -130,10 +140,13 @@ class AuthController extends Controller
      *     tags={"Authentication"},
      *     summary="Login a user",
      *     operationId="loginUser",
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
      *             required={"email", "password"},
+     *
      *             @OA\Property(
      *                 property="email",
      *                 type="string",
@@ -150,18 +163,24 @@ class AuthController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="User logged in successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="Login successful"),
      *             @OA\Property(property="token", type="string", example="Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=401,
      *         description="Unauthorized",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="Invalid credentials")
      *         )
      *     )
@@ -174,23 +193,26 @@ class AuthController extends Controller
         return response()->json(
             array_filter(
                 $result,
-                fn($key) => $key !== 'status',
+                fn ($key) => $key !== 'status',
                 ARRAY_FILTER_USE_KEY
             ),
             $result['status']
         );
     }
-    
+
     /**
      * @OA\Post(
      *     path="/v1/auth/refresh",
      *     tags={"Authentication"},
      *     summary="Refresh an access token using a refresh token",
      *     operationId="refreshToken",
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
      *             required={"refresh_token"},
+     *
      *             @OA\Property(
      *                 property="refresh_token",
      *                 type="string",
@@ -199,42 +221,50 @@ class AuthController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Token refreshed successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="access_token", type="string", example="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."),
      *             @OA\Property(property="token_type", type="string", example="bearer"),
      *             @OA\Property(property="expires_in", type="integer", example=3600)
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=400,
      *         description="Refresh token missing",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="error", type="string", example="Refresh token is required")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=401,
      *         description="Invalid or expired refresh token",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="error", type="string", example="Invalid refresh token")
      *         )
      *     )
      * )
      */
-
     public function refresh(Request $request)
     {
         $data = $request->validate([
-            'refresh_token' => 'required'
+            'refresh_token' => 'required',
         ]);
 
         $user = User::where('refresh_token', $data['refresh_token'])->first();
 
         // Check if user exists and token is still valid
-        if (!$user || Carbon::now()->greaterThan($user->refresh_token_expires_at)) {
+        if (! $user || Carbon::now()->greaterThan($user->refresh_token_expires_at)) {
             return response()->json(['error' => 'Invalid or expired refresh token'], 401);
         }
 
@@ -265,17 +295,23 @@ class AuthController extends Controller
      *     summary="Logout a user",
      *     operationId="logoutUser",
      *     security={{"JWT": {}}},
+     *
      *     @OA\Response(
      *         response=200,
      *         description="User logged out successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="Successfully logged out")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=401,
      *         description="Unauthenticated",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="Unauthenticated")
      *         )
      *     )
@@ -283,17 +319,17 @@ class AuthController extends Controller
      */
     public function logout()
     {
-      
-      $user = JWTAuth::user();
 
-      // Invalidate the current access token
-      JWTAuth::invalidate(JWTAuth::getToken());
+        $user = JWTAuth::user();
 
-      // Clear the refresh token from the database
-      $user->forceFill(['refresh_token' => null, 'refresh_token_expires_at' => null])->save();
+        // Invalidate the current access token
+        JWTAuth::invalidate(JWTAuth::getToken());
 
-      return response()->json([
-          'message' => 'Successfully logged out',
-      ]);
+        // Clear the refresh token from the database
+        $user->forceFill(['refresh_token' => null, 'refresh_token_expires_at' => null])->save();
+
+        return response()->json([
+            'message' => 'Successfully logged out',
+        ]);
     }
 }

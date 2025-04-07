@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreIpoDetailRequest;
 use App\Http\Requests\UpdateIpoDetailRequest;
 use App\Http\Resources\IpoDetailResource;
-use Illuminate\Http\Request;
 use App\Models\IpoDetail;
 
 class IpoDetailController extends Controller
@@ -14,7 +13,7 @@ class IpoDetailController extends Controller
     {
         // Eager load the 'stock' and 'sector' relationships
         $ipoDetails = IpoDetail::with(['stock.sector', 'stock.latestPrice'])->get();
-    
+
         return response()->json([
             'message' => 'Successfully fetched all ipo details',
             'data' => IpoDetailResource::collection($ipoDetails),
@@ -25,13 +24,13 @@ class IpoDetailController extends Controller
     {
         // Eager load the 'stock' and 'sector' relationships
         $ipoDetail = IpoDetail::with(['stock.sector', 'stock.latestPrice'])->find($id);
-    
-        if (!$ipoDetail) {
+
+        if (! $ipoDetail) {
             return response()->json([
-                'message' => 'IPO detail not found for ' . $id,
+                'message' => 'IPO detail not found for '.$id,
             ], 404);
         }
-    
+
         return response()->json([
             'message' => 'Successfully fetched ipo details',
             'data' => new IpoDetailResource($ipoDetail),
@@ -52,9 +51,9 @@ class IpoDetailController extends Controller
     {
         $ipoDetail = IpoDetail::find($id);
 
-        if (!$ipoDetail) {
+        if (! $ipoDetail) {
             return response()->json([
-                'message' => 'IPO detail not found for ID: ' . $id,
+                'message' => 'IPO detail not found for ID: '.$id,
             ], 404);
         }
 
@@ -70,16 +69,16 @@ class IpoDetailController extends Controller
     {
         $ipoDetail = IpoDetail::find($id);
 
-        if (!$ipoDetail) {
+        if (! $ipoDetail) {
             return response()->json([
-                'message' => 'Could not find IPO detail with ID: ' . $id,
+                'message' => 'Could not find IPO detail with ID: '.$id,
             ], 404);
         }
 
         $ipoDetail->delete();
 
         return response()->json([
-            'message' => 'Successfully deleted IPO detail with ID: ' . $id,
+            'message' => 'Successfully deleted IPO detail with ID: '.$id,
         ]);
     }
 }
