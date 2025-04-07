@@ -18,7 +18,7 @@ class SoldStock
     /**
      * Create a new event instance.
      */
-    public function __construct(public Transaction $transaction)
+    public function __construct(public Transaction $transaction, public $user)
     {}
 
     /**

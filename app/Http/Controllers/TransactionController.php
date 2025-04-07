@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\BroughtStock;
+use App\Events\SoldStock;
 use App\Http\Resources\TransactionResource;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
@@ -176,18 +177,48 @@ class TransactionController extends Controller
      *     )
      * )
      */
-    public function store(Request $request)
+        public function store(Request $request)
     {
         $attributes = $request->validate([
             'stock_id' => 'required|integer|exists:stocks,id',
             'type' => 'required|in:buy,sell,ipo_allotted',
             'quantity' => 'required|integer|min:10',
-            'price' => 'required',
-            'transaction_fee' => 'required',
+            'price' => 'required|numeric|min:0',
+            'transaction_fee' => 'required|numeric|min:0',
         ]);
-        $transaction = auth()->user()->transactions()->create($attributes);
+
+        $user = auth()->user();
+        $total_price = $attributes['price'] * $attributes['quantity'];
+
+        if ($attributes['type'] === 'buy') {
+            if (!$user->portfolio || $user->portfolio->amount < $total_price) {
+                return response()->json([
+                    'message' => 'You do not have enough balance in your portfolio.',
+                ], 400);
+            }
+        }
+
+        if ($attributes['type'] === 'sell') {
+            $holding = $user->portfolio->holdings()
+                ->where('stock_id', $attributes['stock_id'])
+                ->first();
+
+            if (!$holding || $holding->quantity < $attributes['quantity']) {
+                return response()->json([
+                    'message' => 'You are trying to sell more shares than you own.',
+                ], 400);
+            }
+        }
+
+        // Create transaction
+        $transaction = $user->transactions()->create($attributes);
         $transaction->load('stock');
-        event(new BroughtStock($transaction, auth()->user()));
+
+        // Dispatch appropriate event
+        match ($transaction->type) {
+            'buy' => event(new BroughtStock($transaction, $user)),
+            'sell' => event(new SoldStock($transaction, $user)),
+        };
 
         return response()->json([
             'message' => 'Successfully created new transaction',
@@ -381,35 +412,35 @@ class TransactionController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $transaction = Transaction::find($id);
-
-        if (! $transaction) {
-            return response()->json([
-                'message' => 'No Stock found with ID '.$id,
-            ], 404);
-        }
-
-        $data = $request->validate([
-            'symbol' => 'sometimes|string|max:6|unique:stocks,symbol,'.$id,
-            'name' => 'sometimes|string',
-            'sector_id' => 'sometimes|integer|exists:sectors,id',
-        ]);
-
-        $transaction->forceFill([
-            'user_id' => $request->user_id,
-            'stock_id' => $request->stock_id,
-            'type' => $request->type,
-            'quantity' => $request->quantity,
-            'price' => $request->price,
-            'transaction_fee' => $request->transaction_fee,
-        ]);
-        $transaction->save();
-        $transaction->load('stock');
-
-        return response()->json([
-            'message' => 'Stock successfully updated',
-            'data' => new TransactionResource($transaction),
-        ]);
+//        $transaction = Transaction::find($id);
+//
+//        if (! $transaction) {
+//            return response()->json([
+//                'message' => 'No Stock found with ID '.$id,
+//            ], 404);
+//        }
+//
+//        $data = $request->validate([
+//            'symbol' => 'sometimes|string|max:6|unique:stocks,symbol,'.$id,
+//            'name' => 'sometimes|string',
+//            'sector_id' => 'sometimes|integer|exists:sectors,id',
+//        ]);
+//
+//        $transaction->forceFill([
+//            'user_id' => $request->user_id,
+//            'stock_id' => $request->stock_id,
+//            'type' => $request->type,
+//            'quantity' => $request->quantity,
+//            'price' => $request->price,
+//            'transaction_fee' => $request->transaction_fee,
+//        ]);
+//        $transaction->save();
+//        $transaction->load('stock');
+//
+//        return response()->json([
+//            'message' => 'Stock successfully updated',
+//            'data' => new TransactionResource($transaction),
+//        ]);
     }
 
     /**
