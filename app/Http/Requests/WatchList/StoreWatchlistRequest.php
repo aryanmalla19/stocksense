@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\WatchList;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateSectorRequest extends FormRequest
+class StoreWatchlistRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,19 +22,18 @@ class UpdateSectorRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|in:banking,hydropower,
-                       life Insurance,non-life Insurance,
-                       health,manufacturing,hotel,trading,
-                       microfinance,finance,investment,others',
-            //
+            'stock_id' => 'required|exists:stocks,id',
         ];
     }
 
-    public function messages()
+    /**
+     * Get custom messages for validation errors.
+     */
+    public function messages(): array
     {
         return [
-            'name.required' => 'Sector name is required.',
-            'name.in' => 'The sector name must be one of the predefined values.',
+            'stock_id.required' => 'The stock ID is required.',
+            'stock_id.exists' => 'The selected stock does not exist.',
         ];
     }
 }

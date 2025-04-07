@@ -36,7 +36,6 @@ class UserVerification extends Mailable implements ShouldQueue
     /**
      * Get the message content definition.
      */
-
     public function content(): Content
     {
         return new Content(
@@ -47,7 +46,7 @@ class UserVerification extends Mailable implements ShouldQueue
                     'verification.verify',
                     now()->addMinutes(60), // Set expiry time
                     ['id' => $this->user->id, 'hash' => sha1($this->user->email)] // Parameters to pass
-                )
+                ),
             ]
         );
     }

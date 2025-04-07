@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Stock;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -16,7 +16,7 @@ class UpdateStockRequest extends FormRequest
         $id = $this->route('stock'); // Gets the ID from the route
 
         return [
-            'symbol' => 'sometimes|string|max:6|unique:stocks,symbol,' . $id,
+            'symbol' => 'sometimes|string|max:6|unique:stocks,symbol,'.$id,
             'name' => 'sometimes|string',
             'sector_id' => 'sometimes|integer|exists:sectors,id',
         ];
@@ -33,6 +33,4 @@ class UpdateStockRequest extends FormRequest
             'sector_id.exists' => 'The selected sector does not exist.',
         ];
     }
-
-    
-}    
+}

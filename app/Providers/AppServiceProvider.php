@@ -29,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
         VerifyEmail::toMailUsing(function (object $notifiable, string $url) {
             return (new MailMessage)
                 ->subject('Verify Email Address')
-                ->view('emails.custom-verify',['url'=>(string) $url,'user'=> $notifiable]);
+                ->view('emails.custom-verify', ['url' => (string) $url, 'user' => $notifiable]);
         });
     }
 }

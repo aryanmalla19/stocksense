@@ -31,7 +31,6 @@ class StoreIpoApplicationRequest extends FormRequest
         ];
     }
 
-
     public function messages(): array
     {
         return [

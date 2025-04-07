@@ -20,7 +20,7 @@ class IpoApplicationResource extends JsonResource
             'applied_shares' => $this->applied_shares,
             'status' => $this->status,
             'applied_date' => $this->applied_date,
-            'allotted_shares' => $this->allotted_shares
+            'allotted_shares' => $this->allotted_shares,
         ];
     }
 }
