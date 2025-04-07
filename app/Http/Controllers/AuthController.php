@@ -7,9 +7,9 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRegisterRequest;
 use App\Services\AuthService;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
-use Tymon\JWTAuth\Exceptions\TokenExpiredException;
-use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\User;
@@ -180,46 +180,7 @@ class AuthController extends Controller
             $result['status']
         );
     }
-
-    /**
-     * @OA\Post(
-     *     path="/v1/auth/logout",
-     *     tags={"Authentication"},
-     *     summary="Logout a user",
-     *     operationId="logoutUser",
-     *     security={{"JWT": {}}},
-     *     @OA\Response(
-     *         response=200,
-     *         description="User logged out successfully",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Successfully logged out")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Unauthenticated")
-     *         )
-     *     )
-     * )
-     */
-    public function logout(): JsonResponse
-    {
-        $user = auth('api')->user();
-
-        $user->forceFill([
-            'refresh_token' => null,
-        ])->save();
-
-        $result = $this->authService->logout();
-
-        return response()->json(
-            ['message' => $result['message']],
-            $result['status']
-        );
-    }
-
+    
     /**
      * @OA\Post(
      *     path="/v1/auth/refresh",
@@ -263,54 +224,76 @@ class AuthController extends Controller
      *     )
      * )
      */
-    public function refresh(Request $request): JsonResponse
+
+    public function refresh(Request $request)
     {
-        $refreshToken = trim($request->input('refresh_token')); // Trim to avoid whitespace issues
+        $data = $request->validate([
+            'refresh_token' => 'required'
+        ]);
 
-        if (!$refreshToken) {
-            return response()->json(
-                ['error' => 'Refresh token is required'],
-                400
-            );
+        $user = User::where('refresh_token', $data['refresh_token'])->first();
+
+        // Check if user exists and token is still valid
+        if (!$user || Carbon::now()->greaterThan($user->refresh_token_expires_at)) {
+            return response()->json(['error' => 'Invalid or expired refresh token'], 401);
         }
 
-        try {
-            $payload = JWTAuth::setToken($refreshToken)->getPayload();
-            $userId = $payload['sub'];
+        // Generate a new access token
+        $newAccessToken = JWTAuth::fromUser($user);
 
-            $user = User::findOrFail($userId);
-            if ($user->refresh_token !== $refreshToken) {
-                return response()->json(
-                    ['error' => 'Invalid refresh token'],
-                    401
-                );
-            }
+        // Generate a new refresh token
+        $newRefreshToken = Str::random(32);
 
-            $newAccessToken = JWTAuth::fromUser($user);
+        // Update refresh token in the database
+        $user->forceFill([
+            'refresh_token' => $newRefreshToken,
+            'refresh_token_expires_at' => Carbon::now()->addDays(30)->toDateTimeString(), // Ensure timestamp format
+        ])->save();
 
-            return response()->json([
-                'access_token' => $newAccessToken,
-                'token_type' => 'bearer',
-                'expires_in' => config('jwt.ttl') * 60,
-            ]);
-        } catch (TokenExpiredException $e) {
-            return response()->json(
-                ['error' => 'Refresh token expired, please log in again'],
-                401
-            );
-        } catch (TokenInvalidException $e) {
-            return response()->json(
-                ['error' => 'Invalid refresh token'],
-                401
-            );
-        } catch (\Exception $e) {
-            return response()->json(
-                [
-                    'error' => 'Something went wrong',
-                    'message' => $e->getMessage(),
-                ],
-                500
-            );
-        }
+        return response()->json([
+            'access_token' => $newAccessToken,
+            'token_type' => 'bearer',
+            'expires_in' => config('jwt.ttl') * 60, // Access token TTL in seconds
+            'refresh_token' => $newRefreshToken,
+        ]);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/v1/auth/logout",
+     *     tags={"Authentication"},
+     *     summary="Logout a user",
+     *     operationId="logoutUser",
+     *     security={{"JWT": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="User logged out successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Successfully logged out")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthenticated")
+     *         )
+     *     )
+     * )
+     */
+    public function logout()
+    {
+      
+      $user = JWTAuth::user();
+
+      // Invalidate the current access token
+      JWTAuth::invalidate(JWTAuth::getToken());
+
+      // Clear the refresh token from the database
+      $user->forceFill(['refresh_token' => null, 'refresh_token_expires_at' => null])->save();
+
+      return response()->json([
+          'message' => 'Successfully logged out',
+      ]);
     }
 }

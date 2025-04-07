@@ -9,13 +9,15 @@ use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\SectorController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\StockPriceController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\UserSettingController;
 use App\Http\Controllers\VerificationEmailController;
+use App\Http\Middleware\ApiExceptionMiddleware;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('v1')->middleware(\App\Http\Middleware\ApiExceptionMiddleware::class)->group(function () {
 
+Route::prefix('v1')->middleware(ApiExceptionMiddleware::class)->group(function () {
     // Public Authentication Routes
     Route::prefix('auth')->group(function () {
 
@@ -23,13 +25,14 @@ Route::prefix('v1')->middleware(\App\Http\Middleware\ApiExceptionMiddleware::cla
         Route::middleware('throttle:10,1')->group(function () {
             Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
             Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
-            Route::post('/refresh', [AuthController::class, 'refresh'])->name('auth.refresh');      
+            Route::post('/refresh', [AuthController::class, 'refresh'])->name('auth.refresh');
         });
 
         // Rate-limited email & password management actions
         Route::middleware('throttle:100,1')->group(function () {
-            Route::get('/email/verify/{id}/{hash}', [VerificationEmailController::class, 'verify'])->name('verification.verify');
+            Route::get('/email/verify/{id}/{hash}', [VerificationEmailController::class, 'verify'])->name('verification.verify')->middleware('signed');
             Route::post('/email/resend', [VerificationEmailController::class, 'resend'])->name('verification.resend');
+            Route::get('/reset-password', [PasswordResetController::class, 'resetPasswordForm'])->name('password.reset.form');
             Route::post('/forgot-password', [PasswordResetController::class, 'sendResetPassword'])->name('password.forgot');
             Route::post('/reset-password', [PasswordResetController::class, 'resetPassword'])->name('password.reset');
             Route::post('/verify-otp', [TwoFactorController::class, 'verifyOtp'])->name('otp.verify');
@@ -42,6 +45,8 @@ Route::prefix('v1')->middleware(\App\Http\Middleware\ApiExceptionMiddleware::cla
         // Authenticated User Actions
         Route::prefix('auth')->group(function () {
             Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
+            Route::post('/2fa/enable', [TwoFactorController::class, 'enable'])->name('2fa.enable');
+            Route::post('/2fa/disable', [TwoFactorController::class, 'disable'])->name('2fa.disable');
         });
 
         // User Settings
@@ -59,5 +64,8 @@ Route::prefix('v1')->middleware(\App\Http\Middleware\ApiExceptionMiddleware::cla
 
         // Sectorsa
         Route::apiResource('/sectors', SectorController::class)->names('sectors');
+
+        // Transaction
+        Route::apiResource('/transactions', TransactionController::class)->names('transactions');
     });
 });

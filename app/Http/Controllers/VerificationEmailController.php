@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ResendVerificationRequest;
+use App\Mail\UserVerification;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -38,17 +40,11 @@ class VerificationEmailController extends Controller
             return response()->json(['message' => 'Email already verified'], 400);
         }
 
-        // Mark email as verified and fire event
         $user->markEmailAsVerified();
-        event(new Verified($user));
-
-        // Optionally generate a JWT token for immediate login
-        $token = JWTAuth::fromUser($user);
 
         return response()->json([
             'message' => 'Email verified successfully',
-            'token' => $token, // Return JWT token for API clients
-        ], 200);
+        ]);
     }
 
     /**
@@ -57,9 +53,16 @@ class VerificationEmailController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function resend(ResendVerificationRequest $request)
-    { 
+
+    public function resend(Request $request)
+    {
+    $request->validate(['email' => 'required|email']);
     $user = User::where('email', $request->email)->first();
+
+    if ($user && !$user->hasVerifiedEmail()) {
+        Mail::to($user->email)->queue(new UserVerification($user));
+        return response()->json(['message' => 'Verification email resent.']);
+    }
 
     if ($user && !$user->hasVerifiedEmail()) {
         $user->sendEmailVerificationNotification();

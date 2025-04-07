@@ -55,4 +55,12 @@ class PasswordResetController extends Controller
             default => response()->json(['error' => __('Failed to reset the password.')], 400),
         };
     }
+
+    public function resetPasswordForm(Request $request)
+    {
+        return view('auth.reset-password', [
+            'token' => $request->query('token'),
+            'email' => $request->query('email'),
+        ]);
+    }
 }
