@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\WatchList\StoreWatchlistRequest;
 use App\Http\Resources\WatchListResource;
 use App\Models\Watchlist;
-use Illuminate\Http\Request;
 
 class WatchlistController extends Controller
 {
@@ -24,19 +24,16 @@ class WatchlistController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreWatchlistRequest $request)
     {
-        $data = $request->validate([
-            'stock_id' => 'required|exists:stocks,id',
-        ]);
+        $data = $request->validated();
         $user = auth()->user();
         $exists = $user->watchlists()->where($data)->exists();
+        
         if ($exists) {
-            return response()->json(
-            [
-            'message' => 'Same watchlist already exists',
-            ],
-            409);
+            return response()->json([
+                'message' => 'Same watchlist already exists',
+            ], 409);
         }
 
         $watchlist = $user->watchlists()->create($data);
@@ -51,7 +48,6 @@ class WatchlistController extends Controller
      */
     public function show(string $id)
     {
-
         $watchlist = Watchlist::where('id', $id)->with(['user', 'stock'])->first();
 
         if (!$watchlist) {
@@ -78,16 +74,17 @@ class WatchlistController extends Controller
             ], 404);
         }
 
-        Watchlist::where('id', $id)->delete();
+        $watchlist->delete();
 
         return response()->json([
             'message' => 'Successfully deleted watchlist with ID ' . $id,
         ]);
     }
 
-    public function showAll(){
+    public function showAll()
+    {
         $watchlists = Watchlist::with(['user', 'stock'])->get();
-        if(empty($watchlists)){
+        if ($watchlists->isEmpty()) {
             return response()->json([
                 'message' => 'No any watchlist found'
             ]);
