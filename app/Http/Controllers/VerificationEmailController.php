@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ResendVerificationRequest;
 use App\Mail\UserVerification;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
@@ -52,16 +53,23 @@ class VerificationEmailController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
+
     public function resend(Request $request)
     {
-        $request->validate(['email' => 'required|email']);
-        $user = User::where('email', $request->email)->first();
+    $request->validate(['email' => 'required|email']);
+    $user = User::where('email', $request->email)->first();
 
-        if ($user && !$user->hasVerifiedEmail()) {
-            Mail::to($user->email)->queue(new UserVerification($user));
-            return response()->json(['message' => 'Verification email resent.']);
-        }
-
-        return response()->json(['message' => 'User not found or already verified.'], 400);
+    if ($user && !$user->hasVerifiedEmail()) {
+        Mail::to($user->email)->queue(new UserVerification($user));
+        return response()->json(['message' => 'Verification email resent.']);
     }
+
+    if ($user && !$user->hasVerifiedEmail()) {
+        $user->sendEmailVerificationNotification();
+        return response()->json(['message' => 'Verification email resent.']);
+    }
+
+    return response()->json(['message' => 'User not found or already verified.'], 400);
+   }  
+
 }

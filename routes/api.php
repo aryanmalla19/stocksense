@@ -62,7 +62,7 @@ Route::prefix('v1')->middleware(ApiExceptionMiddleware::class)->group(function (
         Route::apiResource('/ipo-details', IpoDetailController::class)->names('ipo-details');
         Route::apiResource('/ipo-applications', IpoApplicationController::class)->names('ipo-applications');
 
-        // Sectors
+        // Sectorsa
         Route::apiResource('/sectors', SectorController::class)->names('sectors');
 
         // Transaction

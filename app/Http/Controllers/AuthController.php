@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\UserLoginRequest;
+use App\Http\Requests\UserRegisterRequest;
 use App\Services\AuthService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -52,10 +54,37 @@ class AuthController extends Controller
      *         required=true,
      *         @OA\JsonContent(
      *             required={"name", "email", "password", "password_confirmation"},
-     *             @OA\Property(property="name", type="string", example="John Doe"),
-     *             @OA\Property(property="email", type="string", format="email", example="subrace@example.com"),
-     *             @OA\Property(property="password", type="string", format="password", example="Password@123"),
-     *             @OA\Property(property="password_confirmation", type="string", format="password", example="Password@123")
+     *             @OA\Property(
+     *                 property="name",
+     *                 type="string",
+     *                 minLength=5,
+     *                 maxLength=50,
+     *                 example="John Doe",
+     *                 description="User's full name (5-50 characters)"
+     *             ),
+     *             @OA\Property(
+     *                 property="email",
+     *                 type="string",
+     *                 format="email",
+     *                 example="subrace@example.com",
+     *                 description="Unique email address"
+     *             ),
+     *             @OA\Property(
+     *                 property="password",
+     *                 type="string",
+     *                 format="password",
+     *                 minLength=8,
+     *                 maxLength=50,
+     *                 example="Password@123",
+     *                 description="Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&)"
+     *             ),
+     *             @OA\Property(
+     *                 property="password_confirmation",
+     *                 type="string",
+     *                 format="password",
+     *                 example="Password@123",
+     *                 description="Must match the password field"
+     *             )
      *         )
      *     ),
      *     @OA\Response(
@@ -63,7 +92,9 @@ class AuthController extends Controller
      *         description="User registered successfully",
      *         @OA\JsonContent(
      *             @OA\Property(property="message", type="string", example="User registered successfully"),
-     *             @OA\Property(property="user", type="object",
+     *             @OA\Property(
+     *                 property="user",
+     *                 type="object",
      *                 @OA\Property(property="id", type="integer", example=1),
      *                 @OA\Property(property="name", type="string", example="Subresh"),
      *                 @OA\Property(property="email", type="string", example="subrace@example.com")
@@ -85,7 +116,10 @@ class AuthController extends Controller
         $result = $this->authService->register($request->validated());
 
         return response()->json(
-            ['message' => $result['message'], 'user' => $result['user'] ?? null],
+            [
+                'message' => $result['message'],
+                'user' => $result['user'] ?? null,
+            ],
             $result['status']
         );
     }
@@ -100,8 +134,20 @@ class AuthController extends Controller
      *         required=true,
      *         @OA\JsonContent(
      *             required={"email", "password"},
-     *             @OA\Property(property="email", type="string", format="email", example="subrace@example.com"),
-     *             @OA\Property(property="password", type="string", format="password", example="Password@123")
+     *             @OA\Property(
+     *                 property="email",
+     *                 type="string",
+     *                 format="email",
+     *                 example="subrace@example.com",
+     *                 description="User's email address"
+     *             ),
+     *             @OA\Property(
+     *                 property="password",
+     *                 type="string",
+     *                 format="password",
+     *                 example="Password@123",
+     *                 description="User's password"
+     *             )
      *         )
      *     ),
      *     @OA\Response(
@@ -126,30 +172,54 @@ class AuthController extends Controller
         $result = $this->authService->login($request->validated());
 
         return response()->json(
-            array_filter($result, fn($key) => $key !== 'status', ARRAY_FILTER_USE_KEY),
+            array_filter(
+                $result,
+                fn($key) => $key !== 'status',
+                ARRAY_FILTER_USE_KEY
+            ),
             $result['status']
         );
     }
-
+    
     /**
      * @OA\Post(
-     *     path="/v1/auth/logout",
+     *     path="/v1/auth/refresh",
      *     tags={"Authentication"},
-     *     summary="Logout a user",
-     *     operationId="logoutUser",
-     *     security={{"JWt": {}}},
+     *     summary="Refresh an access token using a refresh token",
+     *     operationId="refreshToken",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"refresh_token"},
+     *             @OA\Property(
+     *                 property="refresh_token",
+     *                 type="string",
+     *                 example="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+     *                 description="The refresh token issued during login"
+     *             )
+     *         )
+     *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="User logged out successfully",
+     *         description="Token refreshed successfully",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Successfully logged out")
+     *             @OA\Property(property="access_token", type="string", example="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."),
+     *             @OA\Property(property="token_type", type="string", example="bearer"),
+     *             @OA\Property(property="expires_in", type="integer", example=3600)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Refresh token missing",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Refresh token is required")
      *         )
      *     ),
      *     @OA\Response(
      *         response=401,
-     *         description="Unauthenticated",
+     *         description="Invalid or expired refresh token",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Unauthenticated")
+     *             @OA\Property(property="error", type="string", example="Invalid refresh token")
      *         )
      *     )
      * )
@@ -188,18 +258,42 @@ class AuthController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/v1/auth/logout",
+     *     tags={"Authentication"},
+     *     summary="Logout a user",
+     *     operationId="logoutUser",
+     *     security={{"JWT": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="User logged out successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Successfully logged out")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthenticated")
+     *         )
+     *     )
+     * )
+     */
     public function logout()
     {
-        $user = JWTAuth::user();
+      
+      $user = JWTAuth::user();
 
-        // Invalidate the current access token
-        JWTAuth::invalidate(JWTAuth::getToken());
+      // Invalidate the current access token
+      JWTAuth::invalidate(JWTAuth::getToken());
 
-        // Clear the refresh token from the database
-        $user->forceFill(['refresh_token' => null, 'refresh_token_expires_at' => null])->save();
+      // Clear the refresh token from the database
+      $user->forceFill(['refresh_token' => null, 'refresh_token_expires_at' => null])->save();
 
-        return response()->json([
-            'message' => 'Successfully logged out',
-        ]);
+      return response()->json([
+          'message' => 'Successfully logged out',
+      ]);
     }
 }

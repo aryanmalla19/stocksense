@@ -2,114 +2,123 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreHoldingRequest;
+use App\Http\Requests\UpdateHoldingRequest;
+use App\Http\Resources\HoldingResource;
 use App\Models\User;
 use App\Models\Holding;
-use Illuminate\Http\Request;
-use App\Http\Resources\HoldingResource;
+use Illuminate\Http\JsonResponse;
 
 class HoldingController extends Controller
 {
     /**
      * Display a listing of the user's holdings.
      */
-    public function index($id)
+    public function index(User $user): JsonResponse
     {
-        $user = User::findOrFail($id);
         $this->authorize('viewAny', [Holding::class, $user]);
 
-        if (!$user->portfolio) {
-            return response()->json(['message' => 'Portfolio not found'], 404);
-        }
+        $portfolio = $this->ensurePortfolioExists($user);
 
-        $holdings = $user->portfolio->holdings;
-
-        return response()->json([
-            'message' => 'Successfully fetched user holdings',
-            'data' => HoldingResource::collection($holdings),
-        ]);
+        return $this->successResponse(
+            'Successfully fetched user holdings',
+            HoldingResource::collection($portfolio->holdings)
+        );
     }
 
     /**
      * Store a newly created holding for a user's portfolio.
      */
-    public function store(Request $request, $id)
+    public function store(StoreHoldingRequest $request, User $user): JsonResponse
     {
-        $user = User::findOrFail($id);
         $this->authorize('create', [Holding::class, $user]);
 
-        if (!$user->portfolio) {
-            return response()->json(['message' => 'Portfolio not found'], 404);
-        }
+        $portfolio = $this->ensurePortfolioExists($user);
 
-        $validated = $request->validate([
-            'average_price' => 'required',
-            'quantity' => 'required|numeric|min:1',
-            'price' => 'required|numeric|min:0',
-            ''
-        ]);
+        $holding = $portfolio->holdings()->create($request->validated());
 
-        $holding = $user->portfolio->holdings()->create($validated);
-
-        return response()->json([
-            'message' => 'Holding created successfully',
-            'data' => new HoldingResource($holding),
-        ], 201);
+        return $this->successResponse(
+            'Holding created successfully',
+            new HoldingResource($holding),
+            201
+        );
     }
 
     /**
      * Display the specified holding.
      */
-    public function show($userId, $holdingId)
+    public function show(User $user, Holding $holding): JsonResponse
     {
-        $user = User::findOrFail($userId);
-        $holding = $user->portfolio->holdings()->findOrFail($holdingId);
-
+        $this->ensureHoldingBelongsToUser($user, $holding);
         $this->authorize('view', $holding);
 
-        return response()->json([
-            'message' => 'Holding details fetched successfully',
-            'data' => new HoldingResource($holding),
-        ]);
+        return $this->successResponse(
+            'Holding details fetched successfully',
+            new HoldingResource($holding)
+        );
     }
 
     /**
      * Update the specified holding.
      */
-    public function update(Request $request, $userId, $holdingId)
+    public function update(UpdateHoldingRequest $request, User $user, Holding $holding): JsonResponse
     {
-        $user = User::findOrFail($userId);
-        $holding = $user->portfolio->holdings()->findOrFail($holdingId);
-
+        $this->ensureHoldingBelongsToUser($user, $holding);
         $this->authorize('update', $holding);
 
-        $validated = $request->validate([
-            'average_price' => 'sometimes',
-            'quantity' => 'sometimes|numeric|min:1',
-            'price' => 'sometimes|numeric|min:0',
-        ]);
+        $holding->update($request->validated());
 
-        $holding->update($validated);
-
-        return response()->json([
-            'message' => 'Holding updated successfully',
-            'data' => new HoldingResource($holding),
-        ]);
+        return $this->successResponse(
+            'Holding updated successfully',
+            new HoldingResource($holding)
+        );
     }
 
     /**
      * Remove the specified holding.
      */
-    public function destroy($userId, $holdingId)
+    public function destroy(User $user, Holding $holding): JsonResponse
     {
-        $user = User::findOrFail($userId);
-        $holding = $user->portfolio->holdings()->findOrFail($holdingId);
-
+        $this->ensureHoldingBelongsToUser($user, $holding);
         $this->authorize('delete', $holding);
 
         $holding->delete();
 
-        return response()->json([
-            'message' => 'Holding deleted successfully',
-        ]);
+        return $this->successResponse('Holding deleted successfully');
+    }
+
+    /**
+     * Ensure the user has a portfolio, or return a 404 response.
+     */
+    private function ensurePortfolioExists(User $user): mixed
+    {
+        if (!$user->portfolio) {
+            abort(404, 'Portfolio not found');
+        }
+
+        return $user->portfolio;
+    }
+
+    /**
+     * Ensure the holding belongs to the user's portfolio, or return a 404 response.
+     */
+    private function ensureHoldingBelongsToUser(User $user, Holding $holding): void
+    {
+        if (!$user->portfolio || !$user->portfolio->holdings()->where('id', $holding->id)->exists()) {
+            abort(404, 'Holding not found');
+        }
+    }
+
+    /**
+     * Format a successful JSON response.
+     */
+    private function successResponse(string $message, $data = null, int $status = 200): JsonResponse
+    {
+        $response = ['message' => $message];
+        if ($data !== null) {
+            $response['data'] = $data;
+        }
+
+        return response()->json($response, $status);
     }
 }
