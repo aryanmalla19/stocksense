@@ -180,7 +180,7 @@ class AuthController extends Controller
             $result['status']
         );
     }
-    
+
     /**
      * @OA\Post(
      *     path="/v1/auth/refresh",
@@ -283,7 +283,7 @@ class AuthController extends Controller
      */
     public function logout()
     {
-      
+
       $user = JWTAuth::user();
 
       // Invalidate the current access token
