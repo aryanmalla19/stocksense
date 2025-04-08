@@ -24,7 +24,7 @@ class StoreIpoDetailRequest extends FormRequest
         return [
             'stock_id' => 'required|integer|exists:stocks,id',
             'issue_price' => 'required|integer|min:100',
-            'total_shares' => 'required|integer|min:1000',
+            'total_shares' => 'required|integer|min:20',
             'open_date' => 'required|date',
             'close_date' => 'required|date|after:open_date',
             'listing_date' => 'required|date|after:close_date',
