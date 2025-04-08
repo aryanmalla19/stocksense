@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HoldingController;
+use App\Http\Controllers\IpoAllotmentController;
 use App\Http\Controllers\IpoApplicationController;
 use App\Http\Controllers\IpoDetailController;
 use App\Http\Controllers\PasswordResetController;
@@ -60,8 +61,6 @@ Route::prefix('v1')->middleware(ApiExceptionMiddleware::class)->group(function (
         Route::apiResource('/users/portfolios', PortfolioController::class)->names('users.portfolios');
         Route::apiResource('/users/{id}/holdings', HoldingController::class)->names('users.holdings');
         // IPO Management
-        Route::apiResource('/ipo-details', IpoDetailController::class)->names('ipo-details');
-        Route::apiResource('/ipo-applications', IpoApplicationController::class)->names('ipo-applications');
 
         // Sectorsa
         Route::apiResource('/sectors', SectorController::class)->names('sectors');
@@ -76,3 +75,9 @@ Route::prefix('v1')->middleware(ApiExceptionMiddleware::class)->group(function (
 
 
 Route::get('/watchlists', [WatchlistController::class, 'showAll'])->name('all-watchlists');
+
+// IPO allotment
+Route::get('/ipo-allotments/{id}' , [IpoAllotmentController::class, 'ipoAllotment'])->name('ipo-allotments');
+
+        Route::apiResource('/ipo-details', IpoDetailController::class)->names('ipo-details');
+        Route::apiResource('/ipo-applications', IpoApplicationController::class)->names('ipo-applications');
