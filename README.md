@@ -259,16 +259,16 @@ A stocksense web application developed as an internship project by a team of 7 i
 ## API Endpoints
 
 ### Authentication API
-| Method | Endpoint                     | Description                | Parameters            |
-|--------|------------------------------|----------------------------|-----------------------|
-| POST   | `/api/auth/register`         | Register a new user        | `username`, `email`, `password` |
-| POST   | `/api/auth/login`            | Log in a user              | `email`, `password`   |
-| POST   | `/api/auth/logout`           | Log out a user             | `Authorization: Bearer <token>` |
-| POST   | `/api/auth/reset-password`   | Request password reset     | `email`               |
-| PUT    | `/api/auth/reset-password/{token}` | Reset password       | `password`            |
-| POST   | `/api/auth/2fa/enable`       | Enable 2FA                 | `Authorization: Bearer <token>` |
-| POST   | `/api/auth/2fa/verify`       | Verify 2FA code            | `token` (TOTP code)   |
-| POST   | `/api/auth/2fa/disable`      | Disable 2FA                | `token` (TOTP code)   |
+| Method | Endpoint                            | Description                | Parameters            |
+|--------|-------------------------------------|----------------------------|-----------------------|
+| POST   | `/api/v1/auth/register`             | Register a new user        | `username`, `email`, `password` |
+| POST   | `/api/v1/auth/login`                | Log in a user              | `email`, `password`   |
+| POST   | `/api/v1/auth/logout`               | Log out a user             | `Authorization: Bearer <token>` |
+| POST   | `/api/v1/auth/reset-password`       | Request password reset     | `email`               |
+| PUT    | `/api/v1/auth/reset-password/{token}` | Reset password           | `password`            |
+| POST   | `/api/v1/auth/2fa/enable`           | Enable 2FA                 | `Authorization: Bearer <token>` |
+| POST   | `/api/v1/auth/2fa/verify`           | Verify 2FA code            | `token` (TOTP code)   |
+| POST   | `/api/v1/auth/2fa/disable`          | Disable 2FA                | `token` (TOTP code)   |
 
 ### Stock Data API
 | Method | Endpoint                     | Description                | Parameters            |
@@ -294,11 +294,13 @@ A stocksense web application developed as an internship project by a team of 7 i
 
 *Note:* All endpoints requiring authentication expect an `Authorization: Bearer <token>` header.
 
+---
+
 ## Usage
 - Access the API at `http://localhost:8080/api/`.
 - Use tools like Postman or cURL to test endpoints. Example:
   ```bash
-  curl -X POST http://localhost:8000/api/auth/login \
+  curl -X POST http://localhost:8000/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email": "user@example.com", "password": "Password@123"}'
   ```
