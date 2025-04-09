@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Tymon\JWTAuth\Facades\JWTAuth;
-
+use App\Notifications\UserLogin;
 class AuthService
 {
     /**
@@ -56,6 +56,8 @@ class AuthService
         if (! $user->hasVerifiedEmail()) {
             return ['error' => 'Please verify your email before logging in.', 'status' => 403];
         }
+
+        $user->notify(new UserLogin);
 
         if ($user->two_factor_enabled) {
             $otp = Str::random(6, '0123456789');
