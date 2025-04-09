@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\IPODetails;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -28,14 +28,13 @@ class StoreIpoDetailRequest extends FormRequest
             'open_date' => 'required|date',
             'close_date' => 'required|date|after:open_date',
             'listing_date' => 'required|date|after:close_date',
-            'ipo_status' => 'required|string|in:pending,opened,closed',
+            'ipo_status' => 'required|string|in:open,close,pending',
         ];
     }
 
-    public function messages():array
-    
+    public function messages(): array
     {
-        return[
+        return [
             'stock_id' => 'Stock id is required.',
             'stock_id.exists' => 'The selected stock deosnot exist.',
             'issue_price.min' => 'Issue price must be at least :min.',
@@ -43,9 +42,7 @@ class StoreIpoDetailRequest extends FormRequest
             'total_shares.min' => 'Total shares must be at least :min.',
             'close_date.after' => 'Close date must be after open date.',
             'listing_date.after' => 'Listing date must be after close date.',
-            'ipo_status.in' => 'IPO status must be one of: opened, closed, pending.',
-            
-
+            'ipo_status.in' => 'IPO status must be one of: open, close, pending.',
 
         ];
     }

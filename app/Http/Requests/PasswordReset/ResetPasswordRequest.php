@@ -30,14 +30,13 @@ class ResetPasswordRequest extends FormRequest
     }
 
     public function messages()
-{
-    return [
-        'email.required' => 'Please provide your email address.',
-        'email.email' => 'Please provide a valid email address.',
-        'password.required' => 'Please enter your new password.',
-        'password.min' => 'Your password must be at least 6 characters long.',
-        'password.confirmed' => 'The password confirmation does not match.',
-    ];
-}
-
+    {
+        return [
+            'email.required' => 'Please provide your email address.',
+            'email.email' => 'Please provide a valid email address.',
+            'password.required' => 'Please enter your new password.',
+            'password.min' => 'Your password must be at least 6 characters long.',
+            'password.confirmed' => 'The password confirmation does not match.',
+        ];
+    }
 }

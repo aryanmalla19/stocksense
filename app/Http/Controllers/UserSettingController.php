@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserSetting\StoreUserSettingRequest;
+use App\Http\Requests\UserSetting\UpdateUserSettingRequest;
 use App\Http\Resources\UserSettingResource;
 use App\Models\UserSetting;
-use Illuminate\Http\Request;
 
 class UserSettingController extends Controller
 {
@@ -23,21 +24,10 @@ class UserSettingController extends Controller
     /**
      * Store a newly created user setting.
      */
-    public function store(Request $request)
+    public function store(StoreUserSettingRequest $request)
     {
-        $data = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'notification_enabled' => 'nullable|boolean',
-            'mode' => 'required|in:light,dark',
-        ]);
-
+        $data = $request->validated();
         $user = auth()->user();
-        if ($user->id != $data['user_id']) {
-            return response()->json([
-                'message' => 'You cannot create settings for another user',
-            ], 403);
-        }
-
         $setting = $user->setting()->updateOrCreate(['user_id' => $user->id], $data);
 
         return new UserSettingResource($setting);
@@ -63,13 +53,9 @@ class UserSettingController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(UpdateUserSettingRequest $request)
     {
-        $data = $request->validate([
-            'notification_enabled' => 'nullable|boolean',
-            'mode' => 'required|in:light,dark',
-        ]);
-
+        $data = $request->validated();
         $user = auth()->user();
         $setting = $user->setting;
 

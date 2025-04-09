@@ -2,21 +2,19 @@
 
 namespace App\Events;
 
-use App\Models\User;
+use App\Models\Transaction;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class UserRegistered
+class BroughtStock
 {
     use Dispatchable, SerializesModels;
-
-    public User $user;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(User $user)
-    {
-        $this->user = $user;
-    }
+    public function __construct(
+        public Transaction $transaction,
+        public $user
+    ) {}
 }

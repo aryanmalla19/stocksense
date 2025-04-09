@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HoldingController;
 use App\Http\Controllers\IpoAllotmentController;
 use App\Http\Controllers\IpoApplicationController;
@@ -17,7 +18,6 @@ use App\Http\Controllers\VerificationEmailController;
 use App\Http\Controllers\WatchlistController;
 use App\Http\Middleware\ApiExceptionMiddleware;
 use Illuminate\Support\Facades\Route;
-
 
 Route::prefix('v1')->middleware(ApiExceptionMiddleware::class)->group(function () {
     // Public Authentication Routes
@@ -64,17 +64,18 @@ Route::prefix('v1')->middleware(ApiExceptionMiddleware::class)->group(function (
         Route::apiResource('/ipo-details', IpoDetailController::class)->names('ipo-details');
         Route::apiResource('/ipo-applications', IpoApplicationController::class)->names('ipo-applications');
 
-        // Sectorsa
+        // Sectors
         Route::apiResource('/sectors', SectorController::class)->names('sectors');
+
+        Route::get('/dashboard', DashboardController::class);
 
         // Transaction
         Route::apiResource('/transactions', TransactionController::class)->names('transactions');
-        
-        //Watchlist
+
+        // Watchlist
         Route::apiResource('/users/watchlists', WatchlistController::class);
     });
 });
-
 
 Route::get('/watchlists', [WatchlistController::class, 'showAll'])->name('all-watchlists');
 

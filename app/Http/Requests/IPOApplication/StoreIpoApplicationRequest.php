@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\IPOApplication;
 
-use Illuminate\Foundation\Http\FormRequest;
 use App\Models\IpoDetail;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
 
 class StoreIpoApplicationRequest extends FormRequest

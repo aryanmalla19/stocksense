@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\PasswordReset;
+namespace App\Http\Requests\WatchList;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SendResetPasswordRequest extends FormRequest
+class StoreWatchlistRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,18 @@ class SendResetPasswordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|email',
-            //
+            'stock_id' => 'required|exists:stocks,id',
+        ];
+    }
+
+    /**
+     * Get custom messages for validation errors.
+     */
+    public function messages(): array
+    {
+        return [
+            'stock_id.required' => 'The stock ID is required.',
+            'stock_id.exists' => 'The selected stock does not exist.',
         ];
     }
 }

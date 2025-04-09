@@ -28,11 +28,11 @@ class StoreSectorRequest extends FormRequest
         ];
     }
 
-    public function messages():array
+    public function messages(): array
     {
         return [
             'name.required' => 'Sector name is required',
-            'name.in'=> 'Sector name must be in Predefined values',
+            'name.in' => 'Sector name must be in Predefined values',
 
         ];
     }

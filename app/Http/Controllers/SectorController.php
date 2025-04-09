@@ -6,7 +6,6 @@ use App\Http\Requests\Sector\StoreSectorRequest;
 use App\Http\Requests\Sector\UpdateSectorRequest;
 use App\Http\Resources\SectorResource;
 use App\Models\Sector;
-use Illuminate\Http\Request;
 
 class SectorController extends Controller
 {
@@ -14,7 +13,6 @@ class SectorController extends Controller
     // {
     //     $this->middleware('auth:api');
     // }
-
 
     public function index()
     {
@@ -26,7 +24,6 @@ class SectorController extends Controller
             'data' => SectorResource::collection($sectors),
         ]);
     }
-
 
     public function store(StoreSectorRequest $request)
     {
@@ -43,7 +40,6 @@ class SectorController extends Controller
     /**
      * Display the specified sector.
      *
-     * @param  string  $id
      * @return \Illuminate\Http\JsonResponse
      */
     public function show(string $id)
@@ -58,7 +54,6 @@ class SectorController extends Controller
         ]);
     }
 
-
     public function update(UpdateSectorRequest $request, string $id)
     {
         // Find sector or fail with a 404 response
@@ -69,11 +64,10 @@ class SectorController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Successfully updated sector with ID ' . $id,
+            'message' => 'Successfully updated sector with ID '.$id,
             'data' => new SectorResource($sector),
         ]);
     }
-
 
     public function destroy(string $id)
     {
@@ -85,10 +79,9 @@ class SectorController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Successfully deleted sector with ID ' . $id,
+            'message' => 'Successfully deleted sector with ID '.$id,
         ]);
     }
-
 
     protected function findSectorOrFail(string $id)
     {

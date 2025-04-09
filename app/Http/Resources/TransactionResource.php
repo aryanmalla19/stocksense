@@ -22,7 +22,7 @@ class TransactionResource extends JsonResource
             'price' => $this->price,
             'transaction_fee' => $this->transaction_fee,
             'stock_id' => $this->stock_id,
-            'company_name' => $this->whenLoaded('stock')->company_name
+            'company_name' => $this->whenLoaded('stock')->company_name,
         ];
     }
 }
