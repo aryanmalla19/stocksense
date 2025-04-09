@@ -81,19 +81,4 @@ class WatchlistController extends Controller
             'message' => 'Successfully deleted watchlist with ID '.$id,
         ]);
     }
-
-    public function showAll()
-    {
-        $watchlists = Watchlist::with(['user', 'stock'])->get();
-        if ($watchlists->isEmpty()) {
-            return response()->json([
-                'message' => 'No any watchlist found',
-            ]);
-        }
-
-        return response()->json([
-            'message' => 'Successfully fetched all watchlist data',
-            'data' => WatchListResource::collection($watchlists),
-        ]);
-    }
 }
