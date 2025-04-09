@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HoldingController;
+use App\Http\Controllers\IpoAllotmentController;
 use App\Http\Controllers\IpoApplicationController;
 use App\Http\Controllers\IpoDetailController;
 use App\Http\Controllers\PasswordResetController;
@@ -77,3 +78,6 @@ Route::prefix('v1')->middleware(ApiExceptionMiddleware::class)->group(function (
 });
 
 Route::get('/watchlists', [WatchlistController::class, 'showAll'])->name('all-watchlists');
+
+// IPO allotment
+Route::get('/ipo-allotments/{id}' , [IpoAllotmentController::class, 'ipoAllotment'])->name('ipo-allotments');

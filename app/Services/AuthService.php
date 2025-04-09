@@ -45,8 +45,8 @@ class AuthService
     {
         $user = User::where('email', $credentials['email'])->first();
 
-        if (! $user) {
-            return ['error' => 'Invalid email', 'status' => 401];
+        if (!$user) {
+            return ['error' => 'Email does not exist', 'status' => 401];
         }
 
         if (! Hash::check($credentials['password'], $user->password)) {
