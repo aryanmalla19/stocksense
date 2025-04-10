@@ -12,20 +12,10 @@ return new class extends Migration
     public function up()
     {
         Schema::create('sectors', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->id();
             $table->enum('name', [
-                'banking',
-                'hydropower',
-                'life Insurance',
-                'non-life Insurance',
-                'health',
-                'manufacturing',
-                'hotel',
-                'trading',
-                'microfinance',
-                'finance',
-                'investment',
-                'others',
+                'Banking', 'Hydropower', 'Life Insurance', 'Non-life Insurance', 'Health',
+                'Manufacturing', 'Hotel', 'Trading', 'Microfinance', 'Finance', 'Investment', 'Others'
             ])->unique();
         });
     }
