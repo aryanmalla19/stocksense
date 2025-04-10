@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\IpoApplication;
 use App\Models\IpoDetail;
 use App\Models\Portfolio;
-use App\Models\Sector;
 use App\Models\Stock;
 use App\Models\StockPrice;
 use App\Models\Transaction;
@@ -20,22 +19,86 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('sectors')->truncate();
+        // Seed fixed sector data
         $this->call(SectorSeeder::class);
 
-
+        // Create stocks and attach prices
         Stock::factory(50)
-            ->has(StockPrice::factory(5), 'prices')
+            ->has(StockPrice::factory(10), 'prices')
             ->create();
 
         User::factory(10)->create()->each(function ($user) {
             UserSetting::factory()->create(['user_id' => $user->id]);
-            Portfolio::factory(3)->create(['user_id' => $user->id]);
-            Transaction::factory(5)->create(['user_id' => $user->id]);
+
+            // Create 1 portfolio per user for simplicity
+            $portfolio = Portfolio::factory()->create(['user_id' => $user->id]);
+
+            $initialBalance = 100000; // e.g., Rs. 1 lakh
+            $portfolio->update(['amount' => $initialBalance]);
 
             $stockIds = Stock::pluck('id')->toArray();
-            $selectedStockIds = Arr::random($stockIds, min(4, count($stockIds)));
+            $totalSpent = 0;
 
+            // Create transactions (simulate purchases)
+            for ($i = 0; $i < 5; $i++) {
+                $stockId = Arr::random($stockIds);
+                $quantity = rand(1, 50);
+                $pricePerUnit = Stock::find($stockId)->prices()->inRandomOrder()->first()?->close_price ?? rand(100, 1000);
+                $totalPrice = $quantity * $pricePerUnit;
+
+                // Prevent overspending
+                if (($totalSpent + $totalPrice) > $initialBalance) {
+                    break;
+                }
+
+                $totalSpent += $totalPrice;
+
+                // Create the transaction
+                Transaction::factory()->create([
+                    'user_id' => $user->id,
+                    'stock_id' => $stockId,
+                    'quantity' => $quantity,
+                    'price' => $pricePerUnit,
+                ]);
+
+                // Check if holding already exists
+                $holding = DB::table('holdings')
+                    ->where('portfolio_id', $portfolio->id)
+                    ->where('stock_id', $stockId)
+                    ->first();
+
+                // Calculate average price for the stock
+                $totalQuantity = $holding ? $holding->quantity + $quantity : $quantity;
+                $newAveragePrice = ($holding ? $holding->average_price * $holding->quantity : 0) + ($pricePerUnit * $quantity);
+                $newAveragePrice = $newAveragePrice / $totalQuantity;
+
+                if ($holding) {
+                    // If holding exists, update the quantity and average price
+                    DB::table('holdings')
+                        ->where('portfolio_id', $portfolio->id)
+                        ->where('stock_id', $stockId)
+                        ->update([
+                            'quantity' => $totalQuantity,
+                            'average_price' => $newAveragePrice,
+                        ]);
+                } else {
+                    // If holding doesn't exist, insert a new record
+                    DB::table('holdings')->insert([
+                        'portfolio_id' => $portfolio->id,
+                        'stock_id' => $stockId,
+                        'quantity' => $quantity,
+                        'average_price' => $pricePerUnit, // Initial average price is the purchase price
+                    ]);
+                }
+            }
+
+            // Deduct the total spent from the balance
+            $portfolio->update([
+                'amount' => $initialBalance - $totalSpent
+            ]);
+
+            // Create watchlist entries
+            $selectedStockIds = collect($stockIds)->shuffle()->take(4);
             foreach ($selectedStockIds as $stockId) {
                 Watchlist::factory()->create([
                     'user_id' => $user->id,
@@ -44,8 +107,11 @@ class DatabaseSeeder extends Seeder
             }
         });
 
-        IpoDetail::factory(5)
-            ->has(IpoApplication::factory(3), 'applications')
-            ->create();
+        // Create IPO details and applications
+        IpoDetail::factory(5)->create()->each(function ($ipo) {
+            IpoApplication::factory(3)->create([
+                'ipo_id' => $ipo->id,
+            ]);
+        });
     }
 }

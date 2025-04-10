@@ -19,7 +19,7 @@ class StockFactory extends Factory
     {
         $sector = Sector::inRandomOrder()->first() ?? Sector::factory()->create();
         return [
-            'symbol' => $this->faker->unique()->lexify('???'), // e.g., ABC, XYZ
+            'symbol' => $this->faker->unique()->lexify('?????'),
             'company_name' => $this->faker->company(),
             'sector_id' => $sector->id,
             'description' => $this->faker->optional(0.8)->paragraph(), // 80% chance of description
