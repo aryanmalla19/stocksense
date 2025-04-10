@@ -17,8 +17,9 @@ class UserSettingFactory extends Factory
      */
     public function definition(): array
     {
+        $user = User::inRandomOrder()->first() ?? User::factory()->create();
         return [
-            'user_id' => User::inRandomOrder()->first()->id ?? User::factory()->create()->id,
+            'user_id' => $user->id,
             'notification_enabled' => $this->faker->boolean(80), // 80% chance enabled
             'mode' => $this->faker->randomElement(['dark', 'light']),
             'created_at' => $this->faker->dateTimeThisYear(),
