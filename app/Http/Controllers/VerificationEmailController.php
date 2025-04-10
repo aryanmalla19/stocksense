@@ -13,39 +13,60 @@ class VerificationEmailController extends Controller
     /**
      * Verify the user's email address.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @param  string  $hash
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function verify(Request $request, $id, $hash)
     {
         $user = User::findOrFail($id);
 
         // Validate the signed URL
-        if (! URL::hasValidSignature($request)) {
-            return response()->json(['error' => 'Invalid or expired verification link'], 401);
+        if (!URL::hasValidSignature($request)) {
+            $redirectUrl = URL::temporarySignedRoute(
+                'login.with-message',
+                now()->addMinutes(30),
+                ['error' => 'invalid_signature']
+            );
+            return redirect()->to($redirectUrl);
         }
 
         // Verify the hash matches the user's email
-        if (! hash_equals((string) $hash, sha1($user->email))) {
-            return response()->json(['error' => 'Invalid verification link'], 401);
+        if (!hash_equals((string) $hash, sha1($user->email))) {
+            $redirectUrl = URL::temporarySignedRoute(
+                'login.with-message',
+                now()->addMinutes(30),
+                ['error' => 'invalid_link']
+            );
+            return redirect()->to($redirectUrl);
         }
 
         // Check if already verified
         if ($user->hasVerifiedEmail()) {
-            return response()->json(['message' => 'Email already verified'], 400);
+            $redirectUrl = URL::temporarySignedRoute(
+                'login.with-message',
+                now()->addMinutes(30),
+                ['message' => 'already_verified']
+            );
+            return redirect()->to($redirectUrl);
         }
 
         $user->markEmailAsVerified();
 
-        return response()->json([
-            'message' => 'Email verified successfully',
-        ]);
+        $redirectUrl = URL::temporarySignedRoute(
+            'login.with-message',
+            now()->addMinutes(30),
+            ['message' => 'email_verified']
+        );
+
+        return redirect()->to($redirectUrl);
     }
 
     /**
      * Resend the email verification notification.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function resend(Request $request)
@@ -53,15 +74,8 @@ class VerificationEmailController extends Controller
         $request->validate(['email' => 'required|email']);
         $user = User::where('email', $request->email)->first();
 
-        if ($user && ! $user->hasVerifiedEmail()) {
+        if ($user && !$user->hasVerifiedEmail()) {
             Mail::to($user->email)->queue(new UserVerification($user));
-
-            return response()->json(['message' => 'Verification email resent.']);
-        }
-
-        if ($user && ! $user->hasVerifiedEmail()) {
-            $user->sendEmailVerificationNotification();
-
             return response()->json(['message' => 'Verification email resent.']);
         }
 
