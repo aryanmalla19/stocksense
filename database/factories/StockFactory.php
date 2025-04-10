@@ -17,13 +17,23 @@ class StockFactory extends Factory
      */
     public function definition(): array
     {
+        $sector = Sector::inRandomOrder()->first() ?? Sector::factory()->create();
         return [
             'symbol' => $this->faker->unique()->lexify('???'), // e.g., ABC, XYZ
             'company_name' => $this->faker->company(),
-            'sector_id' => Sector::inRandomOrder()->first()->id ?? Sector::factory()->create()->id,
+            'sector_id' => $sector->id,
             'description' => $this->faker->optional(0.8)->paragraph(), // 80% chance of description
+            'is_active' => true,
             'created_at' => $this->faker->dateTimeThisYear(),
             'updated_at' => $this->faker->dateTimeThisYear(),
         ];
     }
+
+    public function withNotActive(): Factory
+    {
+        return $this->state([
+            'is_active' => false,
+        ]);
+    }
+
 }

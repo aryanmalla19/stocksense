@@ -21,19 +21,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         DB::table('sectors')->truncate();
-        Sector::factory(11)->sequence(
-            ['name' => 'banking'],
-            ['name' => 'hydropower'],
-            ['name' => 'life Insurance'],
-            ['name' => 'health'],
-            ['name' => 'manufacturing'],
-            ['name' => 'hotel'],
-            ['name' => 'trading'],
-            ['name' => 'microfinance'],
-            ['name' => 'finance'],
-            ['name' => 'investment'],
-            ['name' => 'others'],
-        )->create();
+        $this->call(SectorSeeder::class);
+
 
         Stock::factory(50)
             ->has(StockPrice::factory(5), 'prices')
