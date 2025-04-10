@@ -10,14 +10,13 @@ class CreateTransactionsTable extends Migration
     {
         // Create the table without the type column
         Schema::create('transactions', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('stock_id')->constrained('stocks')->onDelete('cascade');
-            $table->enum('type', ['buy', 'sell', 'ipo_allotted']);
+            $table->enum('type', ['buy', 'sell', 'ipo_allotted'])->index();
             $table->integer('quantity');
             $table->decimal('price', 15, 2);
             $table->decimal('transaction_fee', 15, 2);
-            $table->index('user_id', 'idx_user_transaction');
             $table->timestamps();
         });
     }

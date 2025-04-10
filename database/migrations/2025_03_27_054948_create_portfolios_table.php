@@ -12,9 +12,10 @@ return new class extends Migration
     public function up()
     {
         Schema::create('portfolios', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->decimal('amount', 15, 2)->default(100000);
+            $table->index('user_id');
             $table->timestamps();
         });
     }
