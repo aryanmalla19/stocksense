@@ -17,14 +17,24 @@ class StockPriceFactory extends Factory
      */
     public function definition(): array
     {
-        $basePrice = $this->faker->randomFloat(2, 10, 1000); // Base for consistency
+        $basePrice = $this->faker->randomFloat(2, 100, 1000);
+
+        $openPrice = $basePrice;
+        $priceFluctuation = $this->faker->randomFloat(2, -50, 50);
+        $closePrice = round($openPrice + $priceFluctuation, 2);
+
+        $highPrice = max($openPrice, $closePrice) + $this->faker->randomFloat(2, 0, 20);
+        $lowPrice = min($openPrice, $closePrice) - $this->faker->randomFloat(2, 0, 20);
+
+        $currentPrice = $this->faker->randomFloat(2, $lowPrice, $highPrice);
 
         return [
             'stock_id' => Stock::inRandomOrder()->first()?->id ?? Stock::factory()->create()->id,
-            'open_price' => $basePrice,
-            'close_price' => $basePrice + $this->faker->randomFloat(2, -50, 50),
-            'high_price' => $basePrice + $this->faker->randomFloat(2, 0, 100),
-            'low_price' => $basePrice - $this->faker->randomFloat(2, 0, 100),
+            'open_price' => $openPrice,
+            'close_price' => $closePrice,
+            'high_price' => round($highPrice, 2),
+            'low_price' => round($lowPrice, 2),
+            'current_price' => round($currentPrice, 2),
             'volume' => $this->faker->numberBetween(1000, 1000000),
             'date' => $this->faker->dateTimeThisYear(),
         ];
