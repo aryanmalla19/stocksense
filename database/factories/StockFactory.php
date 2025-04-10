@@ -23,7 +23,7 @@ class StockFactory extends Factory
             'company_name' => $this->faker->company(),
             'sector_id' => $sector->id,
             'description' => $this->faker->optional(0.8)->paragraph(), // 80% chance of description
-            'is_active' => true,
+            'is_listed' => true,
             'created_at' => $this->faker->dateTimeThisYear(),
             'updated_at' => $this->faker->dateTimeThisYear(),
         ];
@@ -32,7 +32,7 @@ class StockFactory extends Factory
     public function withNotActive(): Factory
     {
         return $this->state([
-            'is_active' => false,
+            'is_listed' => false,
         ]);
     }
 
