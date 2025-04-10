@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\IpoApplication;
 use App\Models\IpoDetail;
+use App\Notifications\IpoAlloted;
 
 class IpoAllotmentController extends Controller
 {
@@ -16,9 +17,12 @@ class IpoAllotmentController extends Controller
 
         if ($allApplications->count() <= $totalUserAllot) {
             foreach ($allApplications as $application) {
-                $application->update(['status' => 'allotted']);
+                $application->update(['status' => 'allotted', 'alloted_shares' => 10]);
+                if ($application->user) {
+                    $application->user->notify(new IpoAlloted($ipo_details));
+                }
             }
-            return response()->json(['message' => 'All applications allotted (less than or equal to required).']);
+            return response()->json(['message' => 'All applications allotted']);
         }
 
         $selectedApplications = $allApplications->random($totalUserAllot);
@@ -26,13 +30,19 @@ class IpoAllotmentController extends Controller
         $selectedIds = $selectedApplications->pluck('id')->toArray();
 
         IpoApplication::whereIn('id', $selectedIds)
-            ->update(['status' => 'allotted']);
+            ->update(['status' => 'allotted', 'alloted_shares' => 10]);
+
+        foreach ($selectedApplications as $application) {
+            if ($application->user) {
+                $application->user->notify(new IpoAlloted($ipo_details));
+            }
+        }
 
         IpoApplication::where('ipo_id', $ipo_id)
             ->whereNotIn('id', $selectedIds)
             ->update(['status' => 'not_allotted']);
 
-        return response()->json(['message' => 'IPO shares allotted successfully.']);
+        return response()->json(['message' => 'IPO shares distributed successfully.']);
     }
 
 }
