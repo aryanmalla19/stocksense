@@ -1,21 +1,23 @@
 <?php
-
 namespace App\Notifications;
 
+use App\Models\IpoDetail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
-class UserLogin extends Notification implements ShouldQueue
+class IpoAlloted extends Notification
 {
     use Queueable;
+
+    protected $ipoDetail;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct(IpoDetail $ipo_detail)
     {
-        //
+        $this->ipoDetail = $ipo_detail;
     }
 
     /**
@@ -25,12 +27,16 @@ class UserLogin extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database']; // or add 'mail' if needed
     }
+
+    /**
+     * Get the array representation of the notification.
+     */
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => "Logged In"
+            'message' => "You have been allotted IPO of " . $this->ipoDetail->stock->symbol
         ];
     }
 }

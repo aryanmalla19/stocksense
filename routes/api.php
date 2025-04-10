@@ -6,6 +6,7 @@ use App\Http\Controllers\HoldingController;
 use App\Http\Controllers\IpoAllotmentController;
 use App\Http\Controllers\IpoApplicationController;
 use App\Http\Controllers\IpoDetailController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\SectorController;
@@ -76,6 +77,9 @@ Route::prefix('v1')->middleware(ApiExceptionMiddleware::class)->group(function (
 
         // Watchlist
         Route::apiResource('/users/watchlists', WatchlistController::class);
+
+        // Notifications
+        Route::apiResource('/users/notifications', NotificationController::class);
     });
 
     // Redirect route for verification
