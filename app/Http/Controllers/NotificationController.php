@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\NotificationResource;
 use Illuminate\Http\JsonResponse;
 
 class NotificationController extends Controller
@@ -19,7 +20,7 @@ class NotificationController extends Controller
 
         return response()->json([
             'message' => 'Successfully fetched user notifications',
-            'data' => $notifications
-        ], 200);
+            'data' => NotificationResource::collection($notifications)
+        ], 200);s
     }
 }
