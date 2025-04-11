@@ -15,6 +15,7 @@ class IpoApplicationResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->id,
             'user_id' => $this->user_id,
             'ipo_id' => $this->ipo_id,
             'applied_shares' => $this->applied_shares,
