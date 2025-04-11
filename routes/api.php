@@ -51,6 +51,9 @@ Route::prefix('v1')->middleware(ApiExceptionMiddleware::class)->group(function (
             Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
             Route::post('/2fa/enable', [TwoFactorController::class, 'enable'])->name('2fa.enable');
             Route::post('/2fa/disable', [TwoFactorController::class, 'disable'])->name('2fa.disable');
+
+            //change password
+            Route::post('/change-password', [AuthController::class, 'changePassword']);
         });
 
         // User Settings
@@ -80,6 +83,7 @@ Route::prefix('v1')->middleware(ApiExceptionMiddleware::class)->group(function (
 
         // Notifications
         Route::apiResource('/users/notifications', NotificationController::class);
+
     });
 
     // Redirect route for verification
