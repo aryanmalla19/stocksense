@@ -15,11 +15,9 @@ class WatchListResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
             'stock_id' => $this->stock_id,
             'user_id' => $this->user_id,
-            'symbol' => $this->stock ? $this->stock->symbol : null,
-            'company_name' => $this->stock ? $this->stock->company_name : null,
+            'stock' => new StockResource($this->stock),
         ];
     }
 }

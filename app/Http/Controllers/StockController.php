@@ -11,13 +11,16 @@ class StockController extends Controller
 {
     public function index()
     {
-        $stocks = Stock::with(['sector', 'latestPrice'])->get();
+        $stocks = Stock::with(['sector', 'latestPrice'])
+            ->listed()
+            ->get();
 
         return response()->json([
             'message' => 'Successfully fetched all stocks',
             'data' => StockResource::collection($stocks),
         ]);
     }
+
 
     public function store(StoreStockRequest $request)
     {
@@ -31,10 +34,13 @@ class StockController extends Controller
 
     public function show(string $id)
     {
-        $stock = Stock::with(['sector', 'latestPrice'])->find($id);
+        $stock = Stock::with(['sector', 'latestPrice'])
+            ->listed()
+            ->find($id);
+
         if (! $stock) {
             return response()->json([
-                'message' => 'No Stock found with ID '.$id,
+                'message' => 'No listed stock found with ID '.$id,
             ], 404);
         }
 
