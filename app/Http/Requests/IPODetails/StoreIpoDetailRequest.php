@@ -28,7 +28,6 @@ class StoreIpoDetailRequest extends FormRequest
             'open_date' => 'required|date',
             'close_date' => 'required|date|after:open_date',
             'listing_date' => 'required|date|after:close_date',
-            'ipo_status' => 'required|string|in:opened,closed,pending',
         ];
     }
 
@@ -38,7 +37,6 @@ class StoreIpoDetailRequest extends FormRequest
             'stock_id' => 'Stock id is required.',
             'stock_id.exists' => 'The selected stock deosnot exist.',
             'issue_price.min' => 'Issue price must be at least :min.',
-
             'total_shares.min' => 'Total shares must be at least :min.',
             'close_date.after' => 'Close date must be after open date.',
             'listing_date.after' => 'Listing date must be after close date.',

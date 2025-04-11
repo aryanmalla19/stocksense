@@ -32,4 +32,65 @@ return Application::configure(basePath: dirname(__DIR__))
                 ], 404);
             }
         });
+
+        $exceptions->render(function (Illuminate\Database\QueryException $e, $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid query parameters. Please check your input.',
+                    'error' => 'QueryException',
+                    'details' => config('app.debug') ? $e->getMessage() : null,
+                ], 400);
+            }
+        });
+        $exceptions->render(function (Illuminate\Validation\ValidationException $e, $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed.',
+                    'errors' => $e->errors(),
+                ], 422);
+            }
+        });
+
+        $exceptions->render(function (Illuminate\Auth\AuthenticationException $e, $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthenticated.',
+                ], 401);
+            }
+        });
+
+        $exceptions->render(function (Illuminate\Auth\Access\AuthorizationException $e, $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You are not authorized to perform this action.',
+                ], 403);
+            }
+        });
+
+        $exceptions->render(function (Illuminate\Database\Eloquent\ModelNotFoundException $e, $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Resource not found.',
+                    'model' => class_basename($e->getModel()),
+                ], 404);
+            }
+        });
+
+        $exceptions->render(function (Throwable $e, $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'An unexpected error occurred.',
+                    'error' => class_basename($e),
+                    'details' => config('app.debug') ? $e->getMessage() : null,
+                ], 500);
+            }
+        });
+
+
     })->create();
