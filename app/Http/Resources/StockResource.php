@@ -21,11 +21,15 @@ class StockResource extends JsonResource
             'symbol' => $this->symbol,
             'company_name' => $this->company_name,
             'sector_id' => $this->sector_id,
+            'is_listed' => $this->is_listed,
             'sector' => $this->whenLoaded('sector', fn () => $this->sector->name, null),
-            'open_price' => $latestPrice ? $latestPrice->open_price : null,
-            'close_price' => $latestPrice ? $latestPrice->close_price : null,
-            'high_price' => $latestPrice ? $latestPrice->high_price : null,
-            'low_price' => $latestPrice ? $latestPrice->low_price : null,
+
+            // 👇 Only include price fields if the stock is listed
+            'open_price' => $this->is_listed && $latestPrice ? $latestPrice->open_price : null,
+            'close_price' => $this->is_listed && $latestPrice ? $latestPrice->close_price : null,
+            'high_price' => $this->is_listed && $latestPrice ? $latestPrice->high_price : null,
+            'low_price' => $this->is_listed && $latestPrice ? $latestPrice->low_price : null,
+            'current_price' => $this->is_listed && $latestPrice ? $latestPrice->current_price : null,
         ];
     }
 }

@@ -15,7 +15,7 @@ class StoreStockRequest extends FormRequest
     {
         return [
             'symbol' => 'required|string|max:6|unique:stocks,symbol',
-            'name' => 'required|string',
+            'company_name' => 'required|string',
             'sector_id' => 'required|integer|exists:sectors,id',
         ];
     }
