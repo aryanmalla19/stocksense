@@ -18,13 +18,19 @@ class IpoApplicationFactory extends Factory
      */
     public function definition(): array
     {
+        $user = User::inRandomOrder()->first() ?? User::factory()->create();
+        $ipo = IpoDetail::inRandomOrder()->first() ?? IpoDetail::factory()->create();
+        $status = $this->faker->randomElement(['pending', 'allotted', 'not_allotted']);
+        $appliedShares = $this->faker->numberBetween(10, 15);
+        $allottedShares = $status === 'allotted' ? $this->faker->numberBetween(1, $appliedShares) : null;
+
         return [
-            'user_id' => User::inRandomOrder()->first()->id ?? User::factory()->create()->id,
-            'ipo_id' => IpoDetail::inRandomOrder()->first()->id ?? IpoDetail::factory()->create()->id,
-            'applied_shares' => $this->faker->numberBetween(10, 100),
-            'status' => $this->faker->randomElement(['pending', 'allotted', 'not_allotted']),
+            'user_id' => $user->id,
+            'ipo_id' => $ipo->id,
+            'applied_shares' => $appliedShares,
+            'status' => $status,
             'applied_date' => $this->faker->dateTimeThisMonth(),
-            'allotted_shares' => $this->faker->numberBetween(0, 50),
+            'allotted_shares' => $allottedShares,
             'created_at' => $this->faker->dateTimeThisMonth(),
             'updated_at' => $this->faker->dateTimeThisMonth(),
         ];
@@ -37,9 +43,11 @@ class IpoApplicationFactory extends Factory
      */
     public function approved()
     {
-        return $this->state([
-            'status' => 'approved',
-            'allotted_shares' => fn (array $attributes) => $attributes['applied_shares'],
-        ]);
+        return $this->state(function (array $attributes) {
+            return [
+                'status' => 'allotted',
+                'allotted_shares' => $this->faker->numberBetween(1, $attributes['applied_shares']),
+            ];
+        });
     }
 }

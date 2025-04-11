@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Sector extends Model
 {
-    use HasFactory;
 
     /**
      * Indicates if the model should be timestamped.

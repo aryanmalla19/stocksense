@@ -9,10 +9,11 @@ class CreateStocksTable extends Migration
     public function up()
     {
         Schema::create('stocks', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->id();
             $table->string('symbol')->unique();
             $table->string('company_name');
             $table->foreignId('sector_id')->nullable()->constrained('sectors')->onDelete('set null');
+            $table->boolean('is_listed')->default(false);
             $table->text('description')->nullable();
             $table->timestamps();
         });

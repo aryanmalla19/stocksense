@@ -12,10 +12,10 @@ return new class extends Migration
     public function up()
     {
         Schema::create('user_settings', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->id();
             $table->foreignId('user_id')->unique()->constrained('users')->onDelete('cascade');
             $table->boolean('notification_enabled')->default(true);
-            $table->enum('mode', ['dark', 'light']);
+            $table->enum('mode', ['dark', 'light'])->default('light');
             $table->timestamps();
         });
     }

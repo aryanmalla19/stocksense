@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('ipo_id')->constrained('ipo_details')->onDelete('cascade');
             $table->integer('applied_shares');
             $table->enum('status', ['pending', 'allotted', 'not_allotted'])->default('pending');
-            $table->timestamp('applied_date')->useCurrent()->useCurrentOnUpdate();
+            $table->timestamp('applied_date')->useCurrent();
             $table->integer('allotted_shares')->nullable();
             $table->timestamps();
         });

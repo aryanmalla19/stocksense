@@ -22,8 +22,8 @@ class TransactionFactory extends Factory
             'user_id' => User::inRandomOrder()->first()->id ?? User::factory()->create()->id,
             'stock_id' => Stock::inRandomOrder()->first()?->id ?? Stock::factory()->create()->id,
             'type' => $this->faker->randomElement(['buy', 'sell', 'ipo_allotted']),
-            'quantity' => $this->faker->numberBetween(1, 100),
-            'price' => $this->faker->randomFloat(2, 10, 1000),
+            'quantity' => $this->faker->numberBetween(10, 100),
+            'price' => $this->faker->randomFloat(2, 1000, 100000),
             'transaction_fee' => $this->faker->randomFloat(2, 0.5, 50), // Fee between 0.5 and 50
             'created_at' => $this->faker->dateTimeThisMonth(),
             'updated_at' => $this->faker->dateTimeThisMonth(),

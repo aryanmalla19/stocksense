@@ -62,4 +62,10 @@ class Stock extends Model
     {
         return $this->hasMany(Holding::class);
     }
+
+    public function scopeListed($query)
+    {
+        return $query->where('is_listed', true);
+    }
+
 }

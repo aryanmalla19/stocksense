@@ -18,9 +18,12 @@ class WatchlistFactory extends Factory
      */
     public function definition(): array
     {
+        $user = User::inRandomOrder()->first() ?? User::factory()->create();
+        $stock = Stock::inRandomOrder()->first() ?? Stock::factory()->create();
+
         return [
-            'user_id' => User::inRandomOrder()->first()->id ?? User::factory()->create()->id,
-            'stock_id' => $this->faker->unique()->randomElement(Stock::pluck('id')->toArray()) ?? Stock::factory()->create()->id,
+            'user_id' => $user->id,
+            'stock_id' => $stock->id,
             'created_at' => $this->faker->dateTimeThisYear(),
             'updated_at' => $this->faker->dateTimeThisYear(),
         ];
