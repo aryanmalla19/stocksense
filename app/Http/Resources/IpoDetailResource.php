@@ -23,10 +23,7 @@ class IpoDetailResource extends JsonResource
             'close_date' => $this->close_date?->format('Y-m-d'),
             'listing_date' => $this->listing_date?->format('Y-m-d'),
             'ipo_status' => $this->ipo_status,
-            'status_label' => ucfirst($this->ipo_status),
-
-            'days_until_open' => Carbon::now()->diffInDays(Carbon::parse($this->open_date), false),
-            // : It will show how many days are left until the IPO opens (or how many days since it opened if the IPO is in the past).
+            'days_until_open' => (int) Carbon::now()->diffInDays(Carbon::parse($this->open_date), true),
             'stock_id' => $this->stock_id,
             'stock' => new StockResource($this->whenLoaded('stock')),
         ];
