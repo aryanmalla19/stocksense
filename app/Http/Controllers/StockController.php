@@ -6,7 +6,7 @@ use App\Http\Requests\Stock\StoreStockRequest;
 use App\Http\Requests\Stock\UpdateStockRequest;
 use App\Http\Resources\StockResource;
 use App\Models\Stock;
-use GuzzleHttp\Psr7\Request;
+use Illuminate\Http\Request;
 
 class StockController extends Controller
 {
@@ -114,4 +114,29 @@ class StockController extends Controller
         ], 200);
     }
 
+    public function searchStock(Request $request){
+
+        $request->validate([
+            'query' => 'required',
+        ]);
+
+        $query = $request->input('query');
+
+        $stocks = Stock::where('symbol', 'like', "%{$query}%")
+        ->orWhere('company_name', 'like', "%{$query}%")
+        ->with(['sector', 'latestPrice'])
+        ->get();
+
+        if (empty($stocks)) {
+            return response()->json([
+                'message' => 'No stocks found'
+            ], 200);
+        }
+
+        return response()->json([
+            'message' => 'Stocks retrieved successfully',
+            'data' => StockResource::collection($stocks)
+        ], 200);
+
+    }
 }
