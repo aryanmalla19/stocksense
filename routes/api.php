@@ -104,3 +104,6 @@ Route::get('/watchlists', [WatchlistController::class, 'showAll'])->name('all-wa
 
 // IPO allotment
 Route::get('/ipo-allotments/{id}', [IpoAllotmentController::class, 'ipoAllotment'])->name('ipo-allotments');
+
+//stock sorting
+Route::get('/stocks/{column}/{direction}', [StockController::class, 'sortStock'])->name('sort-stock');
