@@ -71,4 +71,9 @@ class Stock extends Model
     {
         return $query->where('is_listed', true);
     }
+
+    public function scopeSymbol($query, $symbol)
+    {
+        return $query->where('symbol','like', "%$symbol%");
+    }
 }

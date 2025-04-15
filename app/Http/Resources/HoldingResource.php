@@ -15,7 +15,10 @@ class HoldingResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-
+            'stock_id' => $this->stock_id,
+            'quantity' => $this->quantity,
+            'average_price' => $this->average_price,
+            'stock' => $this->whenLoaded('stock'),
         ];
     }
 }

@@ -34,7 +34,7 @@ class RemoveHolding implements ShouldQueue
         }
 
         // Add the money from the sale to portfolio amount
-        $portfolio->amount += $transaction->price * $transaction->quantity;
+        $portfolio->amount += $transaction->price * $transaction->quantity - $transaction->transaction_fee;
         $portfolio->save();
 
         $newQuantity = $holding->quantity - $transaction->quantity;

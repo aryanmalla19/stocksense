@@ -42,8 +42,8 @@ class TransactionController extends Controller
         $price = Stock::find($attributes['stock_id'])->latestPrice->current_price;
         $total_price = $price * $attributes['quantity'];
 
-        $attributes['price'] = $total_price;
-        $attributes['transaction_fee'] = 0.05 * $total_price;
+        $attributes['price'] = $price;
+        $attributes['transaction_fee'] = 0.01 * $total_price;
 
         if ($attributes['type'] === 'buy') {
             if (! $user->portfolio || $user->portfolio->amount < $total_price) {
@@ -60,7 +60,7 @@ class TransactionController extends Controller
 
             if (! $holding || $holding->quantity < $attributes['quantity']) {
                 return response()->json([
-                    'message' => 'You are trying to sell more shares than you own.',
+                    'message' => 'You are trying to sell more shares than you own or stock not present in your portfolio.',
                 ], 400);
             }
         }

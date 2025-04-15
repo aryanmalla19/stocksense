@@ -17,11 +17,10 @@ use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\UserSettingController;
 use App\Http\Controllers\VerificationEmailController;
 use App\Http\Controllers\WatchlistController;
-use App\Http\Middleware\ApiExceptionMiddleware;
 use Illuminate\Http\Request; // Added this import
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('v1')->middleware(ApiExceptionMiddleware::class)->group(function () {
+Route::prefix('v1')->group(function () {
     // Public Authentication Routes
     Route::prefix('auth')->group(function () {
         // Rate-limited authentication actions
@@ -68,7 +67,7 @@ Route::prefix('v1')->middleware(ApiExceptionMiddleware::class)->group(function (
         Route::get('/stocks/{stock}/history', [StockPriceController::class, 'historyStockPrices'])->name('stocks.history');
         Route::apiResource('/stock-prices', StockPriceController::class)->names('stock-prices');
         Route::apiResource('/users/portfolios', PortfolioController::class)->names('users.portfolios');
-        Route::apiResource('/users/{id}/holdings', HoldingController::class)->names('users.holdings');
+        Route::apiResource('/users/holdings', HoldingController::class)->names('users.holdings');
 
         // IPO Management
         Route::apiResource('/ipo-details', IpoDetailController::class)->names('ipo-details');
@@ -89,26 +88,5 @@ Route::prefix('v1')->middleware(ApiExceptionMiddleware::class)->group(function (
         Route::apiResource('/users/notifications', NotificationController::class);
 
     });
-
-    // Redirect route for verification
-    Route::get('/login-with-message', function (Request $request) {
-        if (! $request->hasValidSignature()) {
-            return redirect()->to('http://localhost:3000/loginReg?error=invalid_signature');
-        }
-
-        $params = $request->query('message')
-            ? ['message' => $request->query('message')]
-            : ['error' => $request->query('error')];
-
-        return redirect()->to('http://localhost:3000/loginReg?'.http_build_query($params));
-    })->name('login.with-message');
 });
 
-Route::get('/watchlists', [WatchlistController::class, 'showAll'])->name('all-watchlists');
-
-// IPO allotment
-Route::get('/ipo-allotments/{id}', [IpoAllotmentController::class, 'ipoAllotment'])->name('ipo-allotments');
-
-//stock sorting
-Route::get('/stocks/{column}/{direction}', [StockController::class, 'sortStock'])->name('sort-stock');
-Route::post('/stocks', [StockController::class, 'searchStock'])->name('search-stock');

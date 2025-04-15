@@ -19,7 +19,7 @@ class HoldingController extends Controller
 
         return response()->json([
             'message' => 'Successfully fetched user holdings',
-            'data' => HoldingResource::collection($portfolio->holdings),
+            'data' => HoldingResource::collection($portfolio->holdings->load('stock')),
         ]);
     }
 
