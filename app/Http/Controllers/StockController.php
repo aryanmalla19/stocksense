@@ -13,12 +13,15 @@ class StockController extends Controller
     public function index()
     {
         $stocks = Stock::with(['sector', 'latestPrice'])
-            ->listed()
-            ->get();
+            ->listed();
+
+        if ($symbol = request('symbol')) {
+            $stocks->symbol($symbol);
+        }
 
         return response()->json([
             'message' => 'Successfully fetched all stocks',
-            'data' => StockResource::collection($stocks),
+            'data' => StockResource::collection($stocks->get()),
         ]);
     }
 
