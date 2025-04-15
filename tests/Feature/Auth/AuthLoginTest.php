@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Auth;
 
 use Tests\TestCase;
 use App\Models\User;
@@ -143,14 +143,16 @@ class AuthLoginTest extends TestCase
             'email' => '',
             'password' => '',
         ]);
-
+    
         $response->assertStatus(422)
                  ->assertJsonStructure([
+                     'success',
                      'message',
                      'errors' => ['email', 'password'],
                  ])
                  ->assertJson([
-                     'message' => 'Email is missing (and 1 more error)',
+                     'success' => false,
+                     'message' => 'Validation failed.',
                  ]);
     }
 }
