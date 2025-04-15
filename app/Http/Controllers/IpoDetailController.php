@@ -13,7 +13,7 @@ class IpoDetailController extends Controller
     public function index()
     {
         // Eager load the 'stock' and 'sector' relationships
-        $ipoDetails = IpoDetail::with(['stock.sector', 'stock.latestPrice'])->get();
+        $ipoDetails = IpoDetail::all();
 
         return response()->json([
             'message' => 'Successfully fetched all ipo details',
