@@ -60,7 +60,10 @@ Route::prefix('v1')->middleware(ApiExceptionMiddleware::class)->group(function (
         Route::apiResource('/users/settings', UserSettingController::class)->names('user.settings');
 
         // Stocks & Stock Prices
-        Route::apiResource('/stocks', StockController::class)->names('stocks');
+        Route::apiResource('/stocks', StockController::class)->names('stocks')
+            ->only(['index','show']);
+        Route::apiResource('/stocks', StockController::class)->names('stocks')
+            ->only(['store','update', 'destroy'])->middleware('isAdmin');
         Route::get('/stocks/{stock}/history', [StockPriceController::class, 'historyStockPrices'])->name('stocks.history');
         Route::apiResource('/stock-prices', StockPriceController::class)->names('stock-prices');
         Route::apiResource('/users/portfolios', PortfolioController::class)->names('users.portfolios');
