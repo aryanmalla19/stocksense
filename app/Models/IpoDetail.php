@@ -55,4 +55,28 @@ class IpoDetail extends Model
     {
         return $this->hasMany(IpoApplication::class, 'ipo_id');
     }
+
+    public function getIpoStatusAttribute(): string
+    {
+        $now = now();
+
+        if ($this->listing_date && $now->gte($this->listing_date)) {
+            return 'listed';
+        }
+
+        if ($this->open_date && $now->lt($this->open_date)) {
+            return 'upcoming';
+        }
+
+        if ($this->open_date && $this->close_date && $now->between($this->open_date, $this->close_date)) {
+            return 'open';
+        }
+
+        if ($this->close_date && $now->gt($this->close_date)) {
+            return 'closed';
+        }
+
+        return 'unknown';
+    }
+
 }
