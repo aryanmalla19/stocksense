@@ -101,4 +101,39 @@ class AuthService
             'status' => 200,
         ];
     }
+
+    public function changePassword(array $data)
+    {
+        $user = auth('api')->user();
+        if (!$user) {
+            return [
+                'message' => 'No user found',
+                'status' => 404
+            ];
+        }
+
+        if (!Hash::check($data['recent_password'], $user->password)) {
+            return [
+                'message' => 'Your current password did not match',
+                'status' => 422
+            ];
+        }
+
+        try {
+            $user->password = bcrypt($data['new_password']);
+            $user->save();
+
+            return [
+                'message' => 'Password changed successfully',
+                'status' => 200
+            ];
+
+        } catch (\Exception $e) {
+            return [
+                'message' => 'Error updating password: ' . $e->getMessage(),
+                'status' => 400
+            ];
+        }
+    }
+
 }

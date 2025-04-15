@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Auth\ChangePasswordRequest;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
@@ -15,7 +16,6 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 class AuthController extends Controller
 {
     protected AuthService $authService;
-
     public function __construct(AuthService $authService)
     {
         $this->authService = $authService;
@@ -277,4 +277,17 @@ class AuthController extends Controller
             'message' => 'Successfully logged out',
         ]);
     }
+
+    // change user password
+    public function changePassword(ChangePasswordRequest $request){
+        $result = $this->authService->changePassword($request->validated());
+        
+        return response()->json(
+            [
+                'message' => $result['message'],
+            ],
+            $result['status']
+        );
+    }
+
 }
