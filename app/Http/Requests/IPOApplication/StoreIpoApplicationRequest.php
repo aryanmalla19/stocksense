@@ -24,11 +24,9 @@ class StoreIpoApplicationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|integer',
             'ipo_id' => 'required|integer|exists:ipo_details,id',
             'applied_shares' => 'required|integer|min:10',
             'status' => 'nullable|string|in:pending,allotted,not_allotted',
-            'allotted_shares' => 'nullable|integer',
         ];
     }
 
@@ -43,7 +41,7 @@ class StoreIpoApplicationRequest extends FormRequest
             if ($ipo) {
                 // Check IPO status
                 $ipoStatus = $ipo->ipo_status; // Matches JSON field name
-                if ($ipoStatus !== 'opened') {
+                if ($ipoStatus !== 'open') {
                     $validator->errors()->add('invalid_status', 'The IPO must be open to apply.');
                 }
 
@@ -66,9 +64,6 @@ class StoreIpoApplicationRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'user_id.required' => 'User ID is required.',
-            'user_id.integer' => 'User ID must be a valid integer.',
-
             'ipo_id.required' => 'IPO ID is required.',
             'ipo_id.integer' => 'IPO ID must be a valid integer.',
 
@@ -82,7 +77,6 @@ class StoreIpoApplicationRequest extends FormRequest
             'applied_date.required' => 'The date of application is required.',
             'applied_date.date' => 'Applied date must be a valid date.',
 
-            'allotted_shares.integer' => 'Allotted shares must be a number if provided.',
         ];
     }
 }
