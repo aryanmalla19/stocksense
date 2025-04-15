@@ -22,7 +22,6 @@ class StockController extends Controller
         ]);
     }
 
-
     public function store(StoreStockRequest $request)
     {
         $stock = Stock::create($request->validated());

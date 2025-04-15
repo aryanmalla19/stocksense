@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\IPODetails\UpdateIpoDetailRequest;
 use App\Http\Requests\IPODetails\StoreIpoDetailRequest;
+use App\Http\Requests\IPODetails\UpdateIpoDetailRequest;
 use App\Http\Resources\IpoDetailResource;
 use App\Models\IpoDetail;
 use App\Models\User;
@@ -15,7 +15,7 @@ class IpoDetailController extends Controller
     public function index()
     {
         // Eager load the 'stock' and 'sector' relationships
-        $ipoDetails = IpoDetail::with(['stock.sector', 'stock.latestPrice'])->get();
+        $ipoDetails = IpoDetail::all();
 
         return response()->json([
             'message' => 'Successfully fetched all ipo details',
@@ -78,7 +78,7 @@ class IpoDetailController extends Controller
 
         if (! $ipoDetail) {
             return response()->json([
-                'message' => 'IPO detail not found for ID: ' . $id,
+                'message' => 'IPO detail not found for ID: '.$id,
             ], 404);
         }
 
@@ -108,7 +108,6 @@ class IpoDetailController extends Controller
             'data' => new IpoDetailResource($ipoDetail),
         ]);
     }
-
 
     public function destroy($id)
     {

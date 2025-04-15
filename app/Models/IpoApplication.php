@@ -35,6 +35,21 @@ class IpoApplication extends Model
         'applied_date' => 'datetime',
     ];
 
+    protected $attributes = [
+        'status' => 'pending',
+        'applied_date' => null, // Laravel can use mutator or handle in controller
+        'allotted_shares' => 0,
+    ];
+
+    protected static function booted()
+    {
+        static::creating(function ($ipoApplication) {
+            if (is_null($ipoApplication->applied_date)) {
+                $ipoApplication->applied_date = now();
+            }
+        });
+    }
+
     /**
      * Get the user who submitted this IPO application.
      */
@@ -49,5 +64,13 @@ class IpoApplication extends Model
     public function ipo(): BelongsTo
     {
         return $this->belongsTo(IpoDetail::class, 'ipo_id');
+    }
+
+    public function scopeIsAllotted($query)
+    {
+        return $query
+            ->where('status', 'allotted')
+            ->whereNotNull('allotted_shares')
+            ->where('allotted_shares', '>', 0);
     }
 }

@@ -13,7 +13,6 @@ class VerificationEmailController extends Controller
     /**
      * Verify the user's email address.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @param  string  $hash
      * @return \Illuminate\Http\RedirectResponse
@@ -23,22 +22,24 @@ class VerificationEmailController extends Controller
         $user = User::findOrFail($id);
 
         // Validate the signed URL
-        if (!URL::hasValidSignature($request)) {
+        if (! URL::hasValidSignature($request)) {
             $redirectUrl = URL::temporarySignedRoute(
                 'login.with-message',
                 now()->addMinutes(30),
                 ['error' => 'invalid_signature']
             );
+
             return redirect()->to($redirectUrl);
         }
 
         // Verify the hash matches the user's email
-        if (!hash_equals((string) $hash, sha1($user->email))) {
+        if (! hash_equals((string) $hash, sha1($user->email))) {
             $redirectUrl = URL::temporarySignedRoute(
                 'login.with-message',
                 now()->addMinutes(30),
                 ['error' => 'invalid_link']
             );
+
             return redirect()->to($redirectUrl);
         }
 
@@ -49,6 +50,7 @@ class VerificationEmailController extends Controller
                 now()->addMinutes(30),
                 ['message' => 'already_verified']
             );
+
             return redirect()->to($redirectUrl);
         }
 
@@ -66,7 +68,6 @@ class VerificationEmailController extends Controller
     /**
      * Resend the email verification notification.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function resend(Request $request)
@@ -74,8 +75,9 @@ class VerificationEmailController extends Controller
         $request->validate(['email' => 'required|email']);
         $user = User::where('email', $request->email)->first();
 
-        if ($user && !$user->hasVerifiedEmail()) {
+        if ($user && ! $user->hasVerifiedEmail()) {
             Mail::to($user->email)->queue(new UserVerification($user));
+
             return response()->json(['message' => 'Verification email resent.']);
         }
 
