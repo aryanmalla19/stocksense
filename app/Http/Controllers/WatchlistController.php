@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\WatchList\StoreWatchlistRequest;
 use App\Http\Resources\WatchListResource;
-use App\Models\Watchlist;
 use Illuminate\Support\Facades\DB;
 
 class WatchlistController extends Controller
@@ -48,7 +47,6 @@ class WatchlistController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-
     public function destroy(string $stockId)
     {
         $userId = auth()->id();
@@ -60,7 +58,7 @@ class WatchlistController extends Controller
 
         if (! $deleted) {
             return response()->json([
-                'message' => 'No watchlist found with Stock ID ' . $stockId,
+                'message' => 'No watchlist found with Stock ID '.$stockId,
             ], 404);
         }
 

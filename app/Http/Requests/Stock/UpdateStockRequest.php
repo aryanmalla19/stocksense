@@ -16,8 +16,8 @@ class UpdateStockRequest extends FormRequest
         $id = $this->route('stock'); // Gets the ID from the route
 
         return [
-            'symbol' => 'sometimes|string|max:6|regex:/^[A-Za-z]+$/|unique:stocks,symbol,' . $id,
-            'company_name' => 'sometimes|string|max:255|unique:stocks,company_name,' . $id,
+            'symbol' => 'sometimes|string|max:6|regex:/^[A-Za-z]+$/|unique:stocks,symbol,'.$id,
+            'company_name' => 'sometimes|string|max:255|unique:stocks,company_name,'.$id,
             'sector_id' => 'sometimes|integer|exists:sectors,id',
         ];
     }

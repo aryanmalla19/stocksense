@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\ApiExceptionMiddleware;
+use App\Http\Middleware\IsAdmin;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -18,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'api.exception' => ApiExceptionMiddleware::class, // Single alias definition
             'cors' => HandleCors::class,
+            'isAdmin' => IsAdmin::class
         ]);
         $middleware->throttleApi('60,1');
     })
@@ -91,6 +93,5 @@ return Application::configure(basePath: dirname(__DIR__))
                 ], 500);
             }
         });
-
 
     })->create();

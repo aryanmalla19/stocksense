@@ -24,6 +24,10 @@ class Stock extends Model
         'description',
     ];
 
+    protected $attributes = [
+        'is_listed' => false
+    ];
+
     /**
      * Get the sector this stock belongs to.
      */
@@ -67,5 +71,4 @@ class Stock extends Model
     {
         return $query->where('is_listed', true);
     }
-
 }

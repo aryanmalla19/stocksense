@@ -61,7 +61,10 @@ Route::prefix('v1')->middleware(ApiExceptionMiddleware::class)->group(function (
         Route::apiResource('/users/settings', UserSettingController::class)->names('user.settings');
 
         // Stocks & Stock Prices
-        Route::apiResource('/stocks', StockController::class)->names('stocks');
+        Route::apiResource('/stocks', StockController::class)->names('stocks')
+            ->only(['index','show']);
+        Route::apiResource('/stocks', StockController::class)->names('stocks')
+            ->only(['store','update', 'destroy'])->middleware('isAdmin');
         Route::get('/stocks/{stock}/history', [StockPriceController::class, 'historyStockPrices'])->name('stocks.history');
         Route::apiResource('/stock-prices', StockPriceController::class)->names('stock-prices');
         Route::apiResource('/users/portfolios', PortfolioController::class)->names('users.portfolios');
@@ -89,15 +92,15 @@ Route::prefix('v1')->middleware(ApiExceptionMiddleware::class)->group(function (
 
     // Redirect route for verification
     Route::get('/login-with-message', function (Request $request) {
-        if (!$request->hasValidSignature()) {
+        if (! $request->hasValidSignature()) {
             return redirect()->to('http://localhost:3000/loginReg?error=invalid_signature');
         }
-        
-        $params = $request->query('message') 
-            ? ['message' => $request->query('message')] 
+
+        $params = $request->query('message')
+            ? ['message' => $request->query('message')]
             : ['error' => $request->query('error')];
-        
-        return redirect()->to('http://localhost:3000/loginReg?' . http_build_query($params));
+
+        return redirect()->to('http://localhost:3000/loginReg?'.http_build_query($params));
     })->name('login.with-message');
 });
 
@@ -105,3 +108,7 @@ Route::get('/watchlists', [WatchlistController::class, 'showAll'])->name('all-wa
 
 // IPO allotment
 Route::get('/ipo-allotments/{id}', [IpoAllotmentController::class, 'ipoAllotment'])->name('ipo-allotments');
+
+//stock sorting
+Route::get('/stocks/{column}/{direction}', [StockController::class, 'sortStock'])->name('sort-stock');
+Route::post('/stocks', [StockController::class, 'searchStock'])->name('search-stock');

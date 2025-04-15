@@ -11,7 +11,7 @@ class IpoAllotmentController extends Controller
     public function ipoAllotment(string $ipo_id)
     {
         $ipo_details = IpoDetail::findOrFail($ipo_id);
-        $totalUserAllot = intval($ipo_details->total_shares / 10); 
+        $totalUserAllot = intval($ipo_details->total_shares / 10);
 
         $allApplications = IpoApplication::where('ipo_id', $ipo_id)->get();
 
@@ -22,6 +22,7 @@ class IpoAllotmentController extends Controller
                     $application->user->notify(new IpoAlloted($ipo_details));
                 }
             }
+
             return response()->json(['message' => 'All applications allotted']);
         }
 
@@ -44,5 +45,4 @@ class IpoAllotmentController extends Controller
 
         return response()->json(['message' => 'IPO shares distributed successfully.']);
     }
-
 }

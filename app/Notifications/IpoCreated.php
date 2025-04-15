@@ -2,20 +2,20 @@
 
 namespace App\Notifications;
 
+use App\Models\IpoDetail;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
-class UserLogin extends Notification implements ShouldQueue
+class IpoCreated extends Notification
 {
     use Queueable;
-
+    protected $ipoDetail;
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct(IpoDetail $ipo_detail)
     {
-        //
+        $this->ipoDetail = $ipo_detail;
     }
 
     /**
@@ -31,7 +31,7 @@ class UserLogin extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => 'Logged In',
+            'message' => 'New Ipo has been opened' . $this->ipoDetail->stock->symbol
         ];
     }
 }

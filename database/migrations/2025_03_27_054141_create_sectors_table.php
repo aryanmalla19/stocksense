@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->enum('name', [
                 'Banking', 'Hydropower', 'Life Insurance', 'Non-life Insurance', 'Health',
-                'Manufacturing', 'Hotel', 'Trading', 'Microfinance', 'Finance', 'Investment', 'Others'
+                'Manufacturing', 'Hotel', 'Trading', 'Microfinance', 'Finance', 'Investment', 'Others',
             ])->unique();
         });
     }

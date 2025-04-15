@@ -94,7 +94,7 @@ class DatabaseSeeder extends Seeder
 
             // Deduct the total spent from the balance
             $portfolio->update([
-                'amount' => $initialBalance - $totalSpent
+                'amount' => $initialBalance - $totalSpent,
             ]);
 
             // Create watchlist entries
