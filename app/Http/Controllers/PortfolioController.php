@@ -11,7 +11,7 @@ class PortfolioController extends Controller
     {
         $user = auth()->user();
 
-        $portfolios = $user->portfolio()->with(['users', 'holdings'])->get();
+        $portfolios = $user->portfolio()->with(['user', 'holdings'])->get();
 
         return response()->json([
             'message' => 'Successfully fetched all portfolios data',
