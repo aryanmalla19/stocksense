@@ -290,4 +290,18 @@ class AuthController extends Controller
         );
     }
 
+    public function me(){
+    $data = auth('api')->user();
+    
+    unset(
+        $data['id'],
+        $data['refresh_token'],
+        $data['refresh_token_expires_at'],
+        $data['two_factor_secret'],
+        $data['two_factor_otp'],
+        $data['two_factor_expires_at']
+    );
+
+    return $data;
+    }
 }
