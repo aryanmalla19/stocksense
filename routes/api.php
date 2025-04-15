@@ -84,15 +84,15 @@ Route::prefix('v1')->middleware(ApiExceptionMiddleware::class)->group(function (
 
     // Redirect route for verification
     Route::get('/login-with-message', function (Request $request) {
-        if (!$request->hasValidSignature()) {
+        if (! $request->hasValidSignature()) {
             return redirect()->to('http://localhost:3000/loginReg?error=invalid_signature');
         }
-        
-        $params = $request->query('message') 
-            ? ['message' => $request->query('message')] 
+
+        $params = $request->query('message')
+            ? ['message' => $request->query('message')]
             : ['error' => $request->query('error')];
-        
-        return redirect()->to('http://localhost:3000/loginReg?' . http_build_query($params));
+
+        return redirect()->to('http://localhost:3000/loginReg?'.http_build_query($params));
     })->name('login.with-message');
 });
 

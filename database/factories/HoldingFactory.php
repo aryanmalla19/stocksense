@@ -20,6 +20,7 @@ class HoldingFactory extends Factory
     {
         $portfolio = Portfolio::inRandomOrder()->first() ?? Portfolio::factory()->create();
         $stock = Stock::inRandomOrder()->first() ?? Stock::factory()->create();
+
         return [
             'portfolio_id' => $portfolio->id,
             'stock_id' => $stock->id,

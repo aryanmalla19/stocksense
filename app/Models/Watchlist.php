@@ -11,6 +11,7 @@ class Watchlist extends Model
     use HasFactory;
 
     protected $primaryKey = ['user_id', 'stock_id'];
+
     public $incrementing = false;
 
     protected $fillable = [

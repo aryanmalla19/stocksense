@@ -16,7 +16,6 @@ use Illuminate\Http\Request;
  */
 class TransactionController extends Controller
 {
-
     public function index()
     {
         $transactions = auth()->user()
@@ -30,7 +29,6 @@ class TransactionController extends Controller
         ]);
     }
 
-    
     public function store(Request $request)
     {
         $attributes = $request->validate([
@@ -80,7 +78,6 @@ class TransactionController extends Controller
         ]);
     }
 
-    
     public function show(string $id)
     {
         $transaction = Transaction::with(['user', 'stock'])->find($id);
@@ -96,7 +93,6 @@ class TransactionController extends Controller
             'data' => new TransactionResource($transaction),
         ]);
     }
-
 
     public function update(Request $request, string $id)
     {
@@ -131,7 +127,6 @@ class TransactionController extends Controller
         //        ]);
     }
 
-    
     public function destroy(string $id)
     {
         $transaction = Transaction::find($id);

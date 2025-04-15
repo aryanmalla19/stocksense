@@ -27,10 +27,11 @@ class UserLogin extends Notification implements ShouldQueue
     {
         return ['database'];
     }
+
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => "Logged In"
+            'message' => 'Logged In',
         ];
     }
 }

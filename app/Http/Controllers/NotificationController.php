@@ -20,7 +20,7 @@ class NotificationController extends Controller
 
         return response()->json([
             'message' => 'Successfully fetched user notifications',
-            'data' => NotificationResource::collection($notifications)
+            'data' => NotificationResource::collection($notifications),
         ], 200);
     }
 }

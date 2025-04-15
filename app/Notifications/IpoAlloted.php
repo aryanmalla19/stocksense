@@ -1,9 +1,9 @@
 <?php
+
 namespace App\Notifications;
 
 use App\Models\IpoDetail;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
 class IpoAlloted extends Notification
@@ -36,7 +36,7 @@ class IpoAlloted extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => "You have been allotted IPO of " . $this->ipoDetail->stock->symbol
+            'message' => 'You have been allotted IPO of '.$this->ipoDetail->stock->symbol,
         ];
     }
 }

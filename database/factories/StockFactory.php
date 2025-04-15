@@ -18,6 +18,7 @@ class StockFactory extends Factory
     public function definition(): array
     {
         $sector = Sector::inRandomOrder()->first() ?? Sector::factory()->create();
+
         return [
             'symbol' => $this->faker->unique()->lexify('?????'),
             'company_name' => $this->faker->company(),
@@ -35,5 +36,4 @@ class StockFactory extends Factory
             'is_listed' => false,
         ]);
     }
-
 }

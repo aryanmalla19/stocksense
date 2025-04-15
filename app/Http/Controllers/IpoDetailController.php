@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\IPODetails\UpdateIpoDetailRequest;
 use App\Http\Requests\IPODetails\StoreIpoDetailRequest;
+use App\Http\Requests\IPODetails\UpdateIpoDetailRequest;
 use App\Http\Resources\IpoDetailResource;
-use App\Models\IpoApplication;
 use App\Models\IpoDetail;
 use Carbon\Carbon;
 
@@ -72,7 +71,7 @@ class IpoDetailController extends Controller
 
         if (! $ipoDetail) {
             return response()->json([
-                'message' => 'IPO detail not found for ID: ' . $id,
+                'message' => 'IPO detail not found for ID: '.$id,
             ], 404);
         }
 
@@ -102,7 +101,6 @@ class IpoDetailController extends Controller
             'data' => new IpoDetailResource($ipoDetail),
         ]);
     }
-
 
     public function destroy($id)
     {

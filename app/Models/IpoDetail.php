@@ -78,5 +78,4 @@ class IpoDetail extends Model
 
         return 'unknown';
     }
-
 }

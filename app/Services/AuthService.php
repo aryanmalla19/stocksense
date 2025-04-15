@@ -5,12 +5,13 @@ namespace App\Services;
 use App\Events\UserRegistered;
 use App\Mail\OtpVerification;
 use App\Models\User;
+use App\Notifications\UserLogin;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use App\Notifications\UserLogin;
+
 class AuthService
 {
     /**
@@ -45,7 +46,7 @@ class AuthService
     {
         $user = User::where('email', $credentials['email'])->first();
 
-        if (!$user) {
+        if (! $user) {
             return ['error' => 'Email does not exist', 'status' => 401];
         }
 

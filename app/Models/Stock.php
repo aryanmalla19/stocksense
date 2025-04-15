@@ -67,5 +67,4 @@ class Stock extends Model
     {
         return $query->where('is_listed', true);
     }
-
 }

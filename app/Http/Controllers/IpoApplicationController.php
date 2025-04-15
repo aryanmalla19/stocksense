@@ -18,6 +18,7 @@ class IpoApplicationController extends Controller
         }
 
         $results = $query->get();
+
         return response()->json([
             'message' => 'Successfully fetched all user ipo applications',
             'data' => IpoApplicationResource::collection($results),
@@ -32,7 +33,7 @@ class IpoApplicationController extends Controller
         $stockPrice = IpoDetail::findOrFail($data['ipo_id'])->issue_price;
         $totalPrice = $stockPrice * $data['applied_shares'];
 
-        if($user->portfolio->amount < $totalPrice){
+        if ($user->portfolio->amount < $totalPrice) {
             return response()->json([
                 'message' => 'Insufficient balance',
             ], 400);
@@ -54,6 +55,7 @@ class IpoApplicationController extends Controller
     {
         $ipoApplication = IpoApplication::find($id)->load('ipo');
         $this->authorize('view', [IpoApplication::class, $ipoApplication]);
+
         return response()->json([
             'message' => 'Successfully fetched all user ipo applications',
             'data' => new IpoApplicationResource($ipoApplication),

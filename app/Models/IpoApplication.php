@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -51,7 +50,6 @@ class IpoApplication extends Model
         });
     }
 
-
     /**
      * Get the user who submitted this IPO application.
      */
@@ -71,8 +69,8 @@ class IpoApplication extends Model
     public function scopeIsAllotted($query)
     {
         return $query
-            ->where('status','allotted')
+            ->where('status', 'allotted')
             ->whereNotNull('allotted_shares')
-            ->where('allotted_shares','>',0);
+            ->where('allotted_shares', '>', 0);
     }
 }

@@ -5,10 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Resources\PortfolioResource;
 use App\Models\Portfolio;
 
-
 class PortfolioController extends Controller
 {
-    
     public function index()
     {
         if (auth()->user()->role != 'admin') {
