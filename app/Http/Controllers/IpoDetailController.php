@@ -6,6 +6,8 @@ use App\Http\Requests\IPODetails\UpdateIpoDetailRequest;
 use App\Http\Requests\IPODetails\StoreIpoDetailRequest;
 use App\Http\Resources\IpoDetailResource;
 use App\Models\IpoDetail;
+use App\Models\User;
+use App\Notifications\IpoCreated;
 use Carbon\Carbon;
 
 class IpoDetailController extends Controller
@@ -59,6 +61,11 @@ class IpoDetailController extends Controller
 
         $ipoDetail = IpoDetail::create($data);
 
+        $users = User::get();
+        foreach($users as $user){
+            $user->notify(new IpoCreated($ipoDetail));
+        }
+        
         return response()->json([
             'message' => 'Successfully created new IPO detail',
             'data' => new IpoDetailResource($ipoDetail),

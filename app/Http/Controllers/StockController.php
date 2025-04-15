@@ -6,6 +6,7 @@ use App\Http\Requests\Stock\StoreStockRequest;
 use App\Http\Requests\Stock\UpdateStockRequest;
 use App\Http\Resources\StockResource;
 use App\Models\Stock;
+use Illuminate\Http\Request;
 
 class StockController extends Controller
 {
@@ -81,5 +82,67 @@ class StockController extends Controller
         return response()->json([
             'message' => 'Successfully deleted stock with ID '.$id,
         ]);
+    }
+
+    public function sortStock($column, $direction = 'asc')
+    {
+        $allowedColumns = [
+            'open_price' => 'stock_prices.open_price',
+            'close_price' => 'stock_prices.close_price',
+            'high_price' => 'stock_prices.high_price',
+            'low_price' => 'stock_prices.low_price',
+            'current_price' => 'stock_prices.current_price',
+            'volume' => 'stock_prices.volume',
+            'company_name' => 'stocks.company_name'
+        ];
+
+        if (!isset($allowedColumns[$column])) {
+            return response()->json([
+                'message' => 'Invalid sort column',
+            ], 400);
+        }
+
+        $stocks = Stock::query()
+            ->join('stock_prices', 'stocks.id', '=', 'stock_prices.stock_id')
+            ->orderBy($allowedColumns[$column], $direction)
+            ->with(['sector', 'latestPrice'])
+            ->get();
+
+        if (empty($stocks)) { 
+            return response()->json([
+                'message' => 'No stocks found'
+            ], 200);
+        }
+
+        return response()->json([
+            'message' => 'Stocks retrieved successfully',
+            'data' => StockResource::collection($stocks)
+        ], 200);
+    }
+
+    public function searchStock(Request $request){
+
+        $request->validate([
+            'query' => 'required',
+        ]);
+
+        $query = $request->input('query');
+
+        $stocks = Stock::where('symbol', 'like', "%{$query}%")
+        ->orWhere('company_name', 'like', "%{$query}%")
+        ->with(['sector', 'latestPrice'])
+        ->get();
+
+        if (empty($stocks)) {
+            return response()->json([
+                'message' => 'No stocks found'
+            ], 200);
+        }
+
+        return response()->json([
+            'message' => 'Stocks retrieved successfully',
+            'data' => StockResource::collection($stocks)
+        ], 200);
+
     }
 }
