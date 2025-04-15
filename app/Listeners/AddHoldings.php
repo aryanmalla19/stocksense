@@ -16,7 +16,7 @@ class AddHoldings implements ShouldQueue
         $transaction = $event->transaction;
         $portfolio = $user->portfolio;
 
-        $portfolio->amount -= $transaction->price * $transaction->quantity;
+        $portfolio->amount -= ($transaction->price * $transaction->quantity) + $transaction->transaction_fee;
         $portfolio->save();
 
         $holding = $portfolio->holdings()->where('stock_id', $transaction->stock_id)->first();
