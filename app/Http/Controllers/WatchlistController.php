@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\WatchList\StoreWatchlistRequest;
 use App\Http\Resources\WatchListResource;
 use App\Models\Watchlist;
+use Illuminate\Support\Facades\DB;
 
 class WatchlistController extends Controller
 {
@@ -13,7 +14,7 @@ class WatchlistController extends Controller
      */
     public function index()
     {
-        $watchlists = auth()->user()->watchlists;
+        $watchlists = auth()->user()->watchlists()->with(['stock.latestPrice', 'stock.sector'])->get();
 
         return response()->json([
             'message' => 'Successfully fetched all watchlist data',
@@ -36,7 +37,7 @@ class WatchlistController extends Controller
             ], 409);
         }
 
-        $watchlist = $user->watchlists()->create($data);
+        $watchlist = $user->watchlists()->create($data)->load(['stock.latestPrice', 'stock.sector']);
 
         return response()->json([
             'message' => 'Successfully added watchlist',
@@ -45,40 +46,26 @@ class WatchlistController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        $watchlist = Watchlist::where('id', $id)->with(['user', 'stock'])->first();
-
-        if (! $watchlist) {
-            return response()->json([
-                'message' => 'No Watchlist found with ID '.$id,
-            ], 404);
-        }
-
-        return response()->json([
-            'message' => 'Successfully fetched watchlist data',
-            'data' => new WatchListResource($watchlist),
-        ]);
-    }
-
-    /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+
+    public function destroy(string $stockId)
     {
-        $watchlist = Watchlist::where('id', $id)->first();
-        if (! $watchlist) {
+        $userId = auth()->id();
+
+        $deleted = DB::table('watchlists')
+            ->where('user_id', $userId)
+            ->where('stock_id', $stockId)
+            ->delete();
+
+        if (! $deleted) {
             return response()->json([
-                'message' => 'No watchlist found with ID '.$id,
+                'message' => 'No watchlist found with Stock ID ' . $stockId,
             ], 404);
         }
 
-        $watchlist->delete();
-
         return response()->json([
-            'message' => 'Successfully deleted watchlist with ID '.$id,
+            'message' => 'Successfully removed watchlist',
         ]);
     }
 }

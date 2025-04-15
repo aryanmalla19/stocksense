@@ -13,7 +13,7 @@ class CreateStocksTable extends Migration
             $table->string('symbol')->unique();
             $table->string('company_name');
             $table->foreignId('sector_id')->nullable()->constrained('sectors')->onDelete('set null');
-            $table->boolean('is_listed')->default(true);
+            $table->boolean('is_listed')->default(false);
             $table->text('description')->nullable();
             $table->timestamps();
         });

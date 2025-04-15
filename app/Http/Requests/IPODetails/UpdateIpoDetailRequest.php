@@ -22,22 +22,19 @@ class UpdateIpoDetailRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'stock_id' => 'required|integer',
-            'issue_price' => 'required|integer|min:100',
-            'total_shares' => 'required|integer|min:1000',
-            'open_date' => 'required|date',
-            'close_date' => 'required|date|after:open_date',
-            'listing_date' => 'required|date|after:close_date',
-            'ipo_status' => 'required|string|in:open,close,pending',
+            'stock_id' => 'sometimes|integer',
+            'issue_price' => 'sometimes|integer|min:100',
+            'total_shares' => 'sometimes|integer|min:1000',
+            'open_date' => 'sometimes|date',
+            'close_date' => 'sometimes|date|after:open_date',
+            'listing_date' => 'sometimes|date|after:close_date',
+            'ipo_status' => 'sometimes|string|in:open,close,pending',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'stock_id.required' => 'Stock ID is required.',
-            'issue_price.required' => 'Issue price is required.',
-            'total_shares.required' => 'Total shares are required.',
             'open_date.required' => 'Open date is required.',
             'close_date.after' => 'Close date must be after open date.',
             'listing_date.after' => 'Listing date must be after close date.',

@@ -10,11 +10,9 @@ class Watchlist extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<string>
-     */
+    protected $primaryKey = ['user_id', 'stock_id'];
+    public $incrementing = false;
+
     protected $fillable = [
         'user_id',
         'stock_id',
@@ -25,14 +23,12 @@ class Watchlist extends Model
      *
      * @var array<string>
      */
-    protected $primaryKey = ['user_id', 'stock_id'];
 
     /**
      * Indicates if the IDs are auto-incrementing.
      *
      * @var bool
      */
-    public $incrementing = false;
 
     /**
      * Get the user who owns this watchlist entry.
