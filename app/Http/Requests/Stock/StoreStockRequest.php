@@ -15,7 +15,7 @@ class StoreStockRequest extends FormRequest
     {
         return [
             'symbol' => 'required|string|max:6|unique:stocks,symbol|regex:/^[A-Za-z]+$/',
-            'company_name' => 'required|string|unique:stocks,company_name',
+            'company_name' => 'required|string|unique:stocks,company_name|regex:/^[A-Za-z\s\.]+$/',
             'sector_id' => 'required|integer|exists:sectors,id',
         ];
     }
