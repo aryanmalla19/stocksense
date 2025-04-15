@@ -49,6 +49,7 @@ Route::prefix('v1')->middleware(ApiExceptionMiddleware::class)->group(function (
         // Authenticated User Actions
         Route::prefix('auth')->group(function () {
             Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
+            Route::get('/me', [AuthController::class, 'me'])->name('login.user');
             Route::post('/2fa/enable', [TwoFactorController::class, 'enable'])->name('2fa.enable');
             Route::post('/2fa/disable', [TwoFactorController::class, 'disable'])->name('2fa.disable');
 
