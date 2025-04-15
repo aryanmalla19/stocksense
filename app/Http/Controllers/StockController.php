@@ -28,7 +28,7 @@ class StockController extends Controller
 
         return response()->json([
             'message' => 'Successfully registered stock',
-            'data' => new StockResource($stock),
+            'data' => new StockResource($stock->load('sector')),
         ], 201);
     }
 
@@ -107,7 +107,7 @@ class StockController extends Controller
             ->with(['sector', 'latestPrice'])
             ->get();
 
-        if (empty($stocks)) { 
+        if (empty($stocks)) {
             return response()->json([
                 'message' => 'No stocks found'
             ], 200);
