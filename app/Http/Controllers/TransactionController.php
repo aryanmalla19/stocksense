@@ -43,7 +43,7 @@ class TransactionController extends Controller
         $total_price = $price * $attributes['quantity'];
 
         $attributes['price'] = $price;
-        $attributes['transaction_fee'] = 0.05 * $total_price;
+        $attributes['transaction_fee'] = 0.01 * $total_price;
 
         if ($attributes['type'] === 'buy') {
             if (! $user->portfolio || $user->portfolio->amount < $total_price) {

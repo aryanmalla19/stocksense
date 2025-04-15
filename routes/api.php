@@ -17,11 +17,10 @@ use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\UserSettingController;
 use App\Http\Controllers\VerificationEmailController;
 use App\Http\Controllers\WatchlistController;
-use App\Http\Middleware\ApiExceptionMiddleware;
 use Illuminate\Http\Request; // Added this import
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('v1')->middleware(ApiExceptionMiddleware::class)->group(function () {
+Route::prefix('v1')->group(function () {
     // Public Authentication Routes
     Route::prefix('auth')->group(function () {
         // Rate-limited authentication actions
