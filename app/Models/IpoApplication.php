@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -34,6 +35,22 @@ class IpoApplication extends Model
         'allotted_shares' => 'integer',
         'applied_date' => 'datetime',
     ];
+
+    protected $attributes = [
+        'status' => 'pending',
+        'applied_date' => null, // Laravel can use mutator or handle in controller
+        'allotted_shares' => 0,
+    ];
+
+    protected static function booted()
+    {
+        static::creating(function ($ipoApplication) {
+            if (is_null($ipoApplication->applied_date)) {
+                $ipoApplication->applied_date = now();
+            }
+        });
+    }
+
 
     /**
      * Get the user who submitted this IPO application.
