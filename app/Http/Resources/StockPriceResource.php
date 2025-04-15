@@ -21,6 +21,7 @@ class StockPriceResource extends JsonResource
             'close_price' => $this->close_price,
             'high_price' => $this->high_price,
             'low_price' => $this->low_price,
+            'current_price' => $this->current_price,
             'date' => $this->date,
         ];
     }
