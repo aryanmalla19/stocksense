@@ -67,7 +67,7 @@ Route::prefix('v1')->middleware(ApiExceptionMiddleware::class)->group(function (
         Route::get('/stocks/{stock}/history', [StockPriceController::class, 'historyStockPrices'])->name('stocks.history');
         Route::apiResource('/stock-prices', StockPriceController::class)->names('stock-prices');
         Route::apiResource('/users/portfolios', PortfolioController::class)->names('users.portfolios');
-        Route::apiResource('/users/{id}/holdings', HoldingController::class)->names('users.holdings');
+        Route::apiResource('/users/holdings', HoldingController::class)->names('users.holdings');
 
         // IPO Management
         Route::apiResource('/ipo-details', IpoDetailController::class)->names('ipo-details');
