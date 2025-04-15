@@ -9,7 +9,9 @@ class PortfolioController extends Controller
 {
     public function index()
     {
-        $portfolios = Portfolio::with(['user', 'holdings'])->get();
+        $user = auth()->user();
+
+        $portfolios = $user->portfolio()->with(['users', 'holdings'])->get();
 
         return response()->json([
             'message' => 'Successfully fetched all portfolios data',
