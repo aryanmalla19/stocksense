@@ -87,26 +87,5 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('/users/notifications', NotificationController::class);
 
     });
-
-    // Redirect route for verification
-    Route::get('/login-with-message', function (Request $request) {
-        if (! $request->hasValidSignature()) {
-            return redirect()->to('http://localhost:3000/loginReg?error=invalid_signature');
-        }
-
-        $params = $request->query('message')
-            ? ['message' => $request->query('message')]
-            : ['error' => $request->query('error')];
-
-        return redirect()->to('http://localhost:3000/loginReg?'.http_build_query($params));
-    })->name('login.with-message');
 });
 
-Route::get('/watchlists', [WatchlistController::class, 'showAll'])->name('all-watchlists');
-
-// IPO allotment
-Route::get('/ipo-allotments/{id}', [IpoAllotmentController::class, 'ipoAllotment'])->name('ipo-allotments');
-
-//stock sorting
-Route::get('/stocks/{column}/{direction}', [StockController::class, 'sortStock'])->name('sort-stock');
-Route::post('/stocks', [StockController::class, 'searchStock'])->name('search-stock');
