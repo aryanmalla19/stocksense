@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\BroughtStock;
 use App\Events\SoldStock;
 use App\Http\Resources\TransactionResource;
+use App\Models\Stock;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 
@@ -35,12 +36,14 @@ class TransactionController extends Controller
             'stock_id' => 'required|integer|exists:stocks,id',
             'type' => 'required|in:buy,sell,ipo_allotted',
             'quantity' => 'required|integer|min:10',
-            'price' => 'required|numeric|min:0',
-            'transaction_fee' => 'required|numeric|min:0',
         ]);
 
         $user = auth()->user();
-        $total_price = $attributes['price'] * $attributes['quantity'];
+        $price = Stock::find($attributes['stock_id'])->latestPrice->current_price;
+        $total_price = $price * $attributes['quantity'];
+
+        $attributes['price'] = $total_price;
+        $attributes['transaction_fee'] = 0.05 * $total_price;
 
         if ($attributes['type'] === 'buy') {
             if (! $user->portfolio || $user->portfolio->amount < $total_price) {
