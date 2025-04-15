@@ -22,6 +22,7 @@ class IpoApplicationResource extends JsonResource
             'status' => $this->status,
             'applied_date' => $this->applied_date,
             'allotted_shares' => $this->allotted_shares,
+            'ipo' => new IpoDetailResource($this->whenLoaded('ipo')),
         ];
     }
 }
