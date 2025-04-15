@@ -24,7 +24,13 @@ class TwoFactorController extends Controller
     {
         $user = Auth::user();
 
-        $user->update(['two_factor_enabled' => false]);
+        $user->update([
+            'two_factor_enabled' => false,
+            'two_factor_otp' => null,
+            'two_factor_secret' => null,
+            'two_factor_expires_at' => null, 
+
+        ]);
 
         return response()->json(['message' => '2FA disabled successfully']);
     }
