@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\IPODetails\UpdateIpoDetailRequest;
 use App\Http\Requests\IPODetails\StoreIpoDetailRequest;
 use App\Http\Resources\IpoDetailResource;
+use App\Models\IpoApplication;
 use App\Models\IpoDetail;
 use Carbon\Carbon;
 

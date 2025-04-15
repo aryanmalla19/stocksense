@@ -67,4 +67,12 @@ class IpoApplication extends Model
     {
         return $this->belongsTo(IpoDetail::class, 'ipo_id');
     }
+
+    public function scopeIsAllotted($query)
+    {
+        return $query
+            ->where('status','allotted')
+            ->whereNotNull('allotted_shares')
+            ->where('allotted_shares','>',0);
+    }
 }

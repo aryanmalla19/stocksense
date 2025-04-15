@@ -11,12 +11,16 @@ class IpoApplicationController extends Controller
 {
     public function index()
     {
-        $user = auth()->user();
-        $ipoApplications = $user->ipoApplications;
+        $query = auth()->user()->ipoApplications();
 
+        if (request()->boolean('is_alloted')) {
+            $query->isAllotted();
+        }
+
+        $results = $query->get();
         return response()->json([
             'message' => 'Successfully fetched all user ipo applications',
-            'data' => IpoApplicationResource::collection($ipoApplications),
+            'data' => IpoApplicationResource::collection($results),
         ]);
     }
 
@@ -49,6 +53,7 @@ class IpoApplicationController extends Controller
     public function show(string $id)
     {
         $ipoApplication = IpoApplication::find($id)->load('ipo');
+        $this->authorize('view', [IpoApplication::class, $ipoApplication]);
         return response()->json([
             'message' => 'Successfully fetched all user ipo applications',
             'data' => new IpoApplicationResource($ipoApplication),
