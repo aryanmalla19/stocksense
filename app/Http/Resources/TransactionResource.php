@@ -20,6 +20,7 @@ class TransactionResource extends JsonResource
             'type' => $this->type,
             'quantity' => $this->quantity,
             'price' => $this->price,
+            'total_price' => $this->price * $this->quantity + $this->transaction_fee,
             'transaction_fee' => $this->transaction_fee,
             'stock_id' => $this->stock_id,
             'company_name' => $this->stock ? $this->stock->company_name : null,
