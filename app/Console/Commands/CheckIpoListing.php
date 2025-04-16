@@ -28,11 +28,9 @@ class CheckIpoListing extends Command
     public function handle(): void
     {
         try {
-            $now = now()->format('Y-m-d H:i:00');
+            $today = now()->toDateString();
 
-            $ipos = IpoDetail::where('listing_date', $now)
-                ->where('ipo_status', 'pending') // or 'not_allotted' depending on your logic
-                ->get();
+            $ipos = IpoDetail::whereDate('listing_date', $today)->get();
 
             foreach ($ipos as $ipo) {
                 AllotIpoJob::dispatch($ipo);

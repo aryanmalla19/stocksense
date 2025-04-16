@@ -141,7 +141,6 @@ class IpoDetailController extends Controller
             $ipoDetails->stock(request('stock_id'));
             $ipoDetails->with(['applications', 'stock']);
         }
-
         $ipoDetails = $ipoDetails->get();
 
         return response()->json([
