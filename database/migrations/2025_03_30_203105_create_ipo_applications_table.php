@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('ipo_id')->constrained('ipo_details')->onDelete('cascade');
+            $table->unique(['user_id', 'ipo_id']);
             $table->integer('applied_shares');
             $table->enum('status', ['pending', 'allotted', 'not_allotted'])->default('pending');
             $table->timestamp('applied_date')->useCurrent();
