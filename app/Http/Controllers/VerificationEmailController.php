@@ -21,17 +21,6 @@ class VerificationEmailController extends Controller
     {
         $user = User::findOrFail($id);
 
-        // Validate the signed URL
-        if (! URL::hasValidSignature($request)) {
-            $redirectUrl = URL::temporarySignedRoute(
-                'login.with-message',
-                now()->addMinutes(30),
-                ['error' => 'invalid_signature']
-            );
-
-            return redirect()->to($redirectUrl);
-        }
-
         // Verify the hash matches the user's email
         if (! hash_equals((string) $hash, sha1($user->email))) {
             $redirectUrl = URL::temporarySignedRoute(
@@ -39,7 +28,6 @@ class VerificationEmailController extends Controller
                 now()->addMinutes(30),
                 ['error' => 'invalid_link']
             );
-
             return redirect()->to($redirectUrl);
         }
 
@@ -50,7 +38,6 @@ class VerificationEmailController extends Controller
                 now()->addMinutes(30),
                 ['message' => 'already_verified']
             );
-
             return redirect()->to($redirectUrl);
         }
 
@@ -77,7 +64,6 @@ class VerificationEmailController extends Controller
 
         if ($user && ! $user->hasVerifiedEmail()) {
             Mail::to($user->email)->queue(new UserVerification($user));
-
             return response()->json(['message' => 'Verification email resent.']);
         }
 
