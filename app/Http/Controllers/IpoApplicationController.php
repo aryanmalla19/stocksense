@@ -30,6 +30,17 @@ class IpoApplicationController extends Controller
         $user = auth()->user();
         $data = $request->validated();
 
+        // Check if the user has already applied to this IPO
+        $alreadyApplied = $user->ipoApplications()
+            ->where('ipo_id', $data['ipo_id'])
+            ->exists();
+
+        if ($alreadyApplied) {
+            return response()->json([
+                'message' => 'You have already applied for this IPO.',
+            ], 409); // 409 Conflict
+        }
+
         $stockPrice = IpoDetail::findOrFail($data['ipo_id'])->issue_price;
         $totalPrice = $stockPrice * $data['applied_shares'];
 
@@ -46,10 +57,11 @@ class IpoApplicationController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Successfully ipo applied',
+            'message' => 'Successfully IPO applied',
             'data' => new IpoApplicationResource($ipoApplication),
         ]);
     }
+
 
     public function show(string $id)
     {

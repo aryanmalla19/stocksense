@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\IpoApplication;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -26,6 +27,7 @@ class IpoDetailResource extends JsonResource
             'days_until_open' => (int) Carbon::now()->diffInDays(Carbon::parse($this->open_date), false),
             'stock_id' => $this->stock_id,
             'stock' => new StockResource($this->whenLoaded('stock')),
+            'applications' => IpoApplicationResource::collection($this->whenLoaded('applications')),
         ];
     }
 }
