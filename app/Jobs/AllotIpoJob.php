@@ -23,14 +23,39 @@ class AllotIpoJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $applicants = $this->ipo->applications; // assuming relationship
+        $ipo = $this->ipo;
+        $totalShares = $ipo->total_shares;
 
-        $winners = $applicants->shuffle()->take(10); // example: 10 random winners
+        $applications = $ipo->applications()->get(); // get all applicants
+        $shuffled = $applications->shuffle(); // random order
 
-        foreach ($winners as $user) {
-            // assign shares to user
-            // maybe create IpoAllotment::create([...]);
+        $remainingShares = $totalShares;
+        $allotted = collect();
+
+        foreach ($shuffled as $app) {
+            if ($remainingShares <= 0) break;
+
+            $maxAllot = min(20, $remainingShares); // upper bound
+            $allot = rand(10, $maxAllot); // random between 10 and maxAllot
+
+            $app->update([
+                'status' => 'allotted',
+                'allotted_shares' => $allot,
+            ]);
+
+            $remainingShares -= $allot;
+            $allotted->push($app->id);
         }
 
+        // Mark rest as not_allotted
+        $ipo->applications()
+            ->whereNotIn('id', $allotted)
+            ->update([
+                'status' => 'not_allotted',
+                'allotted_shares' => 0,
+            ]);
+        $ipo->stock->update(['is_listed' => true]);
+
+        $ipo->update(['ipo_status' => 'allotted']);
     }
 }
