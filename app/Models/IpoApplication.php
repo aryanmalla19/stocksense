@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\IpoApplicationStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,6 +34,7 @@ class IpoApplication extends Model
         'applied_shares' => 'integer',
         'allotted_shares' => 'integer',
         'applied_date' => 'datetime',
+        'status' => IpoApplicationStatus::class,
     ];
 
     protected $attributes = [

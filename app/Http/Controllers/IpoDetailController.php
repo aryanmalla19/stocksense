@@ -14,8 +14,13 @@ class IpoDetailController extends Controller
 {
     public function index()
     {
-        // Eager load the 'stock' and 'sector' relationships
-        $ipoDetails = IpoDetail::all();
+        $ipoDetails = IpoDetail::query(); // 👈 important
+
+        if (request('stock_id')) {
+            $ipoDetails->stock(request('stock_id'));
+        }
+
+        $ipoDetails = $ipoDetails->get(); // 👈 now fetch results
 
         return response()->json([
             'message' => 'Successfully fetched all ipo details',
@@ -65,7 +70,7 @@ class IpoDetailController extends Controller
         foreach($users as $user){
             $user->notify(new IpoCreated($ipoDetail));
         }
-        
+
         return response()->json([
             'message' => 'Successfully created new IPO detail',
             'data' => new IpoDetailResource($ipoDetail),
@@ -125,4 +130,23 @@ class IpoDetailController extends Controller
             'message' => 'Successfully deleted IPO detail with ID: '.$id,
         ]);
     }
+
+    public function adminIndex()
+    {
+        $user = auth()->user();
+
+        $ipoDetails = IpoDetail::query();
+
+        if (request('stock_id')) {
+            $ipoDetails->stock(request('stock_id'));
+            $ipoDetails->with(['applications', 'stock']);
+        }
+        $ipoDetails = $ipoDetails->get();
+
+        return response()->json([
+            'message' => 'Successfully fetched all IPO details with applications',
+            'data' => IpoDetailResource::collection($ipoDetails),
+        ]);
+    }
+
 }

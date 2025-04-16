@@ -19,10 +19,14 @@ class StockController extends Controller
             $stocks->symbol($symbol);
         }
 
-        return response()->json([
-            'message' => 'Successfully fetched all stocks',
-            'data' => StockResource::collection($stocks->get()),
-        ]);
+        $perPage = request('per_page', 10); // default is 10
+        $paginated = $stocks->paginate($perPage);
+
+
+        return StockResource::collection($paginated)
+            ->additional([
+                'message' => 'Successfully fetched all stocks',
+            ]);
     }
 
     public function store(StoreStockRequest $request)

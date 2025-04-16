@@ -15,7 +15,7 @@ class StoreStockPriceRequest extends FormRequest
     {
         return [
             'stock_id' => 'required|exists:stocks,id',
-            'price' => 'required|numeric',
+            'current_price' => 'required|numeric',
         ];
     }
 
@@ -24,8 +24,8 @@ class StoreStockPriceRequest extends FormRequest
         return [
             'stock_id.required' => 'Stock ID is required.',
             'stock_id.exists' => 'The selected stock does not exist.',
-            'price.required' => 'Price is required.',
-            'price.numeric' => 'Price must be a numeric value.',
+            'curren_price.required' => 'Price is required.',
+            'curren_price.numeric' => 'Price must be a numeric value.',
         ];
     }
 }

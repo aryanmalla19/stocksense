@@ -107,11 +107,18 @@ class DatabaseSeeder extends Seeder
             }
         });
 
-        // Create IPO details and applications
-        IpoDetail::factory(5)->create()->each(function ($ipo) {
-            IpoApplication::factory(3)->create([
-                'ipo_id' => $ipo->id,
-            ]);
+        $userIds = User::pluck('id')->toArray();
+
+        IpoDetail::factory(5)->create()->each(function ($ipo) use ($userIds) {
+            // Pick 3 unique users to apply for this IPO
+            $applyingUsers = collect($userIds)->shuffle()->take(3);
+
+            foreach ($applyingUsers as $userId) {
+                IpoApplication::factory()->create([
+                    'user_id' => $userId,
+                    'ipo_id' => $ipo->id,
+                ]);
+            }
         });
     }
 }

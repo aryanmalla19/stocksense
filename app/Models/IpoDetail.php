@@ -78,4 +78,10 @@ class IpoDetail extends Model
 
         return 'unknown';
     }
+
+    public function scopeStock($query, $id)
+    {
+        return $query->where('stock_id', $id);
+    }
+
 }

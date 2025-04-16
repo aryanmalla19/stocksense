@@ -19,7 +19,7 @@ return new class extends Migration
             $table->timestamp('open_date');
             $table->timestamp('close_date');
             $table->timestamp('listing_date');
-            $table->enum('ipo_status', ['pending', 'opened', 'closed'])->default('pending');
+            $table->enum('ipo_status', ['pending', 'opened', 'closed', 'allotted'])->default('pending');
             $table->timestamps();
         });
     }

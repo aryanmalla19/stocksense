@@ -18,7 +18,7 @@ class IpoApplicationFactory extends Factory
      */
     public function definition(): array
     {
-        $user = User::inRandomOrder()->first() ?? User::factory()->create();
+        $user = User::factory()->create();
         $ipo = IpoDetail::inRandomOrder()->first() ?? IpoDetail::factory()->create();
         $status = $this->faker->randomElement(['pending', 'allotted', 'not_allotted']);
         $appliedShares = $this->faker->numberBetween(10, 15);

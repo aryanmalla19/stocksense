@@ -74,6 +74,11 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('/ipo-details', IpoDetailController::class)->names('ipo-details');
         Route::apiResource('/ipo-applications', IpoApplicationController::class)->names('ipo-applications');
 
+        // Admin
+        Route::middleware('isAdmin')->prefix('admin')->group(function () {
+            Route::get('/ipo-details', [IpoDetailController::class, 'adminIndex']);
+        });
+
         // Sectors
         Route::apiResource('/sectors', SectorController::class)->names('sectors');
 
