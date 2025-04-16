@@ -13,7 +13,7 @@ class IpoApplicationController extends Controller
     {
         $query = auth()->user()->ipoApplications();
 
-        if (request()->boolean('is_alloted')) {
+        if (request()->boolean('is_allotted')) {
             $query->isAllotted();
         }
 
