@@ -20,7 +20,7 @@ use App\Http\Controllers\WatchlistController;
 use Illuminate\Http\Request; // Added this import
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('v1')->middleware(\App\Http\Middleware\ApiExceptionMiddleware::class)->group(function () {
+Route::prefix('v1')->group(function () {
     // Public Authentication Routes
     Route::prefix('auth')->group(function () {
         // Rate-limited authentication actions
@@ -40,6 +40,7 @@ Route::prefix('v1')->middleware(\App\Http\Middleware\ApiExceptionMiddleware::cla
             Route::post('/forgot-password', [PasswordResetController::class, 'sendResetPassword'])->name('password.forgot');
             Route::post('/reset-password', [PasswordResetController::class, 'resetPassword'])->name('password.reset');
             Route::post('/verify-otp', [TwoFactorController::class, 'verifyOtp'])->name('otp.verify');
+            Route::get('/login', [AuthController::class, 'loginWithMessage'])->name('login.with-message');
         });
     });
 
