@@ -20,7 +20,7 @@ use App\Http\Controllers\WatchlistController;
 use Illuminate\Http\Request; // Added this import
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('v1')->group(function () {
+Route::prefix('v1')->middleware(\App\Http\Middleware\ApiExceptionMiddleware::class)->group(function () {
     // Public Authentication Routes
     Route::prefix('auth')->group(function () {
         // Rate-limited authentication actions
