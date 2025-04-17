@@ -18,6 +18,7 @@ class GeneralNotification implements ShouldBroadcast
 
     public function __construct($type, $message, $data = [])
     {
+        
         $this->type = $type;
         $this->message = $message;
         $this->data = $data;
