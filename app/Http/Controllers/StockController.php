@@ -16,6 +16,7 @@ class StockController extends Controller
             ->listed();
 
         if ($symbol = request('symbol')) {
+            $symbol = strtoupper($symbol);
             $stocks->symbol($symbol);
         }
 

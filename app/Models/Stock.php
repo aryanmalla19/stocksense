@@ -74,7 +74,7 @@ class Stock extends Model
 
     public function scopeSymbol($query, $symbol)
     {
-        return $query->where('symbol','like', "%$symbol%");
+        return $query->whereRaw('LOWER(symbol) LIKE ?', ['%' . strtolower($symbol) . '%']);
     }
 
     public function scopeSortColumn($query, $column, $direction)
