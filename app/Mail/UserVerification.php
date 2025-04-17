@@ -29,31 +29,30 @@ class UserVerification extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'User Verification - Auth',
+            subject: 'User Verification',
         );
     }
 
     /**
      * Get the message content definition.
      */
+
     public function content(): Content
     {
-
         $temporarySignedURL = URL::temporarySignedRoute(
             'verification.verify',
             now()->addMinutes(60),
-            ['id' => $this->user->id, 'hash' => sha1($this->user->email)]
+            [
+                'id' => $this->user->id,
+                'hash' => sha1($this->user->email),
+            ]
         );
 
-        $query = parse_url($temporarySignedURL, PHP_URL_QUERY);
-
-        $frontendURL = config('app.frontend_url') . '/verify-email?' . $query;
-
         return new Content(
-            markdown: 'mail.user-verification', // Define your Markdown email view
+            markdown: 'mail.user-verification',
             with: [
-                'user' => $this->user, // Pass user data to the view
-                'url' => $frontendURL,
+                'user' => $this->user,
+                'url' => $temporarySignedURL,
             ]
         );
     }
