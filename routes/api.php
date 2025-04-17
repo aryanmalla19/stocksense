@@ -62,9 +62,11 @@ Route::prefix('v1')->group(function () {
 
         // Stocks & Stock Prices
         Route::apiResource('/stocks', StockController::class)->names('stocks')
-            ->only(['index','show']);
+            ->only(['index', 'show']);
         Route::apiResource('/stocks', StockController::class)->names('stocks')
-            ->only(['store','update', 'destroy'])->middleware('isAdmin');
+            ->only(['store', 'update', 'destroy'])->middleware('isAdmin');
+        Route::get('/stocks/sort/{column}/{direction?}', [StockController::class, 'sortStock'])->name('stocks.sort');
+        Route::get('/stocks/search', [StockController::class, 'searchStock'])->name('stocks.search');
         Route::get('/stocks/{stock}/history', [StockPriceController::class, 'historyStockPrices'])->name('stocks.history');
         Route::apiResource('/stock-prices', StockPriceController::class)->names('stock-prices');
         Route::apiResource('/users/portfolios', PortfolioController::class)->names('users.portfolios');
