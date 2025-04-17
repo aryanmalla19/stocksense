@@ -74,7 +74,7 @@ class Stock extends Model
 
     public function scopeSymbol($query, $symbol)
     {
-        return $query->where('symbol','like', "%$symbol%");
+        return $query->whereRaw('LOWER(symbol) LIKE ?', ['%' . strtolower($symbol) . '%']);
     }
 
     public function scopeSortColumn($query, $column, $direction)
@@ -82,18 +82,18 @@ class Stock extends Model
         $priceColumns = ['open_price', 'close_price', 'high_price', 'low_price', 'current_price'];
 
         if (in_array($column, $priceColumns)) {
-            return $query
-                ->join('stock_prices as sp', function ($join) {
-                    $join->on('stocks.id', '=', 'sp.stock_id')
-                        ->whereRaw('sp.id = (
-                         SELECT MAX(id) FROM stock_prices
-                         WHERE stock_prices.stock_id = stocks.id
-                     )');
-                })
-                ->orderBy("sp.$column", $direction)
-                ->select('stocks.*');
+            $query->addSelect([
+                'sort_value' => StockPrice::select($column)
+                    ->whereColumn('stock_prices.stock_id', 'stocks.id')
+                    ->latest('date') // or latest('id') if needed
+                    ->limit(1)
+            ])->orderBy('sort_value', $direction);
+
+            return $query;
         }
 
         return $query->orderBy($column, $direction);
     }
+
+
 }
