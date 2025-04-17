@@ -7,9 +7,9 @@
     💰 **Issue Price per Share:** Rs. {{ number_format($ipo->issue_price, 2) }}
     📈 **Total Investment:** Rs. {{ number_format($ipo->issue_price * $allottedShares, 2) }}
 
-    <x-mail::button :url="route('user.ipo.show', $ipo->id)">
-        View IPO Details
-    </x-mail::button>
+{{--    <x-mail::button>--}}
+{{--        View IPO Details--}}
+{{--    </x-mail::button>--}}
 
     If you have any questions, feel free to contact our support team.
 

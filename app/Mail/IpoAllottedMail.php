@@ -17,7 +17,7 @@ class IpoAllottedMail extends Mailable implements ShouldQueue
     /**
      * Create a new message instance.
      */
-    public function __construct(public IpoDetail $ipo, public int $currentAllotment)
+    public function __construct(public IpoDetail $ipo, public int $allottedShares)
     {
         //
     }

@@ -75,7 +75,7 @@ class AllotIpoJob implements ShouldQueue
                 ]);
                 $refundAmount = ($entry['applied_shares'] - $entry['current_allotment']) * $ipo->issue_price;
                 $user = \App\Models\User::find($entry['user_id']);
-                $user?->increment('balance', $refundAmount);
+                $user?->portfolio->increment('amount', $refundAmount);
                 Mail::to($user->email)->queue(
                     new IpoAllottedMail($ipo, $entry['current_allotment'])
                 );
@@ -94,11 +94,11 @@ class AllotIpoJob implements ShouldQueue
                 ->get();
 
             foreach ($notAllotted as $app) {
-                $app->user->increment('balance', $app->applied_shares * $ipo->issue_price);
+                $app->user->portfolio->increment('amount', $app->applied_shares * $ipo->issue_price);
             }
 
 
-            $ipo->stock->update(['is_listed' => true]);
+            $ipo->stock->forceFill(['is_listed' => true]);
             $ipo->update(['ipo_status' => 'allotted']);
 
             \Log::info("✅ IPO #{$ipo->id} - Allotment completed. Used shares: " . ($totalShares - $remainingShares));
