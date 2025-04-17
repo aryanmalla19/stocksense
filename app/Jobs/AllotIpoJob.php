@@ -3,9 +3,11 @@
 namespace App\Jobs;
 
 use App\Enums\IpoApplicationStatus;
+use App\Mail\IpoAllottedMail;
 use App\Models\IpoDetail;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Mail;
 
 class AllotIpoJob implements ShouldQueue
 {
@@ -14,85 +16,99 @@ class AllotIpoJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(public IpoDetail $ipo)
+    public function __construct(public IpoDetail $ipoDetail)
     {
         //
     }
+
     public function handle(): void
     {
         try {
-            $ipo = $this->ipo;
+            $ipo = $this->ipoDetail;
             $totalShares = $ipo->total_shares;
+            $applications = $ipo->applications()->get()->shuffle();
 
-            $applications = $ipo->applications()->get(); // Get all applicants
-            $shuffled = $applications->shuffle();
-
-            $remainingShares = $totalShares;
             $allotted = collect();
+            $remainingShares = $totalShares;
 
-            // Initial allotment: Exactly 10 shares per selected applicant
-            foreach ($shuffled as $app) {
-                if ($remainingShares < 10) break;
-                if ($app->applied_shares < 10) continue;
+            // Allot fixed 10 shares initially
+            foreach ($applications as $app) {
+                if ($remainingShares < 10 ) break;
 
-                $allot = 10; // Fixed allotment of 10 shares
-
-                $app->update([
-                    'status' => IpoApplicationStatus::Allotted,
-                    'allotted_shares' => $allot,
-                ]);
-
-                $remainingShares -= $allot;
                 $allotted->push([
                     'id' => $app->id,
                     'user_id' => $app->user_id,
-                    'current_allotment' => $allot,
+                    'current_allotment' => 10,
                     'applied_shares' => $app->applied_shares,
                 ]);
+
+                $app->update([
+                    'status' => IpoApplicationStatus::Allotted,
+                    'allotted_shares' => 10,
+                ]);
+
+                $remainingShares -= 10;
             }
 
-            // Patch: Distribute leftover shares (1-by-1) to already allotted users
+            // Distribute extra shares one-by-one
             while ($remainingShares > 0) {
-                $extraDistributed = false;
+                $distributed = false;
 
                 foreach ($allotted as &$entry) {
-                    if ($remainingShares <= 0) break;
+                    if ($remainingShares === 0) break;
+
                     if ($entry['current_allotment'] < $entry['applied_shares']) {
-                        $entry['current_allotment'] += 1;
+                        $entry['current_allotment']++;
                         $remainingShares--;
-                        $extraDistributed = true;
+                        $distributed = true;
                     }
                 }
 
-                if (!$extraDistributed) break; // No one can take more shares
+                if (!$distributed) break; // Nobody can take more shares
             }
 
-            // Final update after patch
+
+            // Final update
             foreach ($allotted as $entry) {
                 $ipo->applications()->where('id', $entry['id'])->update([
-                    'status' => IpoApplicationStatus::Allotted,
                     'allotted_shares' => $entry['current_allotment'],
                 ]);
+                $refundAmount = ($entry['applied_shares'] - $entry['current_allotment']) * $ipo->issue_price;
+                $user = \App\Models\User::find($entry['user_id']);
+                $user?->portfolio->increment('amount', $refundAmount);
+                Mail::to($user->email)->queue(
+                    new IpoAllottedMail($ipo, $entry['current_allotment'])
+                );
             }
 
-            // Mark the rest as not_allotted
+            // Set the rest as not allotted
             $ipo->applications()
-                ->whereNotIn('id', collect($allotted)->pluck('id'))
+                ->whereNotIn('id', $allotted->pluck('id'))
                 ->update([
                     'status' => IpoApplicationStatus::NotAllotted,
                     'allotted_shares' => 0,
                 ]);
 
-            $ipo->stock->update(['is_listed' => true]);
+            $notAllotted = $ipo->applications()
+                ->where('status', IpoApplicationStatus::NotAllotted)
+                ->get();
+
+            foreach ($notAllotted as $app) {
+                $app->user->portfolio->increment('amount', $app->applied_shares * $ipo->issue_price);
+            }
+
+
+            $ipo->stock->forceFill(['is_listed' => true]);
             $ipo->update(['ipo_status' => 'allotted']);
 
-            \Log::info("✅ Allotment job completed successfully for IPO ID: {$ipo->id} | Total shares used: " . ($totalShares - $remainingShares));
+            \Log::info("✅ IPO #{$ipo->id} - Allotment completed. Used shares: " . ($totalShares - $remainingShares));
         } catch (\Throwable $e) {
-            \Log::error("❌ Allotment job failed: " . $e->getMessage(), [
+            \Log::error("❌ IPO allotment failed: " . $e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
             ]);
             throw $e;
         }
     }
+
 
 }
