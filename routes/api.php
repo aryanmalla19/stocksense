@@ -40,7 +40,7 @@ Route::prefix('v1')->group(function () {
             Route::post('/forgot-password', [PasswordResetController::class, 'sendResetPassword'])->name('password.forgot');
             Route::post('/reset-password', [PasswordResetController::class, 'resetPassword'])->name('password.reset');
             Route::post('/verify-otp', [TwoFactorController::class, 'verifyOtp'])->name('otp.verify');
-            Route::get('/login', [AuthController::class, 'loginWithMessage'])->name('login.with-message');
+//            Route::get('/login', [AuthController::class, 'loginWithMessage'])->name('login.with-message');
         });
     });
 

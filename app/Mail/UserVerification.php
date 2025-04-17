@@ -29,7 +29,7 @@ class UserVerification extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'User Verification',
+            subject: 'User Verification - Auth',
         );
     }
 
@@ -38,15 +38,22 @@ class UserVerification extends Mailable implements ShouldQueue
      */
     public function content(): Content
     {
+
+        $temporarySignedURL = URL::temporarySignedRoute(
+            'verification.verify',
+            now()->addMinutes(60),
+            ['id' => $this->user->id, 'hash' => sha1($this->user->email)]
+        );
+
+        $query = parse_url($temporarySignedURL, PHP_URL_QUERY);
+
+        $frontendURL = config('app.frontend_url') . '/verify-email?' . $query;
+
         return new Content(
             markdown: 'mail.user-verification', // Define your Markdown email view
             with: [
                 'user' => $this->user, // Pass user data to the view
-                'url' => URL::temporarySignedRoute(
-                    'verification.verify',
-                    now()->addMinutes(60), // Set expiry time
-                    ['id' => $this->user->id, 'hash' => sha1($this->user->email)] // Parameters to pass
-                ),
+                'url' => $frontendURL,
             ]
         );
     }
