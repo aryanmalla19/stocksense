@@ -7,6 +7,9 @@ Route::get('/', function () {
     return 'welcome';
 });   
 
+//login blade file for testing/ delete later
+Route::view('/login','auth.login')->name('login');
+
 Route::controller(SocialiteController::class)->group(
     function(){
         Route::get('auth/google', 'googleLogin')->name('auth.google');
@@ -15,3 +18,6 @@ Route::controller(SocialiteController::class)->group(
 );
 
       
+
+
+// Route::get('auth/facebook', [SocialiteController::class, 'facebookLogin'])->name('auth.facebook');
