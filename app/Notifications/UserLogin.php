@@ -32,6 +32,7 @@ class UserLogin extends Notification implements ShouldQueue
     {
         return [
             'message' => 'Logged In',
+            'user_id' => $notifiable->id
         ];
     }
 }
