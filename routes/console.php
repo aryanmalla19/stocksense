@@ -9,4 +9,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 // Schedule the command
-Schedule::command('ipo:check-listings')->everySecond();
+Schedule::command('ipo:check-listings')->everyMinute();

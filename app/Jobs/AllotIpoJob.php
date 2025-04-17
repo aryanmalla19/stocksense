@@ -24,20 +24,18 @@ class AllotIpoJob implements ShouldQueue
             $ipo = $this->ipo;
             $totalShares = $ipo->total_shares;
 
-            $applications = $ipo->applications()->get(); // get all applicants
+            $applications = $ipo->applications()->get(); // Get all applicants
             $shuffled = $applications->shuffle();
 
             $remainingShares = $totalShares;
             $allotted = collect();
 
+            // Initial allotment: Exactly 10 shares per selected applicant
             foreach ($shuffled as $app) {
-                if ($remainingShares <= 0) break;
+                if ($remainingShares < 10) break;
+                if ($app->applied_shares < 10) continue;
 
-                $maxAllot = min(20, $remainingShares, $app->applied_shares);
-
-                if ($maxAllot < 10) continue;
-
-                $allot = rand(10, $maxAllot);
+                $allot = 10; // Fixed allotment of 10 shares
 
                 $app->update([
                     'status' => IpoApplicationStatus::Allotted,
@@ -53,13 +51,12 @@ class AllotIpoJob implements ShouldQueue
                 ]);
             }
 
-            // 🩹 Patch: distribute leftover shares (1-by-1) to already allotted users if they applied for more
+            // Patch: Distribute leftover shares (1-by-1) to already allotted users
             while ($remainingShares > 0) {
                 $extraDistributed = false;
 
                 foreach ($allotted as &$entry) {
                     if ($remainingShares <= 0) break;
-
                     if ($entry['current_allotment'] < $entry['applied_shares']) {
                         $entry['current_allotment'] += 1;
                         $remainingShares--;
@@ -67,11 +64,10 @@ class AllotIpoJob implements ShouldQueue
                     }
                 }
 
-                // if no one can take more shares, break to avoid infinite loop
-                if (!$extraDistributed) break;
+                if (!$extraDistributed) break; // No one can take more shares
             }
 
-            // 🛠️ Final update after patch
+            // Final update after patch
             foreach ($allotted as $entry) {
                 $ipo->applications()->where('id', $entry['id'])->update([
                     'status' => IpoApplicationStatus::Allotted,
@@ -91,7 +87,6 @@ class AllotIpoJob implements ShouldQueue
             $ipo->update(['ipo_status' => 'allotted']);
 
             \Log::info("✅ Allotment job completed successfully for IPO ID: {$ipo->id} | Total shares used: " . ($totalShares - $remainingShares));
-
         } catch (\Throwable $e) {
             \Log::error("❌ Allotment job failed: " . $e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
