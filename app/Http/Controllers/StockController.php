@@ -19,9 +19,12 @@ class StockController extends Controller
             $stocks->symbol($symbol);
         }
 
+        if (request('column') && request('direction')) {
+            $stocks->sortColumn(request('column'), request('direction'));
+        }
+
         $perPage = request('per_page', 10); // default is 10
         $paginated = $stocks->paginate($perPage);
-
 
         return StockResource::collection($paginated)
             ->additional([
