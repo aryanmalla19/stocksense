@@ -14,13 +14,15 @@ class DashboardController extends Controller
         $user = auth()->user();
 
         $totalInvestment = $user->transactions()
-            ->where('type', 'BUY')
+            ->where('type', 'buy') // Use lowercase to match enum
             ->sum('price');
 
-        $currentHoldings = $user->portfolio->holdings->sum('amount');
+        $portfolio = $user->portfolio;
+        $currentAmount = $portfolio ? $portfolio->amount : 0;
+        $currentHoldings = $portfolio ? $portfolio->holdings->sum('value') : 0; // Use value attribute
 
         return response()->json([
-            'current_amount' => $user->portfolio->amount,
+            'current_amount' => $currentAmount,
             'total_investment' => $totalInvestment,
             'current_holdings' => $currentHoldings,
         ]);

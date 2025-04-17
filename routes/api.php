@@ -77,6 +77,9 @@ Route::prefix('v1')->group(function () {
         // Sectors
         Route::apiResource('/sectors', SectorController::class)->names('sectors');
 
+        // Portfolio
+        Route::get('/portfolio', [PortfolioController::class, 'index'])->name('portfolio.index');
+
         Route::get('/dashboard', DashboardController::class);
 
         // Transaction

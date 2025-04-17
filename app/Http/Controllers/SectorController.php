@@ -13,17 +13,23 @@ class SectorController extends Controller
     // {
     //     $this->middleware('auth:api');
     // }
-
     public function index()
-    {
-        $sectors = Sector::paginate(15); // Paginate the results
+{
+    $sectors = Sector::paginate(15); // Paginate the results
+    $resource = SectorResource::collection($sectors);
+    $paginationData = $resource->response()->getData(true);
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Successfully fetched all sectors data',
-            'data' => SectorResource::collection($sectors),
-        ]);
-    }
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Successfully fetched all sectors data',
+        'data' => [
+            'data' => $paginationData['data'],
+            'current_page' => $paginationData['meta']['current_page'],
+            'per_page' => $paginationData['meta']['per_page'],
+            'total' => $paginationData['meta']['total'],
+        ],
+    ]);
+}
 
     public function store(StoreSectorRequest $request)
     {

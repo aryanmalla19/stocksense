@@ -21,6 +21,7 @@ class PortfolioFactory extends Factory
 
         return [
             'user_id' => $user->id,
+            'amount' => $this->faker->randomFloat(2, 0, 100000),
             'created_at' => $this->faker->dateTimeThisYear(),
             'updated_at' => $this->faker->dateTimeThisYear(),
         ];

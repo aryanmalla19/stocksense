@@ -47,4 +47,12 @@ class Holding extends Model
     {
         return $this->belongsTo(Stock::class);
     }
+
+    /**
+     * Calculate the total value of the holding (quantity * average_price).
+     */
+    public function getValueAttribute(): float
+    {
+        return $this->quantity * $this->average_price;
+    }
 }
