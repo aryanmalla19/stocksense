@@ -29,6 +29,5 @@ class HoldingFactory extends Factory
             'created_at' => $this->faker->dateTimeThisYear(),
             'updated_at' => $this->faker->dateTimeThisMonth(),
         ];
-
     }
 }
