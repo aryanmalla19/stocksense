@@ -259,40 +259,88 @@ A stocksense web application developed as an internship project by a team of 7 i
 ## API Endpoints
 
 ### Authentication API
-| Method | Endpoint                            | Description                | Parameters            |
-|--------|-------------------------------------|----------------------------|-----------------------|
-| POST   | `/api/v1/auth/register`             | Register a new user        | `username`, `email`, `password` |
-| POST   | `/api/v1/auth/login`                | Log in a user              | `email`, `password`   |
-| POST   | `/api/v1/auth/logout`               | Log out a user             | `Authorization: Bearer <token>` |
-| POST   | `/api/v1/auth/reset-password`       | Request password reset     | `email`               |
-| PUT    | `/api/v1/auth/reset-password/{token}` | Reset password           | `password`            |
-| POST   | `/api/v1/auth/2fa/enable`           | Enable 2FA                 | `Authorization: Bearer <token>` |
-| POST   | `/api/v1/auth/2fa/verify`           | Verify 2FA code            | `token` (TOTP code)   |
-| POST   | `/api/v1/auth/2fa/disable`          | Disable 2FA                | `token` (TOTP code)   |
+| Method | Endpoint                              |     Description            | Parameters                                                                                      |
+|--------|---------------------------------------|----------------------------|-------------------------------------------------------------------------------------------------|
+| POST   | `/api/v1/auth/register`               | Register a new user        | `username`, `email`, `password`                                                                 |
+| POST   | `/api/v1/auth/email/resend`           | Resend a new mail          |  `email`                                                                                        |
+| POST   | `/api/v1/auth/login`                  | Log in a user              | `email`, `password`                                                                             |
+| POST   | `/api/v1/auth/logout`                 | Log out a user             | `Authorization: Bearer <token>`                                                                 |
+| POST   | `/api/v1/auth/change-password`        | change-password            | `Authorization: Bearer <token>` , `recent_password`, `new_password`, `new_password_confirmation`|
+| POST   | `/api/v1/auth/forgot-password`        | Forget password            | `email`                                                                                         |
+| PUT    | `/api/v1/auth/reset-password/{token}` | Reset password             | `password` `<token>`                                                                            |
+| POST   | `/api/v1/auth/2fa/enable`             | Enable 2FA                 | `Authorization: Bearer <token>`                                                                 |
+| POST   | `/api/v1/auth/verify-otp`             | Verify 2FA code            | `Private token` (TOTP code)                                                                     |
+| POST   | `/api/v1/auth/2fa/disable`            | Disable 2FA                | `Authorization: Bearer <token>`                                                                 |     
+
+
 
 ### Stock Data API
-| Method | Endpoint                     | Description                | Parameters            |
-|--------|------------------------------|----------------------------|-----------------------|
-| GET    | `/api/stocks/{symbol}`       | Get real-time stock quote  | `symbol`              |
-| GET    | `/api/stocks/{symbol}/history` | Get historical data      | `from`, `to` (query)  |
-| GET    | `/api/stocks/search`         | Search for stocks          | `q` (query)           |
+| Method | Endpoint                        |    Description             |     Parameters                     |
+|--------|---------------------------------|----------------------------|------------------------------------|
+| GET    | `/api/v1/stocks/{id}`           | Get real-time stock quote  | `symbol`                           |
+| GET    | `/api//v1stocks/{id}/history`   | Get historical data        | `from`, `to` (query)               |
+| GET    | `/api/v1/stocks/`               | get all stocks             | `Authorization: Bearer<token>`     |
+| POST   | `/api/v1/stocks/`               | Add new stock              | `symbol`,`company_name`,`sector_id`|
+| PUT    | `/api/v1/stocks/{id}`           | Edit a stock               | `symbol`,`company_name`,`sector_id`|
+| DELETE | `/api/v1/stocks/{id}`           | Delete a stock             | `Authorization: Bearer<token>`     |
+
+
+
 
 ### Portfolio API
-| Method | Endpoint                     | Description                | Parameters            |
-|--------|------------------------------|----------------------------|-----------------------|
-| GET    | `/api/portfolio`             | Get user’s portfolio       | `Authorization: Bearer <token>` |
-| POST   | `/api/portfolio/buy`         | Buy stocks                 | `symbol`, `quantity`  |
-| POST   | `/api/portfolio/sell`        | Sell stocks                | `symbol`, `quantity`  |
-| GET    | `/api/portfolio/transactions`| Get transaction history    | `Authorization: Bearer <token>` |
+| Method | Endpoint                     |    Description             |     Parameters                  |
+|--------|------------------------------|----------------------------|---------------------------------|
+| GET    | `/api/v1/users/portfolios`   | Get user’s portfolio       | `Authorization: Bearer <token>` |
 
-### Watchlist API
-| Method | Endpoint                     | Description                | Parameters            |
-|--------|------------------------------|----------------------------|-----------------------|
-| GET    | `/api/watchlist`             | Get user’s watchlist       | `Authorization: Bearer <token>` |
-| POST   | `/api/watchlist/add`         | Add stock to watchlist     | `symbol`              |
-| POST   | `/api/watchlist/remove`      | Remove stock from watchlist| `symbol`              |
+
+
+
+### Transaction API
+| Method | Endpoint                     |    Description             |     Parameters                                                |
+|--------|------------------------------|----------------------------|---------------------------------------------------------------|
+| GET    | `/api/v1/transactions`       | fetched all transactionst  | `Authorization: Bearer <token>`                               |
+| POST   | `/api/v1/transactions`       | Add stock to watchlist     | `Authorization: Bearer <token>`,`stock_id`,`type`, `quantity` |  
+
+
+
+### Holdings API
+| Method | Endpoint                     |    Description             |     Parameters                  |
+|--------|------------------------------|----------------------------|---------------------------------|
+| GET    | `/api/v1/users/holdings`     | fetched user holdings      | `Authorization: Bearer <token>` |
+
+
+
+### IPO Details API
+| Method | Endpoint                     |    Description             |     Parameters                                                                                                         |
+|--------|------------------------------|----------------------------|------------------------------------------------------------------------------------------------------------------------|
+| GET    | `/api/v1/ipo-details`        | fetched all ipo details    | `Authorization: Bearer <token>`                                                                                        |
+| POST   | `/api/watchlist/add`         | Add New IPO                | `Authorization: Bearer <token>`, ` stock_id`, `issue_price`, `total_shares`, `open_date`, `close_date`, `listing_date` |
+| GET    |`/api/v1/ipo-details/{Id}`    | Fetch IPO by ID            | `Authorization: Bearer <token>`, `Id`                                                                                  |
+| PUT    |`/api/v1/ipo-details/{Id}`    | Update IPO by ID           | `Authorization: Bearer <token>`, `Id`                                                                                  |
+| DEL    |`/api/v1/ipo-details/{Id}`    | Delete IPO by ID           | `Authorization: Bearer <token>`, `Id`                                                                                  |
+
+
+
+
+### IPO Application API
+| Method | Endpoint                     |    Description             |     Parameters                                               | 
+|--------|------------------------------|----------------------------|--------------------------------------------------------------|
+| GET    | `/api/v1/ipo-applications`   | all user ipo applications  | `Authorization: Bearer <token>`                              |
+| POST   | `/api/v1/ipo-applications`   | Add New IPO                | `Authorization: Bearer <token>`, ` ipo_id` , `applied_shares`|
+| GET    |`/api/v1/ipo-details/{Id}`    | Fetch IPO by ID            | `Authorization: Bearer <token>`, `Id`                        |
+
+
+
+
+### Watchlist API    
+| Method | Endpoint                             |    Description               |     Parameters                             |
+|--------|--------------------------------------|------------------------------|--------------------------------------------|
+| GET    | `/api/v1/users/watchlist`            | fetched all user’s watchlist | `Authorization: Bearer <token>`            |
+| POST   | `/api/v1/users/watchlist`            | Add stock to watchlist       | `Authorization: Bearer <token>``Stock_id`  |
+| DEL    | `/api/v1/users/watchlist/{stock_id}` | Remove stock from watchlist  | `Authorization: Bearer <token>`, `stock_id`|
 
 *Note:* All endpoints requiring authentication expect an `Authorization: Bearer <token>` header.
+
 
 ---
 
