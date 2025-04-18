@@ -28,6 +28,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         'two_factor_recovery_codes',
         'is_active',
         'role',
+        'google_id'
     ];
 
     protected $hidden = [
