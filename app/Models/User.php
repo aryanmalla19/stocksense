@@ -97,7 +97,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 
     public function sendPasswordResetNotification($token)
     {
-        $resetUrl = route('password.reset.form', ['token' => $token, 'email' => $this->email]);
+        $resetUrl = config('app.frontend_url')."/reset-password?email=$this->email&token=$token";
         Mail::to($this->email)->queue(new ResetPassword($this, $resetUrl));
     }
 }
