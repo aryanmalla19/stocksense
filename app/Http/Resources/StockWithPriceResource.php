@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class StockWithPriceResource extends JsonResource
+class StockwithPriceResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,13 +16,13 @@ class StockWithPriceResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'name' => $this->name,
             'symbol' => $this->symbol,
-            'company_name' => $this->company_name,
-            'sector' => $this->whenLoaded('sector', fn () => $this->sector->name, null),
-            'sector_id' => $this->sector_id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'prices' => StockPriceResource::collection($this->whenLoaded('prices')),
+            'sector' => $this->sector ? [
+                'id' => $this->sector->id,
+                'name' => $this->sector->name,
+            ] : null,
+            'prices' => StockPriceResource::collection($this->prices),
         ];
     }
-}
+}   
