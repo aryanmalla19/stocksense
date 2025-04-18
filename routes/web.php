@@ -20,8 +20,3 @@ Route::controller(SocialiteController::class)->group(
         Route::get('/auth/google/callback','googleAuthentication')->name('auth.google-callback');  
     }
 );
-
-      
-
-
-// Route::get('auth/facebook', [SocialiteController::class, 'facebookLogin'])->name('auth.facebook');
