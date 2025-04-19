@@ -281,7 +281,7 @@ class AuthController extends Controller
     // change user password
     public function changePassword(ChangePasswordRequest $request){
         $result = $this->authService->changePassword($request->validated());
-        
+
         return response()->json(
             [
                 'message' => $result['message'],
@@ -292,7 +292,7 @@ class AuthController extends Controller
 
     public function me(){
     $data = auth('api')->user();
-    
+
     unset(
         $data['id'],
         $data['refresh_token'],

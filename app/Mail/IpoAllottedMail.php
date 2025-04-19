@@ -2,23 +2,22 @@
 
 namespace App\Mail;
 
-use App\Models\User;
+use App\Models\IpoDetail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\URL;
 
-class UserVerification extends Mailable implements ShouldQueue
+class IpoAllottedMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(public User $user)
+    public function __construct(public IpoDetail $ipo, public int $allottedShares)
     {
         //
     }
@@ -29,31 +28,17 @@ class UserVerification extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'User Verification',
+            subject: "IPO Allotment Confirmation - {$this->ipo->stock->symbol}",
         );
     }
 
     /**
      * Get the message content definition.
      */
-
     public function content(): Content
     {
-        $temporarySignedURL = URL::temporarySignedRoute(
-            'verification.verify',
-            now()->addMinutes(60),
-            [
-                'id' => $this->user->id,
-                'hash' => sha1($this->user->email),
-            ]
-        );
-
         return new Content(
-            markdown: 'mail.user-verification',
-            with: [
-                'user' => $this->user,
-                'url' => $temporarySignedURL,
-            ]
+            markdown: 'mail.ipo-allotted-mail',
         );
     }
 

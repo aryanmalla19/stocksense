@@ -28,6 +28,7 @@ class StockPrice extends Model
         'close_price',
         'high_price',
         'low_price',
+        'current_price',
         'volume',
         'date',
         'current_price', // Add this
@@ -42,6 +43,7 @@ class StockPrice extends Model
         'open_price' => 'decimal:2',
         'close_price' => 'decimal:2',
         'high_price' => 'decimal:2',
+        'current_price' => 'decimal:2',
         'low_price' => 'decimal:2',
         'volume' => 'integer',
         'date' => 'datetime',

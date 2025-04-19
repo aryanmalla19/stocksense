@@ -104,4 +104,34 @@ class Stock extends Model
     {
         return $this->hasMany(Holding::class);
     }
+
+    public function scopeListed($query)
+    {
+        return $query->where('is_listed', true);
+    }
+
+    public function scopeSymbol($query, $symbol)
+    {
+        return $query->whereRaw('LOWER(symbol) LIKE ?', ['%' . strtolower($symbol) . '%']);
+    }
+
+    public function scopeSortColumn($query, $column, $direction)
+    {
+        $priceColumns = ['open_price', 'close_price', 'high_price', 'low_price', 'current_price'];
+
+        if (in_array($column, $priceColumns)) {
+            $query->addSelect([
+                'sort_value' => StockPrice::select($column)
+                    ->whereColumn('stock_prices.stock_id', 'stocks.id')
+                    ->latest('date') // or latest('id') if needed
+                    ->limit(1)
+            ])->orderBy('sort_value', $direction);
+
+            return $query;
+        }
+
+        return $query->orderBy($column, $direction);
+    }
+
+
 }
