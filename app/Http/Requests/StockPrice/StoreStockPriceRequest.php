@@ -8,7 +8,7 @@ class StoreStockPriceRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true; // You can apply auth logic here if needed
+        return true; // Adjust with auth logic if needed
     }
 
     public function rules(): array
@@ -24,8 +24,8 @@ class StoreStockPriceRequest extends FormRequest
         return [
             'stock_id.required' => 'Stock ID is required.',
             'stock_id.exists' => 'The selected stock does not exist.',
-            'curren_price.required' => 'Price is required.',
-            'curren_price.numeric' => 'Price must be a numeric value.',
+            'current_price.required' => 'Price is required.',
+            'current_price.numeric' => 'Price must be a numeric value.',
         ];
     }
 }

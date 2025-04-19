@@ -28,17 +28,26 @@ class StockPriceController extends Controller
 
         $stock = Stock::find($data['stock_id']);
 
-        if (! $stock) {
+        if (!$stock) {
             return response()->json([
-                'message' => 'Could not find stock with Id '.$data['stock_id'],
+                'message' => 'Could not find stock with Id ' . $data['stock_id'],
             ], 404);
         }
 
-        $newPrice = $stock->prices()->create($data);
+        $newPrice = $stock->prices()->create([
+            'stock_id' => $data['stock_id'],
+            'current_price' => $data['current_price'],
+            'open_price' => $data['open_price'] ?? null,
+            'close_price' => $data['close_price'] ?? null,
+            'high_price' => $data['high_price'] ?? null,
+            'low_price' => $data['low_price'] ?? null,
+            'volume' => $data['volume'] ?? null,
+            'date' => $data['date'] ?? now(),
+        ]);
 
         return response()->json([
             'message' => 'Successfully created new stock price',
-            'data' => $newPrice,
+            'data' => new StockPriceResource($newPrice),
         ], 201);
     }
 
@@ -47,12 +56,12 @@ class StockPriceController extends Controller
         $stockPrice = StockPrice::with('stock')->where('id', $id)->first();
         if (empty($stockPrice)) {
             return response()->json([
-                'message' => 'Could not find stock price data with ID '.$id,
+                'message' => 'Could not find stock price data with ID ' . $id,
             ], 404);
         }
 
         return response()->json([
-            'message' => 'Successfully fetched stock price data with ID '.$id,
+            'message' => 'Successfully fetched stock price data with ID ' . $id,
             'data' => new StockPriceResource($stockPrice),
         ]);
     }
@@ -75,7 +84,7 @@ class StockPriceController extends Controller
     {
         $stock = Stock::with(['prices', 'latestPrice', 'sector'])->find($id);
 
-        if (! $stock) {
+        if (!$stock) {
             return response()->json([
                 'message' => 'Stock not found',
                 'data' => null,

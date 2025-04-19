@@ -26,7 +26,7 @@ class StockResource extends JsonResource
 
             'is_watchlist' => $user->watchlists->contains('stock_id', $this->id),
 
-            // 👇 Only include price fields if the stock is listed
+            //Only include price fields if the stock is listed
             'open_price' => $this->is_listed && $latestPrice ? $latestPrice->open_price : null,
             'close_price' => $this->is_listed && $latestPrice ? $latestPrice->close_price : null,
             'high_price' => $this->is_listed && $latestPrice ? $latestPrice->high_price : null,

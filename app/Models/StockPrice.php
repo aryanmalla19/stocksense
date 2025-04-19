@@ -31,6 +31,7 @@ class StockPrice extends Model
         'current_price',
         'volume',
         'date',
+        'current_price', // Add this
     ];
 
     /**
@@ -46,6 +47,7 @@ class StockPrice extends Model
         'low_price' => 'decimal:2',
         'volume' => 'integer',
         'date' => 'datetime',
+        'current_price' => 'decimal:2', // Add this for consistent formatting
     ];
 
     /**
