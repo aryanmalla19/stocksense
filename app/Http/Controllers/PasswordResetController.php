@@ -24,13 +24,20 @@ class PasswordResetController extends Controller
             ? response()->json(['message' => __('A password reset link has been sent to your email.')], 200)
             : response()->json(['error' => __('We cannot find a user with that email address.')], 400);
     }
-
     public function resetPassword(ResetPasswordRequest $request)
     {
+        $data = $request->only('email', 'password', 'password_confirmation', 'token');
+        $user = User::where('email', $data['email'])->first();
+        if (Hash::check($data['password'], $user->password)) {
+            return response()->json([
+                'message' => 'Cannot set previous password',
+            ], 400);
+        }
 
         $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function (User $user, string $password) {
+            $data,
+            function (User $user, string $password) use ($data) {
+
                 $user->forceFill([
                     'password' => Hash::make($password),
                 ])->setRememberToken(Str::random(60));
@@ -50,6 +57,7 @@ class PasswordResetController extends Controller
             default => response()->json(['error' => __('Failed to reset the password.')], 400),
         };
     }
+
 
     public function resetPasswordForm(Request $request)
     {
