@@ -15,12 +15,12 @@ class PortfolioController extends Controller
     {
         $user = auth()->user();
         $portfolios = $user->portfolio()
-            ->with(['holdings'])
-            ->get();
+            ->with(['holdings.stock.latestPrice'])
+            ->first();
 
         return response()->json([
             'message' => 'Successfully fetched all portfolios data',
-            'data' => $portfolios,
+            'data' => new PortfolioResource($portfolios),
         ]);
     }
 }
