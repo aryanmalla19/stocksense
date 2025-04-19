@@ -34,22 +34,6 @@ class Stock extends Model
     ];
 
     /**
-     * Scope a query to only include listed stocks.
-     */
-    public function scopeListed($query)
-    {
-        return $query->where('is_listed', true);
-    }
-
-    /**
-     * Scope a query to filter stocks by symbol.
-     */
-    public function scopeSymbol($query, $symbol)
-    {
-        return $query->where('symbol', 'like', "%{$symbol}%");
-    }
-
-    /**
      * Get the sector that this stock belongs to.
      */
     public function sector(): BelongsTo
