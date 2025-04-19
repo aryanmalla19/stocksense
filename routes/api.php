@@ -69,7 +69,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/stocks/search', [StockController::class, 'searchStock'])->name('stocks.search');
         Route::get('/stocks/{stock}/history', [StockPriceController::class, 'historyStockPrices'])->name('stocks.history');
         Route::apiResource('/stock-prices', StockPriceController::class)->names('stock-prices');
-        Route::apiResource('/users/portfolios', PortfolioController::class)->names('users.portfolios');
+        Route::apiResource('/portfolios', PortfolioController::class)->names('users.portfolios');
         Route::apiResource('/users/holdings', HoldingController::class)->names('users.holdings');
 
         // IPO Management
@@ -83,9 +83,6 @@ Route::prefix('v1')->group(function () {
 
         // Sectors
         Route::apiResource('/sectors', SectorController::class)->names('sectors');
-
-        // Portfolio
-        Route::get('/portfolio', [PortfolioController::class, 'index'])->name('portfolio.index');
 
         Route::get('/dashboard', DashboardController::class);
 
