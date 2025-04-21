@@ -45,7 +45,7 @@ class Holding extends Model
      */
     public function stock(): BelongsTo
     {
-        return $this->belongsTo(Stock::class);
+        return $this->belongsTo(Stock::class, 'stock_id');
     }
 
     /**

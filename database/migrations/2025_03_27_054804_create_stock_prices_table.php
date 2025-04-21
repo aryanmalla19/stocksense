@@ -16,7 +16,7 @@ class CreateStockPricesTable extends Migration
             $table->decimal('high_price', 15, 2)->nullable();
             $table->decimal('low_price', 15, 2)->nullable();
             $table->decimal('current_price', 15, 2);
-            $table->bigInteger('volume');
+            $table->bigInteger('volume')->default(0);
             $table->timestamp('date')->useCurrent();
             $table->index('stock_id');
         });

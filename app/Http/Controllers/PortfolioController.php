@@ -11,16 +11,16 @@ class PortfolioController extends Controller
     /**
      * Display the authenticated user's portfolio.
      */
-    public function index(Request $request)
+    public function index()
     {
         $user = auth()->user();
-        $portfolios = Portfolio::where('user_id', $user->id)
-            ->with(['user', 'holdings.stock'])
-            ->get();
+        $portfolios = $user->portfolio()
+            ->with(['holdings.stock.latestPrice'])
+            ->first();
 
         return response()->json([
             'message' => 'Successfully fetched all portfolios data',
-            'data' => PortfolioResource::collection($portfolios),
+            'data' => new PortfolioResource($portfolios),
         ]);
     }
 }

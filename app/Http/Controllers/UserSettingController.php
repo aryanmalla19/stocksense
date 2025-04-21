@@ -14,11 +14,11 @@ class UserSettingController extends Controller
      */
     public function index()
     {
-        //        if (!auth()->user()->is_admin) {
-        //            return response()->json(['message' => 'Unauthorized'], 403);
-        //        }
-
-        return UserSettingResource::collection(UserSetting::all());
+        $data = auth()->user()->load('setting');
+        return response()->json([
+            'message' => 'Successfully fetched user data',
+            'data' => $data,
+        ]);
     }
 
     /**
