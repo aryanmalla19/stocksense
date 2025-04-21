@@ -7,6 +7,7 @@ use App\Http\Requests\Stock\UpdateStockRequest;
 use App\Http\Resources\StockResource;
 use App\Models\Stock;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class StockController extends Controller
 {
@@ -33,6 +34,55 @@ class StockController extends Controller
             ]);
     }
 
+    public function sortStock(string $column, string $direction)
+    {
+        // Validate direction
+        if (!in_array(strtolower($direction), ['asc', 'desc'])) {
+            return response()->json([
+                'message' => 'Invalid sort direction. Use "asc" or "desc".',
+            ], 400);
+        }
+
+        // Validate column
+        $validColumns = [
+            'symbol', 'company_name', 'sector_id', 'is_listed',
+            'open_price', 'close_price', 'high_price', 'low_price', 'current_price'
+        ];
+        if (!in_array($column, $validColumns)) {
+            return response()->json([
+                'message' => 'Invalid sort column',
+            ], 400);
+        }
+
+        // Enable query logging
+        DB::enableQueryLog();
+
+        $stocks = Stock::select('stocks.*')
+            ->with(['sector', 'latestPrice'])
+            ->listed()
+            ->sortColumn($column, $direction);
+
+        // Debug: Log raw query
+        \Log::info('Sort stock query:', DB::getQueryLog());
+        DB::disableQueryLog();
+
+        // Debug: Log query results before pagination
+        \Log::info('Stocks retrieved before pagination:', $stocks->get()->toArray());
+
+        $perPage = request('per_page', 10); // default is 10
+        $paginated = $stocks->paginate($perPage);
+
+        $response = StockResource::collection($paginated)
+            ->additional([
+                'message' => 'Stocks retrieved successfully',
+            ]);
+
+        // Debug: Log final response
+        \Log::info('Sort stock response:', $response->response()->getData(true));
+
+        return $response;
+    }
+
     public function store(StoreStockRequest $request)
     {
         $stock = Stock::create($request->validated());
@@ -49,9 +99,9 @@ class StockController extends Controller
             ->listed()
             ->find($id);
 
-        if (! $stock) {
+        if (!$stock) {
             return response()->json([
-                'message' => 'No listed stock found with ID '.$id,
+                'message' => 'No listed stock found with ID ' . $id,
             ], 404);
         }
 
@@ -64,9 +114,9 @@ class StockController extends Controller
     public function update(UpdateStockRequest $request, string $id)
     {
         $stock = Stock::find($id);
-        if (! $stock) {
+        if (!$stock) {
             return response()->json([
-                'message' => 'No Stock found with ID '.$id,
+                'message' => 'No Stock found with ID ' . $id,
             ], 404);
         }
 
@@ -81,16 +131,16 @@ class StockController extends Controller
     public function destroy(string $id)
     {
         $stock = Stock::find($id);
-        if (! $stock) {
+        if (!$stock) {
             return response()->json([
-                'message' => 'No Stock found with ID '.$id,
+                'message' => 'No Stock found with ID ' . $id,
             ], 404);
         }
 
         $stock->delete();
 
         return response()->json([
-            'message' => 'Successfully deleted stock with ID '.$id,
+            'message' => 'Successfully deleted stock with ID ' . $id,
         ]);
     }
 }
