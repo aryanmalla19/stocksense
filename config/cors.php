@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'paths' => ['api/*'], // Apply CORS to API routes
+    'paths' => ['api/*', 'broadcasting/auth'], 
     'allowed_methods' => ['GET', 'POST', 'PUT', 'DELETE'],
     'allowed_origins' => ['http://localhost:3000'],
     'allowed_origins_patterns' => [],
