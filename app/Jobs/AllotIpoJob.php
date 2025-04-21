@@ -113,7 +113,7 @@ class AllotIpoJob implements ShouldQueue
                         $user->portfolio->increment('amount', $refundAmount);
 
                         Mail::to($user->email)->queue(
-                            new IpoAllottedMail($ipo, $entry['current_allotment'])
+                            new IpoAllottedMail($ipo, $entry['current_allotment'], $user)
                         );
                     }
                 }
