@@ -23,5 +23,6 @@ class CreateUserPortfolio implements ShouldQueue
         $event->user->portfolio()->create([
             'user_id' => $event->user->id,
         ]);
+        $event->user->setting()->create();
     }
 }
