@@ -45,7 +45,13 @@ class StockController extends Controller
 
     public function show(string $id)
     {
-        $stock = Stock::with(['sector', 'latestPrice'])
+        $stock = Stock::with([
+            'sector',
+            'latestPrice',
+            'prices' => function ($query) {
+                $query->orderBy('date', 'asc');
+            }
+        ])
             ->listed()
             ->find($id);
 
@@ -60,6 +66,7 @@ class StockController extends Controller
             'data' => new StockResource($stock),
         ]);
     }
+
 
     public function update(UpdateStockRequest $request, string $id)
     {

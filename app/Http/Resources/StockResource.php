@@ -26,12 +26,15 @@ class StockResource extends JsonResource
 
             'is_watchlist' => $user->watchlists->contains('stock_id', $this->id),
 
+            'prices' => $this->whenLoaded('prices'),
+
             //Only include price fields if the stock is listed
             'open_price' => $this->is_listed && $latestPrice ? $latestPrice->open_price : null,
             'close_price' => $this->is_listed && $latestPrice ? $latestPrice->close_price : null,
             'high_price' => $this->is_listed && $latestPrice ? $latestPrice->high_price : null,
             'low_price' => $this->is_listed && $latestPrice ? $latestPrice->low_price : null,
             'current_price' => $this->is_listed && $latestPrice ? $latestPrice->current_price : null,
+
         ];
     }
 }
