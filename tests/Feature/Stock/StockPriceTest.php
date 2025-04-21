@@ -70,46 +70,45 @@ class StockPriceTest extends TestCase
     #[Test]
     public function it_can_store_a_new_stock_price()
     {
-        // Arrange: Create a stock
-        $stock = Stock::factory()->create();
+    $stock = Stock::factory()->create();
 
-        $data = [
-            'stock_id' => $stock->id,
-            'current_price' => 150.75,
-            'open_price' => 150.00,
-            'close_price' => 151.00,
-            'high_price' => 152.00,
-            'low_price' => 149.50,
-            'volume' => 100000,
-            'date' => now()->toDateTimeString(),
-        ];
+    $data = [
+        'stock_id' => $stock->id,
+        'current_price' => 150.75,
+        'open_price' => 150.00,
+        'close_price' => 151.00,
+        'high_price' => 152.00,
+        'low_price' => 149.50,
+        'volume' => 100000,
+        'date' => now()->toDateTimeString(),
+    ];
 
-        // Act: POST request to store endpoint
-        $response = $this->postJson('/api/v1/stock-prices', $data);
+    $response = $this->postJson('/api/v1/stock-prices', $data);
 
-        // Assert: Verify response and database
-        $response->assertStatus(201)
-                 ->assertJson([
-                     'message' => 'Successfully created new stock price',
-                 ])
-                 ->assertJsonStructure([
-                     'message',
-                     'data' => [
-                         'id',
-                         'stock_id',
-                         'open_price',
-                         'close_price',
-                         'high_price',
-                         'low_price',
-                         'current_price',
-                         'date',
-                     ]
-                 ]);
 
-        $this->assertDatabaseHas('stock_prices', [
-            'stock_id' => $stock->id,
-            'current_price' => 150.75,
-        ]);
+
+    $response->assertStatus(201)
+             ->assertJson([
+                 'message' => 'Successfully created new stock price',
+             ])
+             ->assertJsonStructure([
+                 'message',
+                 'data' => [
+                     'id',
+                     'stock_id',
+                     'open_price',
+                     'close_price',
+                     'high_price',
+                     'low_price',
+                     'current_price',
+                     'date',
+                 ]
+             ]);
+
+    $this->assertDatabaseHas('stock_prices', [
+        'stock_id' => $stock->id,
+        'current_price' => 150.75,
+    ]);
     }
 
     #[Test]
