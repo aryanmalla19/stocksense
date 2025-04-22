@@ -20,7 +20,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'role' => $this->role,
             'is_active' => $this->is_active,
-            'two_factor_enabled' => $this->two_factor_enable,
+            'two_factor_enabled' => $this->two_factor_enabled,
             'theme' => $this->whenLoaded('setting', fn () => $this->setting->mode),
             'notification_enabled' => $this->whenLoaded('setting', fn() => $this->setting->notification_enabled),
             'created_at' => $this->created_at,
