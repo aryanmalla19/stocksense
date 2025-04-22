@@ -33,6 +33,8 @@ class Stock extends Model
         'is_listed' => 'boolean',
     ];
 
+    
+
     /**
      * Get the sector that this stock belongs to.
      */

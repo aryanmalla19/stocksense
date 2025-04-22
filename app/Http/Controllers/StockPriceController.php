@@ -23,55 +23,24 @@ class StockPriceController extends Controller
     }
     public function store(StoreStockPriceRequest $request)
     {
-        $data = $request->validated();
-        $stock = Stock::find($data['stock_id']);
+    $data = $request->validated();
 
-        if (!$stock) {
-            return response()->json([
-                'message' => 'Stock not found with ID: ' . $data['stock_id'],
-            ], 404);
-        }
+    $newPrice = StockPrice::create([
+        'stock_id' => $data['stock_id'],
+        'current_price' => $data['current_price'],
+        'open_price' => $data['open_price'] ?? $data['current_price'],
+        'close_price' => $data['close_price'] ?? null,
+        'high_price' => $data['high_price'] ?? $data['current_price'],
+        'low_price' => $data['low_price'] ?? $data['current_price'],
+        'volume' => $data['volume'] ?? 0,
+        'date' => $data['date'] ?? now(),
+    ]);
 
-        $today = now()->toDateString();
-        $todayPrices = $stock->prices()->whereDate('date', $today)->get();
-
-        $currentPrice = $data['current_price'];
-
-        if ($todayPrices->isEmpty()) {
-            // First price entry of the day
-            $newPrice = $stock->prices()->create([
-                'stock_id' => $stock->id,
-                'current_price' => $currentPrice,
-                'open_price' => $currentPrice,
-                'high_price' => $currentPrice,
-                'low_price' => $currentPrice,
-                'close_price' => null,
-                'volume' => 0,
-                'date' => now(),
-            ]);
-        } else {
-            $openPrice = $todayPrices->first()->open_price;
-            $highPrice = max($todayPrices->max('high_price'), $currentPrice);
-            $lowPrice = min($todayPrices->min('low_price'), $currentPrice);
-
-            $newPrice = $stock->prices()->create([
-                'stock_id' => $stock->id,
-                'current_price' => $currentPrice,
-                'open_price' => $openPrice,
-                'high_price' => $highPrice,
-                'low_price' => $lowPrice,
-                'close_price' => null,
-                'volume' => 0,
-                'date' => now(),
-            ]);
-        }
-
-        return response()->json([
-            'message' => 'Successfully created/updated stock price for today',
-            'data' => new StockPriceResource($newPrice),
-        ], 201);
+    return response()->json([
+        'message' => 'Successfully created new stock price',
+        'data' => new StockPriceResource($newPrice),
+    ], 201);
     }
-
 
 
     public function show(string $id)

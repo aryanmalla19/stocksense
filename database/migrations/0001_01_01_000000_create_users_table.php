@@ -17,12 +17,13 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->boolean('is_active')->default(true)->index();
             $table->enum('role', ['admin', 'user'])->default('user')->index();
             $table->text('refresh_token')->nullable();
             $table->index('refresh_token');
             $table->timestamp('refresh_token_expires_at')->nullable();
+            $table->string('google_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
 

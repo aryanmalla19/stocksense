@@ -15,19 +15,18 @@ class StockResource extends JsonResource
     public function toArray(Request $request): array
     {
         $latestPrice = $this->whenLoaded('latestPrice', fn () => $this->latestPrice, null);
-        $user = auth()->user();
+        $sector = $this->whenLoaded('sector', fn () => $this->sector, null);
+
         return [
             'id' => $this->id,
             'symbol' => $this->symbol,
             'company_name' => $this->company_name,
             'sector_id' => $this->sector_id,
+            'sector' => $sector ? $sector->name : null,
             'is_listed' => $this->is_listed,
             'sector' => $this->whenLoaded('sector', fn () => $this->sector->name, null),
-
             'is_watchlist' => $user->watchlists->contains('stock_id', $this->id),
-
             'prices' => $this->whenLoaded('prices'),
-
             //Only include price fields if the stock is listed
             'open_price' => $this->is_listed && $latestPrice ? $latestPrice->open_price : null,
             'close_price' => $this->is_listed && $latestPrice ? $latestPrice->close_price : null,
@@ -37,4 +36,4 @@ class StockResource extends JsonResource
 
         ];
     }
-}
+}   
