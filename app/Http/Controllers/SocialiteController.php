@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\UserRegistered;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
@@ -62,6 +63,8 @@ class SocialiteController extends Controller
                 'refresh_token' => $refreshToken,
                 'refresh_token_expires_at' => Carbon::now()->addDays(30), // Server-side expiration
             ])->save();
+
+            event(new UserRegistered($user));
 
             return response()->json([
                 'access_token' => $token,
