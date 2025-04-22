@@ -22,7 +22,7 @@ class StoreIpoDetailRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'stock_id' => 'required|integer|exists:stocks,id',
+            'stock_id' => 'required|integer|unique::stocks,id',
             'issue_price' => 'required|integer|min:100',
             'total_shares' => 'required|integer|min:20',
             'open_date' => 'required|date',
