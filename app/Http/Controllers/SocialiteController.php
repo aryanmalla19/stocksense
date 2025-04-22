@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Facades\JWTFactory;
@@ -29,12 +31,13 @@ class SocialiteController extends Controller
 
             if ($user) {
                 $token = JWTAuth::fromUser($user);
-                $refreshToken = $user->refresh_token;
+                // Generate a random alphanumeric refresh token
+                $refreshToken = Str::random(32);
 
-                if (!$refreshToken) {
-                    $refreshToken = $this->generateRefreshToken($user);
-                    $user->update(['refresh_token' => $refreshToken]);
-                }
+                $user->forceFill([
+                    'refresh_token' => $refreshToken,
+                    'refresh_token_expires_at' => Carbon::now()->addDays(30), // Server-side expiration
+                ])->save();
 
                 return response()->json([
                     'access_token' => $token,
@@ -52,8 +55,13 @@ class SocialiteController extends Controller
             ]);
 
             $token = JWTAuth::fromUser($user);
-            $refreshToken = $this->generateRefreshToken($user);
-            $user->update(['refresh_token' => $refreshToken]);
+            // Generate a random alphanumeric refresh token
+            $refreshToken = Str::random(32);
+
+            $user->forceFill([
+                'refresh_token' => $refreshToken,
+                'refresh_token_expires_at' => Carbon::now()->addDays(30), // Server-side expiration
+            ])->save();
 
             return response()->json([
                 'access_token' => $token,
@@ -66,16 +74,5 @@ class SocialiteController extends Controller
             \Log::error('Google OAuth error: ' . $e->getMessage());
             return response()->json(['error' => 'Authentication failed'], 500);
         }
-    }
-
-    protected function generateRefreshToken(User $user): string
-    {
-        $customClaims = JWTFactory::customClaims([
-            'sub' => $user->id,
-            'iat' => now()->timestamp,
-            'exp' => now()->addDays(30)->timestamp,
-        ])->make();
-
-        return JWTAuth::encode($customClaims)->get();
     }
 }
