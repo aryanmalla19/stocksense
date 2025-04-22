@@ -89,7 +89,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 
     public function setting(): HasOne
     {
-        return $this->hasOne(UserSetting::class);
+        return $this->hasOne(UserSetting::class, 'user_id');
     }
 
     public function ipoApplications(): HasMany

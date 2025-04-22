@@ -17,7 +17,7 @@ class UserSettingController extends Controller
         $data = auth()->user()->load('setting');
         return response()->json([
             'message' => 'Successfully fetched user data',
-            'data' => $data,
+            'data' => new UserSettingResource($data),
         ]);
     }
 
