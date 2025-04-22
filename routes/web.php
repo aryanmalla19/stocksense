@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\SocialiteController;
+use App\Http\Controllers\SseController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -18,3 +19,6 @@ Route::controller(SocialiteController::class)->group(
         Route::get('auth/google', 'googleLogin')->name('auth.google');
         Route::get('/auth/google/callback','googleAuthentication')->name('auth.google-callback');
     });
+
+Route::get('/api/v1/auth/sse-notifications', [SseController::class, 'stream']);
+Route::view('/sse-test', 'test');
