@@ -22,7 +22,7 @@ class StoreIpoDetailRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'stock_id' => 'required|integer|unique:stocks,id',
+            'stock_id' => 'required|integer|exists:stocks,id',
             'issue_price' => 'required|integer|min:100',
             'total_shares' => 'required|integer|min:20',
             'open_date' => 'required|date',
@@ -35,7 +35,6 @@ class StoreIpoDetailRequest extends FormRequest
     {
         return [
             'stock_id' => 'Stock id is required.',
-            'stock_id.unique' => 'Stock can only have 1 IPO',
             'stock_id.exists' => 'The selected stock does not exist.',
             'issue_price.min' => 'Issue price must be at least :min.',
             'total_shares.min' => 'Total shares must be at least :min.',
