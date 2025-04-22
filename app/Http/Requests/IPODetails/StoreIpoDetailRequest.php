@@ -35,7 +35,7 @@ class StoreIpoDetailRequest extends FormRequest
     {
         return [
             'stock_id' => 'Stock id is required.',
-            'stock_id.exists' => 'The selected stock deosnot exist.',
+            'stock_id.exists' => 'The selected stock does not exist.',
             'issue_price.min' => 'Issue price must be at least :min.',
             'total_shares.min' => 'Total shares must be at least :min.',
             'close_date.after' => 'Close date must be after open date.',

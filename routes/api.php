@@ -3,7 +3,6 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HoldingController;
-use App\Http\Controllers\IpoAllotmentController;
 use App\Http\Controllers\IpoApplicationController;
 use App\Http\Controllers\IpoDetailController;
 use App\Http\Controllers\NotificationController;
@@ -14,10 +13,10 @@ use App\Http\Controllers\StockController;
 use App\Http\Controllers\StockPriceController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TwoFactorController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserSettingController;
 use App\Http\Controllers\VerificationEmailController;
 use App\Http\Controllers\WatchlistController;
-use Illuminate\Http\Request; // Added this import
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -76,6 +75,8 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('/ipo-details', IpoDetailController::class)->names('ipo-details');
         Route::apiResource('/ipo-applications', IpoApplicationController::class)->names('ipo-applications');
 
+        Route::get('/profile', UserController::class);
+
         // Admin
         Route::middleware('isAdmin')->prefix('admin')->group(function () {
             Route::get('/ipo-details', [IpoDetailController::class, 'adminIndex']);
@@ -83,8 +84,6 @@ Route::prefix('v1')->group(function () {
 
         // Sectors
         Route::apiResource('/sectors', SectorController::class)->names('sectors');
-
-        Route::get('/dashboard', DashboardController::class);
 
         // Transaction
         Route::apiResource('/transactions', TransactionController::class)->names('transactions');

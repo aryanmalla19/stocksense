@@ -13,11 +13,10 @@ use Illuminate\Queue\SerializesModels;
 class IpoAllottedMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
-
     /**
      * Create a new message instance.
      */
-    public function __construct(public IpoDetail $ipo, public int $allottedShares)
+    public function __construct(public IpoDetail $ipo, public int $allottedShares, public $user)
     {
         //
     }
@@ -38,7 +37,7 @@ class IpoAllottedMail extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            markdown: 'mail.ipo-allotted-mail',
+            view: 'mail.ipo-allotted-mail',
         );
     }
 
