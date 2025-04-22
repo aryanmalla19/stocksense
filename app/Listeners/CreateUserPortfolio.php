@@ -7,21 +7,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class CreateUserPortfolio implements ShouldQueue
 {
-    /**
-     * Create the event listener.
-     */
-    public function __construct()
-    {
-        //
-    }
-
-    /**
-     * Handle the event.
-     */
     public function handle(UserRegistered $event): void
     {
-        $event->user->portfolio()->create([
-            'user_id' => $event->user->id,
-        ]);
+        $event->user->portfolio()->create();
+        // No need to specify amount - it will use the migration default
     }
 }
