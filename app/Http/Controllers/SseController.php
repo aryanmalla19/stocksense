@@ -1,8 +1,8 @@
 <?php
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class SseController extends Controller
 {
@@ -13,11 +13,15 @@ class SseController extends Controller
 
     public function stream()
     {
-        $userId = auth('api')->user()->id;
+        $token = request()->query('token'); // Get the token from the query string
 
-        // $cacheKey = "sse_notifications_user_{$userId}";
-        // $notifications = Cache::pull($cacheKey, []);
-        // return $notifications;
+        // If the token is invalid or missing, return an error
+        if (!$token || !JWTAuth::setToken($token)->check()) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $user = JWTAuth::toUser($token); // Get the authenticated user using the token
+        $userId = $user->id;
 
         return response()->stream(function () use ($userId) {
             while (true) {
@@ -32,7 +36,7 @@ class SseController extends Controller
 
                 ob_flush();
                 flush();
-                sleep(2); 
+                sleep(2);
             }
         }, 200, [
             'Content-Type' => 'text/event-stream',
