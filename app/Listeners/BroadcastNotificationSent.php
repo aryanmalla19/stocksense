@@ -3,6 +3,7 @@
 namespace App\Listeners;
 use App\Events\GeneralNotification;
 use Illuminate\Notifications\Events\NotificationSent;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class BroadcastNotificationSent
@@ -10,18 +11,22 @@ class BroadcastNotificationSent
     public function handle(NotificationSent $event)
     {
         if ($event->channel === 'database') {
-            $notificationData = $event->notification->toArray($event->notifiable);
 
-            $type = class_basename($event->notification);
+            if ($event->channel !== 'database')
+                return;
 
-            $message = $notificationData['message'] ?? 'No message available';
+            $userId = $event->notifiable->id;
 
-            $data = array_merge($notificationData, [
-                'notification_id' => $event->response,
-                'user_id' => $event->notifiable->id,
-            ]);
+            $data = $event->notification->toArray($event->notifiable);
+            $data['notification_id'] = $event->notification->id ?? uniqid();
+            $data['timestamp'] = now()->toDateTimeString();
 
-            event(new GeneralNotification($type, $message, $data));
+            // Store it temporarily in cache
+            $cacheKey = "sse_notifications_user_{$userId}";
+            $existing = Cache::get($cacheKey, []);
+            $existing[] = $data;
+
+            Cache::put($cacheKey, $existing, 300); 
 
         }
     }
