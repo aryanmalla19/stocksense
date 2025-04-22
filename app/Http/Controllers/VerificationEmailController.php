@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Mail\UserVerification;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
+use Psy\Util\Str;
 
 class VerificationEmailController extends Controller
 {
@@ -17,37 +19,46 @@ class VerificationEmailController extends Controller
      * @param  string  $hash
      * @return \Illuminate\Http\RedirectResponse
      */
+
+
     public function verify(Request $request, $id, $hash)
     {
         $user = User::findOrFail($id);
 
-        // Verify the hash matches the user's email
+        // Verify hash
         if (! hash_equals((string) $hash, sha1($user->email))) {
-            $redirectUrl = URL::temporarySignedRoute(
-                'login.with-message',
-                now()->addMinutes(30),
-                ['error' => 'invalid_link']
-            );
+            $redirectUrl = config('app.frontend_url') . '/email-verified?error=invalid_link';
             return redirect()->to($redirectUrl);
         }
 
-        // Check if already verified
+        // Already verified
         if ($user->hasVerifiedEmail()) {
-            $redirectUrl = URL::temporarySignedRoute(
-                'login.with-message',
-                now()->addMinutes(30),
-                ['message' => 'already_verified']
-            );
+            $redirectUrl = config('app.frontend_url') . '/email-verified?message=already_verified';
             return redirect()->to($redirectUrl);
         }
 
+        // Mark as verified
         $user->markEmailAsVerified();
 
-        $redirectUrl = URL::temporarySignedRoute(
-            'login.with-message',
-            now()->addMinutes(30),
-            ['message' => 'email_verified']
-        );
+        // Create access token
+        $accessToken = \JWTAuth::fromUser($user);
+
+        // Generate refresh token
+        $refreshToken = \Illuminate\Support\Str::random(32);
+
+        // Save refresh token to DB
+        $user->forceFill([
+            'refresh_token' => $refreshToken,
+            'refresh_token_expires_at' => Carbon::now()->addDays(30),
+        ])->save();
+
+        // Redirect to frontend with tokens
+        $redirectUrl = config('app.frontend_url') . '/email-verified?' . http_build_query([
+                'message' => 'email_verified',
+                'access_token' => $accessToken,
+                'refresh_token' => $refreshToken,
+//                'expires_in' => config('jwt.ttl') * 60,
+            ]);
 
         return redirect()->to($redirectUrl);
     }

@@ -98,7 +98,7 @@ class AllotIpoJob implements ShouldQueue
             }
 
 
-            $ipo->stock->forceFill(['is_listed' => true]);
+            $ipo->stock->forceFill(['is_listed' => true])->save();
             $ipo->update(['ipo_status' => 'allotted']);
 
             \Log::info("✅ IPO #{$ipo->id} - Allotment completed. Used shares: " . ($totalShares - $remainingShares));

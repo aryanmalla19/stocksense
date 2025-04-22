@@ -36,17 +36,23 @@ class UserVerification extends Mailable implements ShouldQueue
     /**
      * Get the message content definition.
      */
+
     public function content(): Content
     {
+        $temporarySignedURL = URL::temporarySignedRoute(
+            'verification.verify',
+            now()->addMinutes(60),
+            [
+                'id' => $this->user->id,
+                'hash' => sha1($this->user->email),
+            ]
+        );
+
         return new Content(
-            markdown: 'mail.user-verification', // Define your Markdown email view
+            markdown: 'mail.user-verification',
             with: [
-                'user' => $this->user, // Pass user data to the view
-                'url' => URL::temporarySignedRoute(
-                    'verification.verify',
-                    now()->addMinutes(60), // Set expiry time
-                    ['id' => $this->user->id, 'hash' => sha1($this->user->email)] // Parameters to pass
-                ),
+                'user' => $this->user,
+                'url' => $temporarySignedURL,
             ]
         );
     }

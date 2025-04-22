@@ -24,44 +24,68 @@ class Stock extends Model
         'description',
     ];
 
-    protected $attributes = [
-        'is_listed' => false
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'is_listed' => 'boolean',
     ];
 
+    
+
     /**
-     * Get the sector this stock belongs to.
+     * Get the sector that this stock belongs to.
      */
     public function sector(): BelongsTo
     {
         return $this->belongsTo(Sector::class);
-
     }
 
+    /**
+     * Get the prices for this stock.
+     */
     public function prices(): HasMany
     {
-        return $this->hasMany(StockPrice::class, 'stock_id');
+        return $this->hasMany(StockPrice::class);
     }
 
+    /**
+     * Get the latest price for this stock.
+     */
     public function latestPrice(): HasOne
     {
-        return $this->hasOne(StockPrice::class)->latest('date');
+        return $this->hasOne(StockPrice::class)->latestOfMany('date');
     }
 
+    /**
+     * Get the transactions for this stock.
+     */
     public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class);
     }
 
+    /**
+     * Get the watchlists for this stock.
+     */
     public function watchlists(): HasMany
     {
         return $this->hasMany(Watchlist::class);
     }
 
+    /**
+     * Get the IPO details for this stock.
+     */
     public function ipoDetails(): HasMany
     {
-        return $this->hasMany(IpoDetail::class, 'stock_id');
+        return $this->hasMany(IpoDetail::class);
     }
 
+    /**
+     * Get the holdings for this stock.
+     */
     public function holdings(): HasMany
     {
         return $this->hasMany(Holding::class);

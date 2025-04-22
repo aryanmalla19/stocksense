@@ -24,8 +24,13 @@ class ResetPasswordRequest extends FormRequest
         return [
             'token' => 'required',
             'email' => 'required|email',
-            'password' => 'required|min:6|confirmed',
-            //
+            'password' => [
+                'required',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/',
+                'min:8',
+                'max:50',
+                'confirmed',
+            ],
         ];
     }
 
@@ -34,9 +39,11 @@ class ResetPasswordRequest extends FormRequest
         return [
             'email.required' => 'Please provide your email address.',
             'email.email' => 'Please provide a valid email address.',
-            'password.required' => 'Please enter your new password.',
-            'password.min' => 'Your password must be at least 6 characters long.',
-            'password.confirmed' => 'The password confirmation does not match.',
+            'password.required' => 'Password is missing',
+            'password.min' => 'Password must be at least 8 characters',
+            'password.max' => 'Password must not exceed 50 characters',
+            'password.regex' => 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
+            'password.confirmed' => 'Password confirmation does not match',
         ];
     }
 }

@@ -20,7 +20,8 @@ class HoldingPolicy
      */
     public function view(User $user, Holding $holding)
     {
-        return $user->portfolio && $user->portfolio->id === $holding->portfolio_id;
+        // Ensure portfolio exists and matches the holding's portfolio_id
+        return $user->portfolio !== null && $user->portfolio->id === $holding->portfolio_id;
     }
 
     /**
@@ -36,7 +37,7 @@ class HoldingPolicy
      */
     public function update(User $user, Holding $holding)
     {
-        return $user->portfolio && $user->portfolio->id === $holding->portfolio_id;
+        return $user->portfolio !== null && $user->portfolio->id === $holding->portfolio_id;
     }
 
     /**
@@ -44,6 +45,6 @@ class HoldingPolicy
      */
     public function delete(User $user, Holding $holding)
     {
-        return $user->portfolio && $user->portfolio->id === $holding->portfolio_id;
+        return $user->portfolio !== null && $user->portfolio->id === $holding->portfolio_id;
     }
 }

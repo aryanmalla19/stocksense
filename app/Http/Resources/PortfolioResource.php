@@ -2,30 +2,36 @@
 
 namespace App\Http\Resources;
 
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PortfolioResource extends JsonResource
 {
-    public function toArray($request)
+    public function toArray(Request $request): array
     {
         return [
             'id' => $this->id,
-            'user_id' => $this->user_id,
             'amount' => $this->amount,
-            'user' => [
-                'id' => $this->user->id,
-                'name' => $this->user->name,
-                'email' => $this->user->email,
-            ],
-            'holdings' => $this->holdings->map(function ($holding) {
-                return [
-                    'id' => $holding->id,
-                    'stock_id' => $holding->stock_id,
-                    'quantity' => $holding->quantity,
-                    'average_price' => $holding->average_price,
-                    'value' => $holding->quantity * $holding->average_price,
-                ];
-            })->toArray(),
+
+            // Total Investment = avg price * quantity
+            'investment' => $this->whenLoaded('holdings', function () {
+                return $this->holdings->sum(function ($holding) {
+                    return $holding->average_price * $holding->quantity;
+                });
+            }),
+            'net_worth' => $this->whenLoaded('holdings', function () {
+                return $this->holdings->sum(function ($holding) {
+                    return $holding->stock->latestPrice->current_price * $holding->quantity;
+                });
+            }),
+            'gain_loss' => $this->whenLoaded('holdings', function () {
+                return $this->holdings->sum(function ($holding) {
+                    $investment = $holding->average_price * $holding->quantity;
+                    $net = $holding->stock->latestPrice->current_price * $holding->quantity;
+                    return $net - $investment;
+                });
+            }),
+
         ];
     }
 }

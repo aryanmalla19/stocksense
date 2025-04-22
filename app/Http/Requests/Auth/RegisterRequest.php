@@ -48,4 +48,12 @@ class RegisterRequest extends FormRequest
             'password.confirmed' => 'Password confirmation does not match',
         ];
     }
+
+    public function prepareForValidation()
+    {
+        $this->merge([
+            'name' => strip_tags(trim($this->name)),
+            'email' => trim($this->email),
+        ]);
+    }
 }

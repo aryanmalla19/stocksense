@@ -11,12 +11,8 @@ Route::get('/home', function () {
     return 'dashboard';
 });   
 
-//login blade file for testing/ delete later
-Route::view('/login','login')->name('login');
-
 Route::controller(SocialiteController::class)->group(
     function(){
         Route::get('auth/google', 'googleLogin')->name('auth.google');
         Route::get('/auth/google/callback','googleAuthentication')->name('auth.google-callback');  
-    }
-);
+    });

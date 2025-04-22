@@ -3,7 +3,6 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HoldingController;
-use App\Http\Controllers\IpoAllotmentController;
 use App\Http\Controllers\IpoApplicationController;
 use App\Http\Controllers\IpoDetailController;
 use App\Http\Controllers\NotificationController;
@@ -17,7 +16,6 @@ use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\UserSettingController;
 use App\Http\Controllers\VerificationEmailController;
 use App\Http\Controllers\WatchlistController;
-use Illuminate\Http\Request; // Added this import
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -40,7 +38,7 @@ Route::prefix('v1')->group(function () {
             Route::post('/forgot-password', [PasswordResetController::class, 'sendResetPassword'])->name('password.forgot');
             Route::post('/reset-password', [PasswordResetController::class, 'resetPassword'])->name('password.reset');
             Route::post('/verify-otp', [TwoFactorController::class, 'verifyOtp'])->name('otp.verify');
-            Route::get('/login', [AuthController::class, 'loginWithMessage'])->name('login.with-message');
+//            Route::get('/login', [AuthController::class, 'loginWithMessage'])->name('login.with-message');
         });
     });
 
@@ -62,12 +60,14 @@ Route::prefix('v1')->group(function () {
 
         // Stocks & Stock Prices
         Route::apiResource('/stocks', StockController::class)->names('stocks')
-            ->only(['index','show']);
+            ->only(['index', 'show']);
         Route::apiResource('/stocks', StockController::class)->names('stocks')
-            ->only(['store','update', 'destroy'])->middleware('isAdmin');
+            ->only(['store', 'update', 'destroy'])->middleware('isAdmin');
+        Route::get('/stocks/sort/{column}/{direction?}', [StockController::class, 'sortStock'])->name('stocks.sort');
+        Route::get('/stocks/search', [StockController::class, 'searchStock'])->name('stocks.search');
         Route::get('/stocks/{stock}/history', [StockPriceController::class, 'historyStockPrices'])->name('stocks.history');
         Route::apiResource('/stock-prices', StockPriceController::class)->names('stock-prices');
-        Route::apiResource('/users/portfolios', PortfolioController::class)->names('users.portfolios');
+        Route::apiResource('/portfolios', PortfolioController::class)->names('users.portfolios');
         Route::apiResource('/users/holdings', HoldingController::class)->names('users.holdings');
 
         // IPO Management
@@ -81,9 +81,6 @@ Route::prefix('v1')->group(function () {
 
         // Sectors
         Route::apiResource('/sectors', SectorController::class)->names('sectors');
-
-        // Portfolio
-        Route::get('/portfolio', [PortfolioController::class, 'index'])->name('portfolio.index');
 
         Route::get('/dashboard', DashboardController::class);
 

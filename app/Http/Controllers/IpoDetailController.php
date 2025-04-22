@@ -24,7 +24,7 @@ class IpoDetailController extends Controller
 
         return response()->json([
             'message' => 'Successfully fetched all ipo details',
-            'data' => IpoDetailResource::collection($ipoDetails),
+            'data' => IpoDetailResource::collection($ipoDetails->load('stock')),
         ]);
     }
 

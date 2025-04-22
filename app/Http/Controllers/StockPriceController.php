@@ -21,38 +21,39 @@ class StockPriceController extends Controller
             'data' => StockWithPriceResource::collection($stocks),
         ]);
     }
-
     public function store(StoreStockPriceRequest $request)
     {
-        $data = $request->validated();
+    $data = $request->validated();
 
-        $stock = Stock::find($data['stock_id']);
+    $newPrice = StockPrice::create([
+        'stock_id' => $data['stock_id'],
+        'current_price' => $data['current_price'],
+        'open_price' => $data['open_price'] ?? $data['current_price'],
+        'close_price' => $data['close_price'] ?? null,
+        'high_price' => $data['high_price'] ?? $data['current_price'],
+        'low_price' => $data['low_price'] ?? $data['current_price'],
+        'volume' => $data['volume'] ?? 0,
+        'date' => $data['date'] ?? now(),
+    ]);
 
-        if (! $stock) {
-            return response()->json([
-                'message' => 'Could not find stock with Id '.$data['stock_id'],
-            ], 404);
-        }
-
-        $newPrice = $stock->prices()->create($data);
-
-        return response()->json([
-            'message' => 'Successfully created new stock price',
-            'data' => $newPrice,
-        ], 201);
+    return response()->json([
+        'message' => 'Successfully created new stock price',
+        'data' => new StockPriceResource($newPrice),
+    ], 201);
     }
+
 
     public function show(string $id)
     {
         $stockPrice = StockPrice::with('stock')->where('id', $id)->first();
         if (empty($stockPrice)) {
             return response()->json([
-                'message' => 'Could not find stock price data with ID '.$id,
+                'message' => 'Could not find stock price data with ID ' . $id,
             ], 404);
         }
 
         return response()->json([
-            'message' => 'Successfully fetched stock price data with ID '.$id,
+            'message' => 'Successfully fetched stock price data with ID ' . $id,
             'data' => new StockPriceResource($stockPrice),
         ]);
     }
@@ -75,7 +76,7 @@ class StockPriceController extends Controller
     {
         $stock = Stock::with(['prices', 'latestPrice', 'sector'])->find($id);
 
-        if (! $stock) {
+        if (!$stock) {
             return response()->json([
                 'message' => 'Stock not found',
                 'data' => null,

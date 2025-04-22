@@ -25,6 +25,7 @@ class IpoDetailResource extends JsonResource
             'listing_date' => $this->listing_date?->format('Y-m-d'),
             'ipo_status' => $this->ipo_status,
             'days_until_open' => (int) Carbon::now()->diffInDays(Carbon::parse($this->open_date), false),
+            'company_name' => $this->whenLoaded('stock')->company_name,
             'stock_id' => $this->stock_id,
             'stock' => new StockResource($this->whenLoaded('stock')),
             'applications' => IpoApplicationResource::collection($this->whenLoaded('applications')),
