@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\IpoDetailStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -37,7 +38,7 @@ class IpoDetail extends Model
         'open_date' => 'datetime',
         'close_date' => 'datetime',
         'listing_date' => 'datetime',
-        'ipo_status' => 'string',
+        'ipo_status' => IpoDetailStatus::class,
     ];
 
     /**

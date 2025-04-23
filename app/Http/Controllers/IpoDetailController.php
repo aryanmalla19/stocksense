@@ -14,17 +14,22 @@ class IpoDetailController extends Controller
 {
     public function index()
     {
-        $ipoDetails = IpoDetail::query(); // 👈 important
+        $ipoDetails = IpoDetail::query();
 
         if (request('stock_id')) {
             $ipoDetails->stock(request('stock_id'));
         }
+        if(request('status')){
+            $ipoDetails->whereIpoStatus(request('status'));
+        }
 
-        $ipoDetails = $ipoDetails->get(); // 👈 now fetch results
+        $ipoDetails->orderBy('close_date','desc');
+
+        $ipoDetails = $ipoDetails->get();
 
         return response()->json([
             'message' => 'Successfully fetched all ipo details',
-            'data' => IpoDetailResource::collection($ipoDetails->load('stock')),
+            'data' => IpoDetailResource::collection($ipoDetails->load(['stock', 'applications'])),
         ]);
     }
 
