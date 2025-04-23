@@ -12,11 +12,6 @@ class IpoDetail extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<string>
-     */
     protected $fillable = [
         'stock_id',
         'issue_price',
@@ -27,11 +22,6 @@ class IpoDetail extends Model
         'ipo_status',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'issue_price' => 'decimal:2',
         'total_shares' => 'integer',
@@ -41,17 +31,11 @@ class IpoDetail extends Model
         'ipo_status' => IpoDetailStatus::class,
     ];
 
-    /**
-     * Get the stock associated with this IPO.
-     */
     public function stock(): BelongsTo
     {
         return $this->belongsTo(Stock::class);
     }
 
-    /**
-     * Get the applications for this IPO.
-     */
     public function applications(): HasMany
     {
         return $this->hasMany(IpoApplication::class, 'ipo_id');
@@ -62,19 +46,19 @@ class IpoDetail extends Model
         $now = now();
 
         if ($this->listing_date && $now->gte($this->listing_date)) {
-            return 'listed';
+            return IpoDetailStatus::Allotted->value;
         }
 
         if ($this->open_date && $now->lt($this->open_date)) {
-            return 'upcoming';
+            return IpoDetailStatus::Upcoming->value;
         }
 
         if ($this->open_date && $this->close_date && $now->between($this->open_date, $this->close_date)) {
-            return 'open';
+            return IpoDetailStatus::Opened->value;
         }
 
         if ($this->close_date && $now->gt($this->close_date)) {
-            return 'closed';
+            return IpoDetailStatus::Closed->value;
         }
 
         return 'unknown';
