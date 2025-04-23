@@ -25,11 +25,5 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::policy(Holding::class, HoldingPolicy::class);
-
-        VerifyEmail::toMailUsing(function (object $notifiable, string $url) {
-            return (new MailMessage)
-                ->subject('Verify Email Address')
-                ->view('emails.custom-verify', ['url' => (string) $url, 'user' => $notifiable]);
-        });
     }
 }

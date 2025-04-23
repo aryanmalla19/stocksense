@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\IpoDetailStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,13 +14,17 @@ return new class extends Migration
     {
         Schema::create('ipo_details', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('stock_id')->constrained('stocks')->onDelete('cascade');
-            $table->decimal('issue_price', 15, 2)->default(100);
+            $table->foreignId('stock_id')
+                ->constrained('stocks')
+                ->onDelete('cascade');
+            $table->decimal('issue_price', 15, 2)
+                ->default(100);
             $table->integer('total_shares');
             $table->timestamp('open_date');
             $table->timestamp('close_date');
             $table->timestamp('listing_date');
-            $table->enum('ipo_status', ['pending', 'opened', 'closed', 'allotted'])->default('pending');
+            $table->enum('ipo_status', array_column(IpoDetailStatus::cases(), 'value'))
+                ->default(IpoDetailStatus::Upcoming->value);
             $table->timestamps();
         });
     }

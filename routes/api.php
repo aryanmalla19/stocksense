@@ -9,6 +9,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\SectorController;
+use App\Http\Controllers\SocialiteController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\StockPriceController;
 use App\Http\Controllers\TransactionController;
@@ -27,6 +28,7 @@ Route::prefix('v1')->group(function () {
             Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
             Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
             Route::post('/refresh', [AuthController::class, 'refresh'])->name('auth.refresh');
+            Route::post('/google/callback', [SocialiteController::class, 'handleGoogleCallback'])->name('auth.google');
         });
 
         // Rate-limited email & password management actions
