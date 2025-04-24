@@ -2,13 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StockPrice\StoreStockPriceRequest;
-use App\Http\Resources\StockPriceResource;
 use App\Http\Resources\StockResource;
-use App\Http\Resources\StockWithPriceResource;
 use App\Models\Stock;
-use App\Models\StockPrice;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class StockPriceController extends Controller
@@ -31,7 +26,8 @@ class StockPriceController extends Controller
             return response()->json(['message' => 'Stock not found'], 404);
         }
 
-        $response = new StreamedResponse(function () use ($stock, $id) {
+        $response = new StreamedResponse(function () use ($id) {
+            $stock = Stock::with('prices')->find($id); // Send initial snapshot
             echo "data: " . json_encode([
                     'type' => 'initial',
                     'data' => $stock
@@ -40,18 +36,22 @@ class StockPriceController extends Controller
             flush();
 
             while (true) {
-                $latestPrice = $stock->latestPrice;
-                echo "data: " . json_encode([
-                        'type' => 'update',
-                        'data' => $latestPrice
-                    ]) . "\n\n";
+                $latest = Stock::find($id)?->latestPrice; // Re-fetch fresh data
+                if ($latest) {
+                    echo "data: " . json_encode([
+                            'type' => 'update',
+                            'data' => $latest
+                        ]) . "\n\n";
+                } else {
+                    echo "event: error\ndata: " . json_encode(['message' => 'No latest price']) . "\n\n";
+                }
 
                 ob_flush();
                 flush();
-
                 sleep(5);
             }
         });
+
 
         // Proper SSE headers
         $response->headers->set('Content-Type', 'text/event-stream');
