@@ -29,6 +29,7 @@ class NotificationController extends Controller
             'data' => NotificationResource::collection($combined),
         ], 200);
     }
+    
     public function markAllAsRead(): JsonResponse
     {
         $user = auth('api')->user();
@@ -40,7 +41,7 @@ class NotificationController extends Controller
         }
 
         $user->unreadNotifications->markAsRead();
-        
+
         return response()->json([
             'message' => 'Successfully marked all user\'s notifications as read',
         ], 200);
