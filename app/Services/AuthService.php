@@ -106,12 +106,6 @@ class AuthService
     public function changePassword(array $data)
     {
         $user = auth('api')->user();
-        if (!$user) {
-            return [
-                'message' => 'No user found',
-                'status' => 404
-            ];
-        }
 
         if (!Hash::check($data['recent_password'], $user->password)) {
             return [
@@ -121,7 +115,7 @@ class AuthService
         }
 
         try {
-            $user->password = bcrypt($data['new_password']);
+            $user->password = Hash::make($data['new_password']);
             $user->save();
 
             return [

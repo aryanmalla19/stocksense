@@ -10,7 +10,7 @@ class NotificationController extends Controller
     /**
      * Display a listing of the user's notifications.
      */
-    public function index(): JsonResponse
+    public function __invoke(): JsonResponse
     {
         $notifications = auth('api')->user()->notifications;
 

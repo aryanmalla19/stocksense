@@ -11,7 +11,7 @@ class PortfolioController extends Controller
     /**
      * Display the authenticated user's portfolio.
      */
-    public function index()
+    public function __invoke()
     {
         $user = auth()->user();
         $portfolios = $user->portfolio()

@@ -25,7 +25,9 @@ class UserFactory extends Factory
             'password' => Hash::make('Password@123'), // Default password
             'remember_token' => Str::random(10),
             'is_active' => $this->faker->boolean(90), // 90% active
-            'role' => $this->faker->randomElement(['admin', 'user']),
+            'bio' => $this->faker->text(),
+            'phone_number' => $this->faker->phoneNumber(),
+            'profile_image' => $this->faker->imageUrl,
             'created_at' => $this->faker->dateTimeThisYear(),
             'updated_at' => $this->faker->dateTimeThisYear(),
         ];

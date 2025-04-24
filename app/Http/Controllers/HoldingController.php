@@ -9,15 +9,13 @@ use Illuminate\Auth\Access\AuthorizationException;
 
 class HoldingController extends Controller
 {
-    /**
-     * Display a listing of the user's holdings.
-     */
+
     public function index(): JsonResponse
     {
         $this->authorize('viewAny', [Holding::class, auth()->user()]);
 
         $portfolio = auth()->user()->portfolio;
-        $holdings = $portfolio ? $portfolio->holdings->load('stock') : collect([]);
+        $holdings = $portfolio ? $portfolio->holdings->load('stock.sector') : collect([]);
 
         return response()->json([
             'message' => 'Successfully fetched user holdings',
@@ -25,9 +23,6 @@ class HoldingController extends Controller
         ]);
     }
 
-    /**
-     * Display the specified holding.
-     */
     public function show(Holding $holding): JsonResponse
     {
         try {
@@ -36,7 +31,7 @@ class HoldingController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        $holding->load('stock');
+        $holding->load('stock.sector');
 
         return response()->json([
             'message' => 'Holding details fetched successfully',

@@ -15,7 +15,6 @@ class UpdateSectorRequest extends FormRequest
     public function rules(): array
     {
         $sectorId = $this->route('sector');
-        Log::info('Sector ID for unique validation: ' . $sectorId); // Debugging
 
         return [
             'name' => [

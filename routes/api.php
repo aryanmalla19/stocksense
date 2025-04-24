@@ -15,12 +15,12 @@ use App\Http\Controllers\StockPriceController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\UserSettingController;
 use App\Http\Controllers\VerificationEmailController;
 use App\Http\Controllers\WatchlistController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
+
     // Public Authentication Routes
     Route::prefix('auth')->group(function () {
         // Rate-limited authentication actions
@@ -37,11 +37,9 @@ Route::prefix('v1')->group(function () {
                 ->name('verification.verify')
                 ->middleware('signed');
             Route::post('/email/resend', [VerificationEmailController::class, 'resend'])->name('verification.resend');
-            Route::get('/reset-password', [PasswordResetController::class, 'resetPasswordForm'])->name('password.reset.form');
             Route::post('/forgot-password', [PasswordResetController::class, 'sendResetPassword'])->name('password.forgot');
             Route::post('/reset-password', [PasswordResetController::class, 'resetPassword'])->name('password.reset');
             Route::post('/verify-otp', [TwoFactorController::class, 'verifyOtp'])->name('otp.verify');
-//            Route::get('/login', [AuthController::class, 'loginWithMessage'])->name('login.with-message');
             Route::get('/sse-notifications', [SseController::class, 'stream']);
         });
     });
@@ -51,17 +49,13 @@ Route::prefix('v1')->group(function () {
         // Authenticated User Actions
         Route::prefix('auth')->group(function () {
             Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
-            Route::get('/me', [AuthController::class, 'me'])->name('login.user');
             Route::post('/2fa/enable', [TwoFactorController::class, 'enable'])->name('2fa.enable');
             Route::post('/2fa/disable', [TwoFactorController::class, 'disable'])->name('2fa.disable');
-
-            //change password
             Route::post('/change-password', [AuthController::class, 'changePassword']);
         });
 
-        // User Settings
-        Route::apiResource('/users/settings', UserSettingController::class)->names('user.settings');
-
+        Route::get('/profile', [UserController::class, 'index']);
+        Route::put('/profile', [UserController::class, 'update']);
         // Stocks & Stock Prices
         Route::apiResource('/stocks', StockController::class)->names('stocks')
             ->only(['index', 'show']);
@@ -70,33 +64,42 @@ Route::prefix('v1')->group(function () {
         Route::get('/stocks/{stock}/history', [StockPriceController::class, 'historyStockPrices'])->name('stocks.history');
 
 
-        Route::apiResource('/stock-prices', StockPriceController::class)->names('stock-prices');
-        Route::apiResource('/portfolios', PortfolioController::class)->names('users.portfolios');
-        Route::apiResource('/users/holdings', HoldingController::class)->names('users.holdings');
+        Route::get('/portfolios', PortfolioController::class)->name('portfolios');
+        Route::apiResource('/holdings', HoldingController::class)
+            ->only(['index', 'show'])
+            ->names('holdings');
 
         // IPO Management
         Route::apiResource('/ipo-details', IpoDetailController::class)->names('ipo-details');
-        Route::apiResource('/ipo-applications', IpoApplicationController::class)->names('ipo-applications');
+        Route::apiResource('/ipo-applications', IpoApplicationController::class)
+            ->only(['index', 'show', 'store'])
+            ->names('ipo-applications');
 
-        Route::get('/profile', UserController::class);
+        // Sectors
+        Route::apiResource('/sectors', SectorController::class)
+            ->only(['index','show'])
+            ->names('sectors');
+        Route::apiResource('/sectors', SectorController::class)
+            ->only(['store','update', 'destroy'])
+            ->names('sectors')
+            ->middleware('auth:api');
+
+        // Transaction
+        Route::apiResource('/transactions', TransactionController::class)
+            ->only(['show', 'index', 'store'])
+            ->names('transactions');
+
+        // Watchlist
+        Route::apiResource('/watchlists', WatchlistController::class)
+        ->only(['index', 'store', 'destroy']);
+
+        // Notifications
+        Route::get('/users/notifications', NotificationController::class);
 
         // Admin
         Route::middleware('isAdmin')->prefix('admin')->group(function () {
             Route::get('/ipo-details', [IpoDetailController::class, 'adminIndex']);
         });
-
-        // Sectors
-        Route::apiResource('/sectors', SectorController::class)->names('sectors');
-
-        // Transaction
-        Route::apiResource('/transactions', TransactionController::class)->names('transactions');
-
-        // Watchlist
-        Route::apiResource('/users/watchlists', WatchlistController::class);
-
-        // Notifications
-        Route::apiResource('/users/notifications', NotificationController::class);
-
     });
 });
 
