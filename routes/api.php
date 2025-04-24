@@ -75,16 +75,25 @@ Route::prefix('v1')->group(function () {
             ->names('ipo-applications');
 
         // Sectors
-        Route::apiResource('/sectors', SectorController::class)->names('sectors');
+        Route::apiResource('/sectors', SectorController::class)
+            ->only(['index','show'])
+            ->names('sectors');
+        Route::apiResource('/sectors', SectorController::class)
+            ->only(['store','update', 'destroy'])
+            ->names('sectors')
+            ->middleware('auth:api');
 
         // Transaction
-        Route::apiResource('/transactions', TransactionController::class)->names('transactions');
+        Route::apiResource('/transactions', TransactionController::class)
+            ->only(['show', 'index', 'store'])
+            ->names('transactions');
 
         // Watchlist
-        Route::apiResource('/users/watchlists', WatchlistController::class);
+        Route::apiResource('/watchlists', WatchlistController::class)
+        ->only(['index', 'store', 'destroy']);
 
         // Notifications
-        Route::apiResource('/users/notifications', NotificationController::class);
+        Route::get('/users/notifications', NotificationController::class);
 
         // Admin
         Route::middleware('isAdmin')->prefix('admin')->group(function () {
