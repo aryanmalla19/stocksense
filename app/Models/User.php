@@ -18,7 +18,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     use CanResetPassword, HasFactory, Notifiable;
 
 
-    
+
 
     protected $fillable = [
         'name',
@@ -31,8 +31,11 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         'two_factor_secret',
         'two_factor_recovery_codes',
         'is_active',
+        'bio',
+        'phone_number',
         'role',
-        'google_id'
+        'google_id',
+        'profile_image',
     ];
 
     protected $hidden = [
