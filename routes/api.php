@@ -66,7 +66,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/portfolios', PortfolioController::class)->name('portfolios');
         Route::apiResource('/holdings', HoldingController::class)
             ->only(['index', 'show'])
-            ->names('users.holdings');
+            ->names('holdings');
 
         // IPO Management
         Route::apiResource('/ipo-details', IpoDetailController::class)->names('ipo-details');
