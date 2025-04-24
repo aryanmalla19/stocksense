@@ -17,18 +17,30 @@ use Illuminate\Http\Request;
  */
 class TransactionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $transactions = auth()->user()
+        $query = auth()->user()
             ->transactions()
             ->with('stock')
-            ->get();
+            ->orderBy('created_at', 'desc');
 
-        return response()->json([
-            'message' => 'Successfully fetched all transactions',
-            'data' => TransactionResource::collection($transactions),
-        ]);
+        // Filter by type
+        if ($request->has('type')) {
+            $query->where('type', $request->type);
+        }
+
+        if ($request->has('from') && $request->has('to')) {
+            $query->whereBetween('created_at', [$request->from, $request->to]);
+        }
+
+        $transactions = $query->paginate(10);
+
+        return TransactionResource::collection($transactions)
+            ->additional([
+                'message' => 'Successfully fetched filtered transactions',
+            ]);
     }
+
 
     public function store(Request $request)
     {
