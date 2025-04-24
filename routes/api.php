@@ -15,7 +15,6 @@ use App\Http\Controllers\StockPriceController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\UserSettingController;
 use App\Http\Controllers\VerificationEmailController;
 use App\Http\Controllers\WatchlistController;
 use Illuminate\Support\Facades\Route;
@@ -64,12 +63,16 @@ Route::prefix('v1')->group(function () {
         Route::get('/stocks/{stock}/history', [StockPriceController::class, 'historyStockPrices'])->name('stocks.history');
 
 
-        Route::apiResource('/portfolios', PortfolioController::class)->names('users.portfolios');
-        Route::apiResource('/holdings', HoldingController::class)->names('users.holdings');
+        Route::get('/portfolios', PortfolioController::class)->name('portfolios');
+        Route::apiResource('/holdings', HoldingController::class)
+            ->only(['index', 'show'])
+            ->names('users.holdings');
 
         // IPO Management
         Route::apiResource('/ipo-details', IpoDetailController::class)->names('ipo-details');
-        Route::apiResource('/ipo-applications', IpoApplicationController::class)->names('ipo-applications');
+        Route::apiResource('/ipo-applications', IpoApplicationController::class)
+            ->only(['index', 'show', 'store'])
+            ->names('ipo-applications');
 
         // Sectors
         Route::apiResource('/sectors', SectorController::class)->names('sectors');
