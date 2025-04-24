@@ -15,14 +15,12 @@ class StockResource extends JsonResource
     public function toArray(Request $request): array
     {
         $latestPrice = $this->whenLoaded('latestPrice', fn () => $this->latestPrice, null);
-        $sector = $this->whenLoaded('sector', fn () => $this->sector, null);
-
+        $user = auth()->user();
         return [
             'id' => $this->id,
             'symbol' => $this->symbol,
             'company_name' => $this->company_name,
             'sector_id' => $this->sector_id,
-            'sector' => $sector ? $sector->name : null,
             'is_listed' => $this->is_listed,
             'sector' => $this->whenLoaded('sector', fn () => $this->sector->name, null),
             'is_watchlist' => $user->watchlists->contains('stock_id', $this->id),
@@ -36,4 +34,4 @@ class StockResource extends JsonResource
 
         ];
     }
-}   
+}

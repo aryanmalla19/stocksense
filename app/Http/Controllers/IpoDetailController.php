@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\IpoDetailStatus;
 use App\Http\Requests\IPODetails\StoreIpoDetailRequest;
 use App\Http\Requests\IPODetails\UpdateIpoDetailRequest;
 use App\Http\Resources\IpoDetailResource;
@@ -14,17 +15,22 @@ class IpoDetailController extends Controller
 {
     public function index()
     {
-        $ipoDetails = IpoDetail::query(); // 👈 important
+        $ipoDetails = IpoDetail::query();
 
         if (request('stock_id')) {
             $ipoDetails->stock(request('stock_id'));
         }
+        if(request('status')){
+            $ipoDetails->whereIpoStatus(request('status'));
+        }
 
-        $ipoDetails = $ipoDetails->get(); // 👈 now fetch results
+        $ipoDetails->orderBy('close_date','desc');
+
+        $ipoDetails = $ipoDetails->get();
 
         return response()->json([
             'message' => 'Successfully fetched all ipo details',
-            'data' => IpoDetailResource::collection($ipoDetails->load('stock')),
+            'data' => IpoDetailResource::collection($ipoDetails->load(['stock', 'applications'])),
         ]);
     }
 
@@ -48,21 +54,6 @@ class IpoDetailController extends Controller
     public function store(StoreIpoDetailRequest $request)
     {
         $data = $request->validated();
-
-        $openDate = Carbon::parse($data['open_date']);
-        $closeDate = Carbon::parse($data['close_date']);
-        $listingDate = Carbon::parse($data['listing_date']);
-        $now = now();
-
-        if ($openDate->isFuture()) {
-            $data['ipo_status'] = 'pending';
-        } elseif ($now->between($openDate, $closeDate)) {
-            $data['ipo_status'] = 'opened';
-        } elseif ($closeDate->isPast()) {
-            $data['ipo_status'] = 'closed';
-        } else {
-            $data['ipo_status'] = 'unknown';
-        }
 
         $ipoDetail = IpoDetail::create($data);
 
@@ -89,21 +80,19 @@ class IpoDetailController extends Controller
 
         $data = $request->validated();
 
-        // Recalculate the ipo_status if date fields are present
         $now = now();
 
         $openDate = isset($data['open_date']) ? Carbon::parse($data['open_date']) : Carbon::parse($ipoDetail->open_date);
         $closeDate = isset($data['close_date']) ? Carbon::parse($data['close_date']) : Carbon::parse($ipoDetail->close_date);
-        $listingDate = isset($data['listing_date']) ? Carbon::parse($data['listing_date']) : Carbon::parse($ipoDetail->listing_date);
 
         if ($openDate->isFuture()) {
-            $data['ipo_status'] = 'pending';
+            $data['ipo_status'] = IpoDetailStatus::Upcoming;
         } elseif ($now->between($openDate, $closeDate)) {
-            $data['ipo_status'] = 'opened';
+            $data['ipo_status'] = IpoDetailStatus::Opened;
         } elseif ($closeDate->isPast()) {
-            $data['ipo_status'] = 'closed';
+            $data['ipo_status'] = IpoDetailStatus::Closed;
         } else {
-            $data['ipo_status'] = 'unknown';
+            $data['ipo_status'] = IpoDetailStatus::Allotted;
         }
 
         $ipoDetail->update($data);

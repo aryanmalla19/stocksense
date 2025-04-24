@@ -11,27 +11,30 @@ class PortfolioResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'amount' => $this->amount,
-
-            // Total Investment = avg price * quantity
+            'amount' => (float) $this->amount,
             'investment' => $this->whenLoaded('holdings', function () {
-                return $this->holdings->sum(function ($holding) {
-                    return $holding->average_price * $holding->quantity;
-                });
-            }),
+                $sum = 0.0;
+                foreach ($this->holdings as $holding) {
+                    $sum += $holding->average_price * $holding->quantity;
+                }
+                return round($sum, 2);
+            }, 0.00),
             'net_worth' => $this->whenLoaded('holdings', function () {
-                return $this->holdings->sum(function ($holding) {
-                    return $holding->stock->latestPrice->current_price * $holding->quantity;
-                });
-            }),
+                $sum = 0.0;
+                foreach ($this->holdings as $holding) {
+                    $sum += $holding->stock->latestPrice->current_price * $holding->quantity;
+                }
+                return round($sum, 2);
+            }, 0.00),
             'gain_loss' => $this->whenLoaded('holdings', function () {
-                return $this->holdings->sum(function ($holding) {
+                $sum = 0.0;
+                foreach ($this->holdings as $holding) {
                     $investment = $holding->average_price * $holding->quantity;
                     $net = $holding->stock->latestPrice->current_price * $holding->quantity;
-                    return $net - $investment;
-                });
-            }),
-
+                    $sum += $net - $investment;
+                }
+                return round($sum, 2);
+            }, 0.00),
         ];
     }
 }
