@@ -95,8 +95,10 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('/users/watchlists', WatchlistController::class);
 
         // Notifications
-        Route::apiResource('/users/notifications', NotificationController::class);
-
+        Route::apiResource('/users/notifications', NotificationController::class)->names('notifications')->parameters([
+            'notifications' => 'id'
+        ]);
+        Route::put('/users/markasread-notifications', [NotificationController::class, 'markAllAsRead']);
     });
 });
 
