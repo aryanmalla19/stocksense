@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Events\UserRegistered;
 use App\Mail\OtpVerification;
 use App\Models\User;
+use App\Notifications\GeneralNotification;
 use App\Notifications\UserLogin;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
@@ -58,7 +59,7 @@ class AuthService
             return ['error' => 'Please verify your email before logging in.', 'status' => 403];
         }
 
-//        $user->notify(new UserLogin);
+        $user->notify(new GeneralNotification('login', 'User logged in'));
 
         if ($user->two_factor_enabled) {
             $otp = Str::random(6, '0123456789');
