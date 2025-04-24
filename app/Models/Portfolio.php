@@ -16,7 +16,9 @@ class Portfolio extends Model
      *
      * @var array<string>
      */
-
+    protected $fillable = [
+        'user_id',
+    ];
 
     /**
      * Get the user this portfolio belongs to.

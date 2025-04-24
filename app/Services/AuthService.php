@@ -58,7 +58,7 @@ class AuthService
             return ['error' => 'Please verify your email before logging in.', 'status' => 403];
         }
 
-        $user->notify(new UserLogin);
+//        $user->notify(new UserLogin);
 
         if ($user->two_factor_enabled) {
             $otp = Str::random(6, '0123456789');
