@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HoldingController;
 use App\Http\Controllers\IpoApplicationController;
 use App\Http\Controllers\IpoDetailController;
