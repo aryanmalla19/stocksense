@@ -9,6 +9,7 @@ use App\Http\Resources\StockWithPriceResource;
 use App\Models\Stock;
 use App\Models\StockPrice;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class StockPriceController extends Controller
 {
@@ -21,25 +22,26 @@ class StockPriceController extends Controller
             'data' => StockWithPriceResource::collection($stocks),
         ]);
     }
+
     public function store(StoreStockPriceRequest $request)
     {
-    $data = $request->validated();
+        $data = $request->validated();
 
-    $newPrice = StockPrice::create([
-        'stock_id' => $data['stock_id'],
-        'current_price' => $data['current_price'],
-        'open_price' => $data['open_price'] ?? $data['current_price'],
-        'close_price' => $data['close_price'] ?? null,
-        'high_price' => $data['high_price'] ?? $data['current_price'],
-        'low_price' => $data['low_price'] ?? $data['current_price'],
-        'volume' => $data['volume'] ?? 0,
-        'date' => $data['date'] ?? now(),
-    ]);
+        $newPrice = StockPrice::create([
+            'stock_id' => $data['stock_id'],
+            'current_price' => $data['current_price'],
+            'open_price' => $data['open_price'] ?? $data['current_price'],
+            'close_price' => $data['close_price'] ?? null,
+            'high_price' => $data['high_price'] ?? $data['current_price'],
+            'low_price' => $data['low_price'] ?? $data['current_price'],
+            'volume' => $data['volume'] ?? 0,
+            'date' => $data['date'] ?? now(),
+        ]);
 
-    return response()->json([
-        'message' => 'Successfully created new stock price',
-        'data' => new StockPriceResource($newPrice),
-    ], 201);
+        return response()->json([
+            'message' => 'Successfully created new stock price',
+            'data' => new StockPriceResource($newPrice),
+        ], 201);
     }
 
 
@@ -72,23 +74,54 @@ class StockPriceController extends Controller
         ], 400);
     }
 
-    public function historyStockPrices(string $id)
+
+    public function historyStockPrices($id)
     {
-        $stock = Stock::with(['prices', 'latestPrice', 'sector'])->find($id);
+        $stock = Stock::with('prices')->find($id);
 
         if (!$stock) {
-            return response()->json([
-                'message' => 'Stock not found',
-                'data' => null,
-            ], 404);
+            return response()->json(['message' => 'Stock not found'], 404);
+        }
+        return new StockResource($stock->load(['prices', 'sector']));
+    }
+
+    public function historyStockPricesLive($id)
+    {
+        $stock = Stock::with('prices')->find($id);
+
+        if (!$stock) {
+            return response()->json(['message' => 'Stock not found'], 404);
         }
 
-        return response()->json([
-            'message' => 'Successfully rendered stock all historically data',
-            'data' => [
-                'stock' => new StockResource($stock),
-                'historic' => StockPriceResource::collection($stock->prices),
-            ],
-        ]);
+        $response = new StreamedResponse(function () use ($stock, $id) {
+            echo "data: " . json_encode([
+                    'type' => 'initial',
+                    'data' => $stock
+                ]) . "\n\n";
+            ob_flush();
+            flush();
+
+            while (true) {
+                $latestPrice = $stock->latestPrice;
+                echo "data: " . json_encode([
+                        'type' => 'update',
+                        'data' => $latestPrice
+                    ]) . "\n\n";
+
+                ob_flush();
+                flush();
+
+                sleep(5);
+            }
+        });
+
+        // Proper SSE headers
+        $response->headers->set('Content-Type', 'text/event-stream');
+        $response->headers->set('Cache-Control', 'no-cache');
+        $response->headers->set('Connection', 'keep-alive');
+        $response->headers->set('X-Accel-Buffering', 'no'); // nginx: turn off response buffering
+
+        return $response;
     }
+
 }

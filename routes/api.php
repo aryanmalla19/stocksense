@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HoldingController;
 use App\Http\Controllers\IpoApplicationController;
 use App\Http\Controllers\IpoDetailController;
@@ -68,9 +67,9 @@ Route::prefix('v1')->group(function () {
             ->only(['index', 'show']);
         Route::apiResource('/stocks', StockController::class)->names('stocks')
             ->only(['store', 'update', 'destroy'])->middleware('isAdmin');
-        Route::get('/stocks/sort/{column}/{direction?}', [StockController::class, 'sortStock'])->name('stocks.sort');
-        Route::get('/stocks/search', [StockController::class, 'searchStock'])->name('stocks.search');
         Route::get('/stocks/{stock}/history', [StockPriceController::class, 'historyStockPrices'])->name('stocks.history');
+
+
         Route::apiResource('/stock-prices', StockPriceController::class)->names('stock-prices');
         Route::apiResource('/portfolios', PortfolioController::class)->names('users.portfolios');
         Route::apiResource('/users/holdings', HoldingController::class)->names('users.holdings');
@@ -101,3 +100,4 @@ Route::prefix('v1')->group(function () {
     });
 });
 
+Route::get('/stocks/{stock}/history', [StockPriceController::class, 'historyStockPricesLive'])->name('stocks.history');
