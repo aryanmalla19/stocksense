@@ -9,6 +9,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\SectorController;
+use App\Http\Controllers\SseController;
 use App\Http\Controllers\SocialiteController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\StockPriceController;
@@ -42,6 +43,7 @@ Route::prefix('v1')->group(function () {
             Route::post('/reset-password', [PasswordResetController::class, 'resetPassword'])->name('password.reset');
             Route::post('/verify-otp', [TwoFactorController::class, 'verifyOtp'])->name('otp.verify');
 //            Route::get('/login', [AuthController::class, 'loginWithMessage'])->name('login.with-message');
+            Route::get('/sse-notifications', [SseController::class, 'stream']);
         });
     });
 
