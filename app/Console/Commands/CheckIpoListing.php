@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\IpoDetailStatus;
 use App\Jobs\AllotIpoJob;
 use App\Models\IpoDetail;
 use Illuminate\Console\Command;
@@ -31,7 +32,7 @@ class CheckIpoListing extends Command
             $now = now()->format('Y-m-d H:i:00');
 
             $ipos = IpoDetail::where('listing_date', $now)
-                ->whereIn('ipo_status', ['opened', 'pending', 'closed'])
+                ->whereIn('ipo_status', [IpoDetailStatus::Upcoming->value, IpoDetailStatus::Opened->value, IpoDetailStatus::Closed->value])
                 ->get();
 
             foreach ($ipos as $ipo) {

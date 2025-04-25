@@ -37,7 +37,7 @@ class StockPriceController extends Controller
             flush();
 
             while (true) {
-                $latest = Stock::find($id)?->latestPrice; // Re-fetch fresh data
+                $latest = Stock::find($id)?->latestPrice;
                 if ($latest) {
                     echo 'data: '.json_encode([
                         'type' => 'update',
@@ -53,11 +53,10 @@ class StockPriceController extends Controller
             }
         });
 
-        // Proper SSE headers
         $response->headers->set('Content-Type', 'text/event-stream');
         $response->headers->set('Cache-Control', 'no-cache');
         $response->headers->set('Connection', 'keep-alive');
-        $response->headers->set('X-Accel-Buffering', 'no');
+//        $response->headers->set('X-Accel-Buffering', 'no');
 
         return $response;
     }

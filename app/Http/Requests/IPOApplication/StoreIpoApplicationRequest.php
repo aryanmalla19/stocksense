@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\IPOApplication;
 
+use App\Enums\IpoDetailStatus;
 use App\Models\IpoDetail;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
@@ -41,7 +42,7 @@ class StoreIpoApplicationRequest extends FormRequest
             if ($ipo) {
                 // Check IPO status
                 $ipoStatus = $ipo->ipo_status; // Matches JSON field name
-                if ($ipoStatus !== 'open') {
+                if ($ipoStatus !== IpoDetailStatus::Opened->value) {
                     $validator->errors()->add('invalid_status', 'The IPO must be open to apply.');
                 }
 
