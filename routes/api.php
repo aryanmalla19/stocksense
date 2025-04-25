@@ -82,7 +82,9 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('/sectors', SectorController::class)
             ->only(['store','update', 'destroy'])
             ->names('sectors')
-            ->middleware('auth:api');
+            ->middleware('isAdmin');
+        Route::get('/stats/sectors', [SectorController::class, 'stats']);
+        Route::get('/users/stats/sectors', [SectorController::class, 'userStats']);
 
         // Transaction
         Route::apiResource('/transactions', TransactionController::class)

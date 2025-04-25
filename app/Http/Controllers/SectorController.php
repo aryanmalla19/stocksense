@@ -6,6 +6,7 @@ use App\Http\Requests\Sector\StoreSectorRequest;
 use App\Http\Requests\Sector\UpdateSectorRequest;
 use App\Http\Resources\SectorResource;
 use App\Models\Sector;
+use Illuminate\Http\Request;
 
 class SectorController extends Controller
 {
@@ -51,4 +52,42 @@ class SectorController extends Controller
             'message' => 'Successfully deleted sector with ID '. $sector->id,
         ]);
     }
+
+    public function stats()
+    {
+        $sectors = Sector::withCount('stocks')->get();
+
+        $chartData = $sectors->map(function ($sector) {
+            return [
+                'name' => $sector->name,
+                'value' => $sector->stocks_count,
+            ];
+        });
+
+        return response()->json([
+            'data' => $chartData,
+        ]);
+    }
+    public function userStats()
+    {
+        $user = auth()->user();
+
+        $stocks = $user->portfolio->holdings->pluck('stock')->flatten();
+
+        $groupedBySector = $stocks->groupBy(function ($stock) {
+            return $stock->sector->name ?? 'Unknown';
+        });
+
+        $chartData = $groupedBySector->map(function ($stocks, $sectorName) {
+            return [
+                'name' => $sectorName,
+                'value' => $stocks->count(),
+            ];
+        })->values();
+
+        return response()->json([
+            'data' => $chartData,
+        ]);
+    }
+
 }
