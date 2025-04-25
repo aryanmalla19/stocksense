@@ -119,23 +119,4 @@ class IpoDetailController extends Controller
             'message' => 'Successfully deleted IPO detail with ID: '.$id,
         ]);
     }
-
-    public function adminIndex()
-    {
-        $user = auth()->user();
-
-        $ipoDetails = IpoDetail::query();
-
-        if (request('stock_id')) {
-            $ipoDetails->stock(request('stock_id'));
-            $ipoDetails->with(['applications', 'stock']);
-        }
-        $ipoDetails = $ipoDetails->get();
-
-        return response()->json([
-            'message' => 'Successfully fetched all IPO details with applications',
-            'data' => IpoDetailResource::collection($ipoDetails),
-        ]);
-    }
-
 }

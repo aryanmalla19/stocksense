@@ -22,12 +22,18 @@ class UserResource extends JsonResource
             'is_active' => $this->is_active,
             'phone_number' => $this->phone_number,
             'bio' => $this->bio,
-            'profile_image' => $this->profile_image ? asset($this->profile_image) : 'default_path',
+            'profile_image' => $this->profile_image ? asset($this->profile_image) : asset('images/default-profile.png'),
             'two_factor_enabled' => $this->two_factor_enabled,
             'theme' => $this->whenLoaded('setting', fn () => $this->setting->mode),
             'notification_enabled' => $this->whenLoaded('setting', fn() => $this->setting->notification_enabled),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'portfolio' => $this->whenLoaded('portfolio', function (){
+                return new PortfolioResource($this->portfolio);
+            }),
+            'transactions' => $this->whenLoaded('transactions', function() {
+                return TransactionResource::collection($this->transactions);
+            }),
+            'created_at' => $this->created_at->toDateTimeString(),
+            'updated_at' => $this->updated_at->toDateTimeString(),
         ];
     }
 }

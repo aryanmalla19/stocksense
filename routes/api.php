@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HoldingController;
 use App\Http\Controllers\IpoApplicationController;
@@ -100,7 +101,9 @@ Route::prefix('v1')->group(function () {
 
         // Admin
         Route::middleware('isAdmin')->prefix('admin')->group(function () {
-            Route::get('/ipo-details', [IpoDetailController::class, 'adminIndex']);
+            Route::get('/users', [AdminController::class, 'users']);
+            Route::get('/users/{id}', [AdminController::class, 'user']);
+            Route::get('/ipo-details/{id}/applications', [AdminController::class, 'ipoApplications']);
         });
     });
 });
