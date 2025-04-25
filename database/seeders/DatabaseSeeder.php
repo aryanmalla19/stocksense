@@ -11,6 +11,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Models\UserSetting;
 use App\Models\Watchlist;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -24,8 +25,27 @@ class DatabaseSeeder extends Seeder
 
         // Create stocks and attach prices
         Stock::factory(50)
-            ->has(StockPrice::factory(10), 'prices')
+//            ->has(StockPrice::factory(10), 'prices')
             ->create();
+
+        $stocks = Stock::all();
+
+        $startDate = Carbon::now()->subMonths(3);
+        $endDate = Carbon::now();
+
+        foreach ($stocks as $stock) {
+            $date = $startDate->copy();
+
+            while ($date->lte($endDate)) {
+                StockPrice::factory()->create([
+                    'stock_id' => $stock->id,
+                    'date' => $date->copy(),
+                ]);
+
+                $date->addDay();
+            }
+        }
+
 
         User::factory(10)->create()->each(function ($user) {
             UserSetting::factory()->create(['user_id' => $user->id]);
