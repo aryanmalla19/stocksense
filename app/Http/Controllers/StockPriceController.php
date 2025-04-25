@@ -57,7 +57,7 @@ class StockPriceController extends Controller
         $response->headers->set('Content-Type', 'text/event-stream');
         $response->headers->set('Cache-Control', 'no-cache');
         $response->headers->set('Connection', 'keep-alive');
-        $response->headers->set('X-Accel-Buffering', 'no'); // nginx: turn off response buffering
+        $response->headers->set('X-Accel-Buffering', 'no');
 
         return $response;
     }

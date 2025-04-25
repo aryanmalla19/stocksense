@@ -20,10 +20,8 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Seed fixed sector data
         $this->call(SectorSeeder::class);
 
-        // Create stocks and attach prices
         Stock::factory(50)
 //            ->has(StockPrice::factory(10), 'prices')
             ->create();
@@ -92,7 +90,6 @@ class DatabaseSeeder extends Seeder
                 $newAveragePrice = $newAveragePrice / $totalQuantity;
 
                 if ($holding) {
-                    // If holding exists, update the quantity and average price
                     DB::table('holdings')
                         ->where('portfolio_id', $portfolio->id)
                         ->where('stock_id', $stockId)
@@ -101,12 +98,11 @@ class DatabaseSeeder extends Seeder
                             'average_price' => $newAveragePrice,
                         ]);
                 } else {
-                    // If holding doesn't exist, insert a new record
                     DB::table('holdings')->insert([
                         'portfolio_id' => $portfolio->id,
                         'stock_id' => $stockId,
                         'quantity' => $quantity,
-                        'average_price' => $pricePerUnit, // Initial average price is the purchase price
+                        'average_price' => $pricePerUnit,
                     ]);
                 }
             }
@@ -129,7 +125,6 @@ class DatabaseSeeder extends Seeder
         $userIds = User::pluck('id')->toArray();
 
         IpoDetail::factory(5)->create()->each(function ($ipo) use ($userIds) {
-            // Pick 3 unique users to apply for this IPO
             $applyingUsers = collect($userIds)->shuffle()->take(3);
 
             foreach ($applyingUsers as $userId) {

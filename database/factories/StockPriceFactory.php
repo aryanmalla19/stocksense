@@ -10,33 +10,41 @@ class StockPriceFactory extends Factory
 {
     protected $model = StockPrice::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    private static $previousClose = null;
+    private static $currentDate = null;
+
     public function definition(): array
     {
-        $basePrice = $this->faker->randomFloat(2, 100, 1000);
+        if (is_null(self::$currentDate)) {
+            self::$currentDate = now()->subMonths(3); // Start 3 months ago
+        } else {
+            self::$currentDate = self::$currentDate->addDay(); // Move to next day
+        }
 
-        $openPrice = $basePrice;
-        $priceFluctuation = $this->faker->randomFloat(2, -50, 50);
-        $closePrice = round($openPrice + $priceFluctuation, 2);
+        if (is_null(self::$previousClose)) {
+            self::$previousClose = $this->faker->randomFloat(2, 100, 500);
+        }
 
-        $highPrice = max($openPrice, $closePrice) + $this->faker->randomFloat(2, 0, 20);
-        $lowPrice = min($openPrice, $closePrice) - $this->faker->randomFloat(2, 0, 20);
+        $openPrice = self::$previousClose;
+        $dailyChange = $this->faker->randomFloat(2, -5, 5);
+        $closePrice = round($openPrice + $dailyChange, 2);
 
-        $currentPrice = $this->faker->randomFloat(2, $lowPrice, $highPrice);
+        $highPrice = max($openPrice, $closePrice) + $this->faker->randomFloat(2, 0, 3);
+        $lowPrice = min($openPrice, $closePrice) - $this->faker->randomFloat(2, 0, 3);
+
+        $currentPrice = round($this->faker->randomFloat(2, $lowPrice, $highPrice), 2);
+
+        self::$previousClose = $closePrice;
 
         return [
             'stock_id' => Stock::inRandomOrder()->first()?->id ?? Stock::factory()->create()->id,
-            'open_price' => $openPrice,
+            'open_price' => round($openPrice, 2),
             'close_price' => $closePrice,
             'high_price' => round($highPrice, 2),
             'low_price' => round($lowPrice, 2),
-            'current_price' => round($currentPrice, 2),
+            'current_price' => $currentPrice,
             'volume' => $this->faker->numberBetween(1000, 1000000),
-            'date' => $this->faker->dateTimeThisYear(),
+            'date' => self::$currentDate->format('Y-m-d'),
         ];
     }
 }
