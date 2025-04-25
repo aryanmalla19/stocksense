@@ -28,7 +28,7 @@ class TwoFactorController extends Controller
             'two_factor_enabled' => false,
             'two_factor_otp' => null,
             'two_factor_secret' => null,
-            'two_factor_expires_at' => null, 
+            'two_factor_expires_at' => null,
 
         ]);
 

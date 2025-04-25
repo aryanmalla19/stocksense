@@ -60,25 +60,25 @@ class StockTest extends TestCase
         $response = $this->actingAs($user, 'api')->getJson('/api/v1/stocks');
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'message' => 'Successfully fetched all stocks',
-                     'data' => [
-                         [
-                             'id' => $stock->id,
-                             'symbol' => $stock->symbol,
-                             'company_name' => $stock->company_name,
-                             'sector_id' => $sector->id,
-                             'is_listed' => true,
-                             'sector' => $sector->name,
-                             'is_watchlist' => false,
-                             'open_price' => (float) $price->open_price,
-                             'close_price' => (float) $price->close_price,
-                             'high_price' => (float) $price->high_price,
-                             'low_price' => (float) $price->low_price,
-                             'current_price' => (float) $price->current_price,
-                         ],
-                     ],
-                 ]);
+            ->assertJson([
+                'message' => 'Successfully fetched all stocks',
+                'data' => [
+                    [
+                        'id' => $stock->id,
+                        'symbol' => $stock->symbol,
+                        'company_name' => $stock->company_name,
+                        'sector_id' => $sector->id,
+                        'is_listed' => true,
+                        'sector' => $sector->name,
+                        'is_watchlist' => false,
+                        'open_price' => (float) $price->open_price,
+                        'close_price' => (float) $price->close_price,
+                        'high_price' => (float) $price->high_price,
+                        'low_price' => (float) $price->low_price,
+                        'current_price' => (float) $price->current_price,
+                    ],
+                ],
+            ]);
     }
 
     /**
@@ -95,19 +95,19 @@ class StockTest extends TestCase
         $response = $this->actingAs($user, 'api')->getJson('/api/v1/stocks?symbol=AAPL');
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'message' => 'Successfully fetched all stocks',
-                     'data' => [
-                         [
-                             'symbol' => 'AAPL',
-                             'sector_id' => $sector->id,
-                             'is_listed' => true,
-                             'sector' => $sector->name,
-                             'is_watchlist' => false,
-                         ],
-                     ],
-                 ])
-                 ->assertJsonMissing(['symbol' => 'GOOGL']);
+            ->assertJson([
+                'message' => 'Successfully fetched all stocks',
+                'data' => [
+                    [
+                        'symbol' => 'AAPL',
+                        'sector_id' => $sector->id,
+                        'is_listed' => true,
+                        'sector' => $sector->name,
+                        'is_watchlist' => false,
+                    ],
+                ],
+            ])
+            ->assertJsonMissing(['symbol' => 'GOOGL']);
     }
 
     /**
@@ -124,23 +124,23 @@ class StockTest extends TestCase
         $response = $this->actingAs($user, 'api')->getJson("/api/v1/stocks/{$stock->id}");
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'message' => 'Successfully fetched stock data',
-                     'data' => [
-                         'id' => $stock->id,
-                         'symbol' => $stock->symbol,
-                         'company_name' => $stock->company_name,
-                         'sector_id' => $sector->id,
-                         'is_listed' => true,
-                         'sector' => $sector->name,
-                         'is_watchlist' => false,
-                         'open_price' => (float) $price->open_price,
-                         'close_price' => (float) $price->close_price,
-                         'high_price' => (float) $price->high_price,
-                         'low_price' => (float) $price->low_price,
-                         'current_price' => (float) $price->current_price,
-                     ],
-                 ]);
+            ->assertJson([
+                'message' => 'Successfully fetched stock data',
+                'data' => [
+                    'id' => $stock->id,
+                    'symbol' => $stock->symbol,
+                    'company_name' => $stock->company_name,
+                    'sector_id' => $sector->id,
+                    'is_listed' => true,
+                    'sector' => $sector->name,
+                    'is_watchlist' => false,
+                    'open_price' => (float) $price->open_price,
+                    'close_price' => (float) $price->close_price,
+                    'high_price' => (float) $price->high_price,
+                    'low_price' => (float) $price->low_price,
+                    'current_price' => (float) $price->current_price,
+                ],
+            ]);
     }
 
     /**
@@ -156,9 +156,9 @@ class StockTest extends TestCase
         $response = $this->actingAs($user, 'api')->getJson("/api/v1/stocks/{$stock->id}");
 
         $response->assertStatus(404)
-                 ->assertJson([
-                     'message' => 'No listed stock found with ID ' . $stock->id,
-                 ]);
+            ->assertJson([
+                'message' => 'No listed stock found with ID '.$stock->id,
+            ]);
     }
 
     // === Watchlist Tests ===
@@ -177,16 +177,16 @@ class StockTest extends TestCase
         $response = $this->actingAs($user, 'api')->getJson('/api/v1/stocks');
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'message' => 'Successfully fetched all stocks',
-                     'data' => [
-                         [
-                             'id' => $stock->id,
-                             'symbol' => $stock->symbol,
-                             'is_watchlist' => true,
-                         ],
-                     ],
-                 ]);
+            ->assertJson([
+                'message' => 'Successfully fetched all stocks',
+                'data' => [
+                    [
+                        'id' => $stock->id,
+                        'symbol' => $stock->symbol,
+                        'is_watchlist' => true,
+                    ],
+                ],
+            ]);
     }
 
     // === Admin Stock Management Tests ===
@@ -208,17 +208,17 @@ class StockTest extends TestCase
         ]);
 
         $response->assertStatus(201)
-                 ->assertJson([
-                     'message' => 'Successfully registered stock',
-                     'data' => [
-                         'symbol' => 'AAPL',
-                         'company_name' => 'Apple Inc.',
-                         'sector_id' => $sector->id,
-                         'is_listed' => false,
-                         'sector' => $sector->name,
-                         'is_watchlist' => false,
-                     ],
-                 ]);
+            ->assertJson([
+                'message' => 'Successfully registered stock',
+                'data' => [
+                    'symbol' => 'AAPL',
+                    'company_name' => 'Apple Inc.',
+                    'sector_id' => $sector->id,
+                    'is_listed' => false,
+                    'sector' => $sector->name,
+                    'is_watchlist' => false,
+                ],
+            ]);
 
         $this->assertDatabaseHas('stocks', [
             'symbol' => 'AAPL',
@@ -244,17 +244,17 @@ class StockTest extends TestCase
         ]);
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'message' => 'Stock successfully updated',
-                     'data' => [
-                         'id' => $stock->id,
-                         'symbol' => 'GOOGL',
-                         'company_name' => 'Alphabet Inc.',
-                         'sector_id' => $sector->id,
-                         'is_listed' => 1, // TODO: Fix cast issue
-                         'is_watchlist' => false,
-                     ],
-                 ]);
+            ->assertJson([
+                'message' => 'Stock successfully updated',
+                'data' => [
+                    'id' => $stock->id,
+                    'symbol' => 'GOOGL',
+                    'company_name' => 'Alphabet Inc.',
+                    'sector_id' => $sector->id,
+                    'is_listed' => 1, // TODO: Fix cast issue
+                    'is_watchlist' => false,
+                ],
+            ]);
 
         $this->assertDatabaseHas('stocks', [
             'id' => $stock->id,
@@ -276,9 +276,9 @@ class StockTest extends TestCase
         $response = $this->actingAs($admin, 'api')->deleteJson("/api/v1/stocks/{$stock->id}");
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'message' => 'Successfully deleted stock with ID ' . $stock->id,
-                 ]);
+            ->assertJson([
+                'message' => 'Successfully deleted stock with ID '.$stock->id,
+            ]);
 
         $this->assertDatabaseMissing('stocks', ['id' => $stock->id]);
     }
@@ -294,23 +294,23 @@ class StockTest extends TestCase
         $stock = Stock::factory()->create(['sector_id' => $sector->id]);
 
         $this->actingAs($user, 'api')
-             ->postJson('/api/v1/stocks', [
-                 'symbol' => 'AAPL',
-                 'company_name' => 'Apple Inc.',
-                 'sector_id' => $sector->id,
-             ])
-             ->assertStatus(403);
+            ->postJson('/api/v1/stocks', [
+                'symbol' => 'AAPL',
+                'company_name' => 'Apple Inc.',
+                'sector_id' => $sector->id,
+            ])
+            ->assertStatus(403);
 
         $this->actingAs($user, 'api')
-             ->putJson("/api/v1/stocks/{$stock->id}", [
-                 'symbol' => 'GOOGL',
-                 'company_name' => 'Alphabet Inc.',
-             ])
-             ->assertStatus(403);
+            ->putJson("/api/v1/stocks/{$stock->id}", [
+                'symbol' => 'GOOGL',
+                'company_name' => 'Alphabet Inc.',
+            ])
+            ->assertStatus(403);
 
         $this->actingAs($user, 'api')
-             ->deleteJson("/api/v1/stocks/{$stock->id}")
-             ->assertStatus(403);
+            ->deleteJson("/api/v1/stocks/{$stock->id}")
+            ->assertStatus(403);
     }
 
     // === Stock Sorting Tests ===
@@ -355,8 +355,8 @@ class StockTest extends TestCase
         \Log::info('Sort stocks response:', $response->json());
 
         $response->assertStatus(200)
-                 ->assertJson(['message' => 'Stocks retrieved successfully'])
-                 ->assertJsonPath('data.data.*.symbol', ['AAPL', 'GOOGL']);
+            ->assertJson(['message' => 'Stocks retrieved successfully'])
+            ->assertJsonPath('data.data.*.symbol', ['AAPL', 'GOOGL']);
     }
 
     /**
@@ -370,8 +370,8 @@ class StockTest extends TestCase
         $response = $this->actingAs($user, 'api')->getJson('/api/v1/stocks/sort/invalid_column/asc');
 
         $response->assertStatus(400)
-                 ->assertJson(['message' => 'Invalid sort column'])
-                 ->assertJsonStructure(['message']);
+            ->assertJson(['message' => 'Invalid sort column'])
+            ->assertJsonStructure(['message']);
     }
 
     /**
@@ -385,7 +385,7 @@ class StockTest extends TestCase
         $response = $this->actingAs($user, 'api')->getJson('/api/v1/stocks/sort/current_price/invalid');
 
         $response->assertStatus(400)
-                 ->assertJson(['message' => 'Invalid sort direction. Use "asc" or "desc".'])
-                 ->assertJsonStructure(['message']);
+            ->assertJson(['message' => 'Invalid sort direction. Use "asc" or "desc".'])
+            ->assertJsonStructure(['message']);
     }
 }

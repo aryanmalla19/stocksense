@@ -1,6 +1,5 @@
 <?php
 
-use App\Console\Commands\CheckIpoListing;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 

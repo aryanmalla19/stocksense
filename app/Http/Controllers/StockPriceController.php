@@ -12,9 +12,10 @@ class StockPriceController extends Controller
     {
         $stock = Stock::with('prices')->find($id);
 
-        if (!$stock) {
+        if (! $stock) {
             return response()->json(['message' => 'Stock not found'], 404);
         }
+
         return new StockResource($stock->load(['prices', 'sector']));
     }
 
@@ -22,28 +23,28 @@ class StockPriceController extends Controller
     {
         $stock = Stock::with('prices')->find($id);
 
-        if (!$stock) {
+        if (! $stock) {
             return response()->json(['message' => 'Stock not found'], 404);
         }
 
         $response = new StreamedResponse(function () use ($id) {
             $stock = Stock::with('prices')->find($id); // Send initial snapshot
-            echo "data: " . json_encode([
-                    'type' => 'initial',
-                    'data' => $stock
-                ]) . "\n\n";
+            echo 'data: '.json_encode([
+                'type' => 'initial',
+                'data' => $stock,
+            ])."\n\n";
             ob_flush();
             flush();
 
             while (true) {
                 $latest = Stock::find($id)?->latestPrice; // Re-fetch fresh data
                 if ($latest) {
-                    echo "data: " . json_encode([
-                            'type' => 'update',
-                            'data' => $latest
-                        ]) . "\n\n";
+                    echo 'data: '.json_encode([
+                        'type' => 'update',
+                        'data' => $latest,
+                    ])."\n\n";
                 } else {
-                    echo "event: error\ndata: " . json_encode(['message' => 'No latest price']) . "\n\n";
+                    echo "event: error\ndata: ".json_encode(['message' => 'No latest price'])."\n\n";
                 }
 
                 ob_flush();
@@ -51,7 +52,6 @@ class StockPriceController extends Controller
                 sleep(5);
             }
         });
-
 
         // Proper SSE headers
         $response->headers->set('Content-Type', 'text/event-stream');
@@ -61,5 +61,4 @@ class StockPriceController extends Controller
 
         return $response;
     }
-
 }

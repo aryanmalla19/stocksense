@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-
 class Sector extends Model
 {
     use HasFactory;
@@ -16,7 +15,6 @@ class Sector extends Model
     ];
 
     public $timestamps = false; // Disable timestamps
-
 
     /**
      * Get the stocks belonging to this sector.

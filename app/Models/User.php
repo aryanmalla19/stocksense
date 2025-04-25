@@ -17,9 +17,6 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 {
     use CanResetPassword, HasFactory, Notifiable;
 
-
-
-
     protected $fillable = [
         'name',
         'email',

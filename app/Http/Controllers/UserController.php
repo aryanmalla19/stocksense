@@ -13,8 +13,10 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $user = auth()->user()->load('setting');
+
         return new UserResource($user);
     }
+
     public function update(Request $request)
     {
         $user = auth()->user();
@@ -28,7 +30,7 @@ class UserController extends Controller
                 'min:3',
                 'regex:/^[A-Za-z\s]+$/',
             ],
-            'email' => 'nullable|email|unique:users,email,' . $user->id,
+            'email' => 'nullable|email|unique:users,email,'.$user->id,
             'phone_number' => [
                 'nullable',
                 'string',
@@ -52,5 +54,4 @@ class UserController extends Controller
             'message' => 'Successfully updated profile',
         ]);
     }
-
 }

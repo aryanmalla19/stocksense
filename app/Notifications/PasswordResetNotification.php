@@ -35,7 +35,7 @@ class PasswordResetNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => 'Your password has been resetted'
+            'message' => 'Your password has been resetted',
         ];
     }
 }

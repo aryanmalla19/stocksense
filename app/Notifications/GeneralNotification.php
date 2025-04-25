@@ -3,14 +3,14 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class GeneralNotification extends Notification
 {
     use Queueable;
+
     public $service;
+
     public $message;
 
     /**
@@ -29,9 +29,8 @@ class GeneralNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['database']; 
+        return ['database'];
     }
-
 
     /**
      * Get the array representation of the notification.

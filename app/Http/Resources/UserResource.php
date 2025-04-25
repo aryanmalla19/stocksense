@@ -25,11 +25,11 @@ class UserResource extends JsonResource
             'profile_image' => $this->profile_image ? asset($this->profile_image) : asset('images/default-profile.png'),
             'two_factor_enabled' => $this->two_factor_enabled,
             'theme' => $this->whenLoaded('setting', fn () => $this->setting->mode),
-            'notification_enabled' => $this->whenLoaded('setting', fn() => $this->setting->notification_enabled),
-            'portfolio' => $this->whenLoaded('portfolio', function (){
+            'notification_enabled' => $this->whenLoaded('setting', fn () => $this->setting->notification_enabled),
+            'portfolio' => $this->whenLoaded('portfolio', function () {
                 return new PortfolioResource($this->portfolio);
             }),
-            'transactions' => $this->whenLoaded('transactions', function() {
+            'transactions' => $this->whenLoaded('transactions', function () {
                 return TransactionResource::collection($this->transactions);
             }),
             'created_at' => $this->created_at->toDateTimeString(),

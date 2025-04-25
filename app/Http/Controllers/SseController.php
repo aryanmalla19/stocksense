@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Cache;
@@ -15,7 +16,7 @@ class SseController extends Controller
     {
         $token = request()->query('token');
 
-        if (!$token || !JWTAuth::setToken($token)->check()) {
+        if (! $token || ! JWTAuth::setToken($token)->check()) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
@@ -24,14 +25,14 @@ class SseController extends Controller
 
         return response()->stream(function () use ($userId) {
             $start = time();
-            $duration = 5; 
+            $duration = 5;
 
             while ((time() - $start) < $duration) {
                 $cacheKey = "sse_notifications_user_{$userId}";
                 $notifications = Cache::pull($cacheKey, []);
 
                 foreach ($notifications as $notification) {
-                    echo "data: " . json_encode($notification) . "\n\n";
+                    echo 'data: '.json_encode($notification)."\n\n";
                 }
 
                 echo ": ping\n\n";
@@ -47,5 +48,4 @@ class SseController extends Controller
             'Connection' => 'keep-alive',
         ]);
     }
-
 }

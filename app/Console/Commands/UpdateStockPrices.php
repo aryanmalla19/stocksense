@@ -2,14 +2,15 @@
 
 namespace App\Console\Commands;
 
-use Carbon\Carbon;
-use Illuminate\Console\Command;
 use App\Models\Stock;
 use App\Models\StockPrice;
+use Carbon\Carbon;
+use Illuminate\Console\Command;
 
 class UpdateStockPrices extends Command
 {
     protected $signature = 'stocks:update-prices';
+
     protected $description = 'Update stock prices based on the latest record for each stock';
 
     public function handle()
@@ -21,8 +22,9 @@ class UpdateStockPrices extends Command
         foreach ($stocks as $stock) {
             $latest = $stock->latestPrice;
 
-            if (!$latest) {
+            if (! $latest) {
                 $this->warn("⚠️ No price history for {$stock->symbol}");
+
                 continue;
             }
 
@@ -41,13 +43,13 @@ class UpdateStockPrices extends Command
             $lowPrice = round(min($openPrice, $closePrice, $currentPrice) - rand(1, 3), 2);
 
             $newPrice = new StockPrice([
-                'open_price'     => $openPrice,
-                'close_price'    => $closePrice,
-                'current_price'  => $currentPrice,
-                'high_price'     => $highPrice,
-                'low_price'      => $lowPrice,
-                'volume'         => rand(1000, 10000),
-                'date'           => Carbon::now(),
+                'open_price' => $openPrice,
+                'close_price' => $closePrice,
+                'current_price' => $currentPrice,
+                'high_price' => $highPrice,
+                'low_price' => $lowPrice,
+                'volume' => rand(1000, 10000),
+                'date' => Carbon::now(),
             ]);
 
             $stock->prices()->save($newPrice);

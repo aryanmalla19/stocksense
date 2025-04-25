@@ -20,11 +20,11 @@ class IpoDetailController extends Controller
         if (request('stock_id')) {
             $ipoDetails->stock(request('stock_id'));
         }
-        if(request('status')){
+        if (request('status')) {
             $ipoDetails->whereIpoStatus(request('status'));
         }
 
-        $ipoDetails->orderBy('close_date','desc');
+        $ipoDetails->orderBy('close_date', 'desc');
 
         $ipoDetails = $ipoDetails->get();
 
@@ -58,7 +58,7 @@ class IpoDetailController extends Controller
         $ipoDetail = IpoDetail::create($data);
 
         $users = User::get();
-        foreach($users as $user){
+        foreach ($users as $user) {
             $user->notify(new IpoCreated($ipoDetail));
         }
 

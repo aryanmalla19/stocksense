@@ -34,15 +34,14 @@ class CheckIpoListing extends Command
                 ->whereIn('ipo_status', ['opened', 'pending', 'closed'])
                 ->get();
 
-
             foreach ($ipos as $ipo) {
                 AllotIpoJob::dispatch($ipo);
             }
 
-            $this->info('Checked IPOs and dispatched ' . $ipos->count() . ' allotment jobs.');
-            \Log::info('ipo:check-listings ran successfully, dispatched ' . $ipos->count() . ' jobs.');
+            $this->info('Checked IPOs and dispatched '.$ipos->count().' allotment jobs.');
+            \Log::info('ipo:check-listings ran successfully, dispatched '.$ipos->count().' jobs.');
         } catch (\Exception $e) {
-            \Log::error('Error in ipo:check-listings: ' . $e->getMessage());
+            \Log::error('Error in ipo:check-listings: '.$e->getMessage());
             $this->error('An error occurred while checking IPOs.');
         }
     }

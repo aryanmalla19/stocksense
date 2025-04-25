@@ -2,16 +2,15 @@
 
 namespace Tests\Feature\Auth;
 
-use Tests\TestCase;
-use App\Models\User;
 use App\Mail\ResetPassword;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Queue;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Http\Response;
+use Tests\TestCase;
 
 class PasswordResetTest extends TestCase
 {
@@ -35,7 +34,7 @@ class PasswordResetTest extends TestCase
         ]);
 
         $response->assertStatus(200)
-                 ->assertJson(['message' => 'A password reset link has been sent to your email.']);
+            ->assertJson(['message' => 'A password reset link has been sent to your email.']);
 
         Mail::assertQueued(ResetPassword::class, function ($mail) use ($user) {
             return $mail->hasTo($user->email);
@@ -53,7 +52,7 @@ class PasswordResetTest extends TestCase
         ]);
 
         $response->assertStatus(400)
-                 ->assertJson(['error' => 'We cannot find a user with that email address.']);
+            ->assertJson(['error' => 'We cannot find a user with that email address.']);
     }
 
     public function test_user_can_reset_password_with_valid_token()
@@ -69,7 +68,7 @@ class PasswordResetTest extends TestCase
         ]);
 
         $response->assertStatus(200)
-                 ->assertJson(['message' => 'Your password has been successfully reset.']);
+            ->assertJson(['message' => 'Your password has been successfully reset.']);
 
         $this->assertTrue(\Illuminate\Support\Facades\Hash::check('NewPassword@123', $user->fresh()->password));
         $this->assertDatabaseMissing('password_reset_tokens', ['email' => 'john@example.com']);
@@ -87,7 +86,7 @@ class PasswordResetTest extends TestCase
         ]);
 
         $response->assertStatus(400)
-                 ->assertJson(['error' => 'The reset token is invalid or has expired.']);
+            ->assertJson(['error' => 'The reset token is invalid or has expired.']);
     }
 
     /**
@@ -97,26 +96,24 @@ class PasswordResetTest extends TestCase
     {
         // Setup a user
         // $user = User::factory()->create(['email' => 'bartoletti.kira@example.org']);
-    
+
         // Hit the endpoint 100 times (should be okay)
         for ($i = 0; $i < 100; $i++) {
             $this->withServerVariables(['REMOTE_ADDR' => '127.0.0.1'])
-            ->postJson('/api/v1/auth/forgot-password', data: [
-                'email' => 'bartoletti.kira@example.org',
-            ]);
+                ->postJson('/api/v1/auth/forgot-password', data: [
+                    'email' => 'bartoletti.kira@example.org',
+                ]);
         }
-    
+
         // 101st request should be rate-limited
         $response = $this->postJson('/api/v1/auth/forgot-password', [
             'email' => 'bartoletti.kira@example.org',
         ]);
-    
-        $response->assertStatus(500); //429
+
+        $response->assertStatus(500); // 429
         // $response->assertJsonFragment(['message' => 'Too Many Attempts.']);
     }
-    
 }
-
 
 // public function handle(Request $request, Closure $next): Response
 // {

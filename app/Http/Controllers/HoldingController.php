@@ -4,12 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\HoldingResource;
 use App\Models\Holding;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\JsonResponse;
 
 class HoldingController extends Controller
 {
-
     public function index(): JsonResponse
     {
         $this->authorize('viewAny', [Holding::class, auth()->user()]);

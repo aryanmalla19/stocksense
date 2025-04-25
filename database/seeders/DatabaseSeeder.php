@@ -46,7 +46,6 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-
         User::factory(10)->create()->each(function ($user) {
             UserSetting::factory()->create(['user_id' => $user->id]);
 

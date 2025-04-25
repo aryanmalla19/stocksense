@@ -6,8 +6,6 @@ use App\Http\Requests\Stock\StoreStockRequest;
 use App\Http\Requests\Stock\UpdateStockRequest;
 use App\Http\Resources\StockResource;
 use App\Models\Stock;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class StockController extends Controller
 {
@@ -46,13 +44,13 @@ class StockController extends Controller
 
     public function show(string $id)
     {
-        $stock = Stock::with(['sector','latestPrice'])
+        $stock = Stock::with(['sector', 'latestPrice'])
             ->listed()
             ->find($id);
 
-        if (!$stock) {
+        if (! $stock) {
             return response()->json([
-                'message' => 'No listed stock found with ID ' . $id,
+                'message' => 'No listed stock found with ID '.$id,
             ], 404);
         }
 
@@ -62,13 +60,12 @@ class StockController extends Controller
         ]);
     }
 
-
     public function update(UpdateStockRequest $request, string $id)
     {
         $stock = Stock::find($id);
-        if (!$stock) {
+        if (! $stock) {
             return response()->json([
-                'message' => 'No Stock found with ID ' . $id,
+                'message' => 'No Stock found with ID '.$id,
             ], 404);
         }
 
@@ -83,16 +80,16 @@ class StockController extends Controller
     public function destroy(string $id)
     {
         $stock = Stock::find($id);
-        if (!$stock) {
+        if (! $stock) {
             return response()->json([
-                'message' => 'No Stock found with ID ' . $id,
+                'message' => 'No Stock found with ID '.$id,
             ], 404);
         }
 
         $stock->delete();
 
         return response()->json([
-            'message' => 'Successfully deleted stock with ID ' . $id,
+            'message' => 'Successfully deleted stock with ID '.$id,
         ]);
     }
 }

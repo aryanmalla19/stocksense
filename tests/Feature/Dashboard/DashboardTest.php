@@ -2,13 +2,13 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use App\Models\User;
-use App\Models\Portfolio;
 use App\Models\Holding;
+use App\Models\Portfolio;
 use App\Models\Stock;
 use App\Models\Transaction;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class DashboardTest extends TestCase
 {
@@ -45,14 +45,14 @@ class DashboardTest extends TestCase
         ]);
 
         $response = $this->actingAs($user, 'api')
-                        ->getJson('/api/v1/dashboard');
+            ->getJson('/api/v1/dashboard');
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'current_amount' => 50000.75,
-                     'total_investment' => 1500.25,
-                     'current_holdings' => 2500.50, // 10 * 250.05
-                 ]);
+            ->assertJson([
+                'current_amount' => 50000.75,
+                'total_investment' => 1500.25,
+                'current_holdings' => 2500.50, // 10 * 250.05
+            ]);
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
@@ -68,14 +68,14 @@ class DashboardTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->actingAs($user, 'api')
-                        ->getJson('/api/v1/dashboard');
+            ->getJson('/api/v1/dashboard');
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'current_amount' => 0,
-                     'total_investment' => 0,
-                     'current_holdings' => 0,
-                 ]);
+            ->assertJson([
+                'current_amount' => 0,
+                'total_investment' => 0,
+                'current_holdings' => 0,
+            ]);
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
@@ -126,13 +126,13 @@ class DashboardTest extends TestCase
         ]);
 
         $response = $this->actingAs($user, 'api')
-                        ->getJson('/api/v1/dashboard');
+            ->getJson('/api/v1/dashboard');
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'current_amount' => 75000.00,
-                     'total_investment' => 5000.00, // 2000 + 3000
-                     'current_holdings' => 7500.00, // 3000 + 4500
-                 ]);
+            ->assertJson([
+                'current_amount' => 75000.00,
+                'total_investment' => 5000.00, // 2000 + 3000
+                'current_holdings' => 7500.00, // 3000 + 4500
+            ]);
     }
 }

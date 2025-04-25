@@ -6,13 +6,13 @@ use App\Enums\IpoApplicationStatus;
 use App\Mail\IpoAllottedMail;
 use App\Models\IpoDetail;
 use App\Models\User;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class AllotIpoJob implements ShouldQueue
 {
@@ -58,7 +58,9 @@ class AllotIpoJob implements ShouldQueue
 
                 // Initial 10 shares allotment
                 foreach ($applications as $app) {
-                    if ($remainingShares < 10) break;
+                    if ($remainingShares < 10) {
+                        break;
+                    }
 
                     $app->update([
                         'status' => IpoApplicationStatus::Allotted,
@@ -75,7 +77,7 @@ class AllotIpoJob implements ShouldQueue
                     $remainingShares -= 10;
                 }
 
-                Log::info("The remaining shares are " . $remainingShares);
+                Log::info('The remaining shares are '.$remainingShares);
 
                 // Distribute remaining shares one by one
                 $allotted = $allottedCollection->toArray(); // convert to mutable array
@@ -83,22 +85,26 @@ class AllotIpoJob implements ShouldQueue
                 while ($remainingShares > 0) {
                     $distributed = false;
 
-                    Log::info("The remaining shares are :- " . $remainingShares);
+                    Log::info('The remaining shares are :- '.$remainingShares);
                     foreach ($allotted as $i => $entry) {
-                        if ($remainingShares === 0) break;
+                        if ($remainingShares === 0) {
+                            break;
+                        }
                         if ($entry['current_allotment'] < $entry['applied_shares']) {
                             $allotted[$i]['current_allotment']++;
                             $remainingShares--;
                             $distributed = true;
                         }
-                        Log::info(" The current_allotment is " . $allotted[$i]['current_allotment']);
-                        Log::info(" The applied_shares is " . $allotted[$i]['applied_shares']);
+                        Log::info(' The current_allotment is '.$allotted[$i]['current_allotment']);
+                        Log::info(' The applied_shares is '.$allotted[$i]['applied_shares']);
                     }
 
-                    if (!$distributed) break;
+                    if (! $distributed) {
+                        break;
+                    }
                 }
 
-                Log::info("The remaining shares are : " . $remainingShares);
+                Log::info('The remaining shares are : '.$remainingShares);
 
                 // Final update of applications
                 foreach ($allotted as $entry) {
@@ -153,9 +159,9 @@ class AllotIpoJob implements ShouldQueue
             ]);
             $ipo->update(['ipo_status' => 'allotted']);
 
-            Log::info("✅ IPO #{$ipo->id} - Allotment completed. Total shares used: " . $totalShares);
+            Log::info("✅ IPO #{$ipo->id} - Allotment completed. Total shares used: ".$totalShares);
         } catch (\Throwable $e) {
-            Log::error("❌ IPO allotment failed: " . $e->getMessage(), [
+            Log::error('❌ IPO allotment failed: '.$e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
             ]);
             throw $e;

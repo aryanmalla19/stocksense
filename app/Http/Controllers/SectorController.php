@@ -6,15 +6,15 @@ use App\Http\Requests\Sector\StoreSectorRequest;
 use App\Http\Requests\Sector\UpdateSectorRequest;
 use App\Http\Resources\SectorResource;
 use App\Models\Sector;
-use Illuminate\Http\Request;
 
 class SectorController extends Controller
 {
     public function index()
-{
-    $sectors = Sector::all();
-    return SectorResource::collection($sectors);
-}
+    {
+        $sectors = Sector::all();
+
+        return SectorResource::collection($sectors);
+    }
 
     public function store(StoreSectorRequest $request)
     {
@@ -39,7 +39,7 @@ class SectorController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Successfully updated sector with ID '. $sector->id,
+            'message' => 'Successfully updated sector with ID '.$sector->id,
         ]);
     }
 
@@ -49,7 +49,7 @@ class SectorController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Successfully deleted sector with ID '. $sector->id,
+            'message' => 'Successfully deleted sector with ID '.$sector->id,
         ]);
     }
 
@@ -68,6 +68,7 @@ class SectorController extends Controller
             'data' => $chartData,
         ]);
     }
+
     public function userStats()
     {
         $user = auth()->user();
@@ -89,5 +90,4 @@ class SectorController extends Controller
             'data' => $chartData,
         ]);
     }
-
 }

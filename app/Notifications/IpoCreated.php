@@ -9,7 +9,9 @@ use Illuminate\Notifications\Notification;
 class IpoCreated extends Notification
 {
     use Queueable;
+
     protected $ipoDetail;
+
     /**
      * Create a new notification instance.
      */
@@ -31,7 +33,7 @@ class IpoCreated extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => 'New Ipo has been opened ' . $this->ipoDetail->stock->symbol
+            'message' => 'New Ipo has been opened '.$this->ipoDetail->stock->symbol,
         ];
     }
 }
