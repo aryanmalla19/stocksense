@@ -27,88 +27,85 @@ class StockPriceTest extends TestCase
     // tests/Feature/Stock/StockPriceTest.php, in it_can_fetch_all_stocks_with_prices
     public function it_can_fetch_all_stocks_with_prices()
     {
-    // Arrange: Create stocks with associated prices
-    $stocks = Stock::factory()->count(3)->create()->each(function ($stock) {
-        StockPrice::factory()->count(2)->create(['stock_id' => $stock->id]);
-    });
+        // Arrange: Create stocks with associated prices
+        $stocks = Stock::factory()->count(3)->create()->each(function ($stock) {
+            StockPrice::factory()->count(2)->create(['stock_id' => $stock->id]);
+        });
 
-    // Act: GET request to index endpoint
-    $response = $this->getJson('/api/v1/stock-prices');
+        // Act: GET request to index endpoint
+        $response = $this->getJson('/api/v1/stock-prices');
 
-    // Assert: Verify response structure and data
-    $response->assertStatus(200)
-             ->assertJson([
-                 'message' => 'Successfully fetched all stock with its prices',
-             ])
-             ->assertJsonStructure([
-                 'message',
-                 'data' => [
-                     '*' => [
-                         'id',
-                         'name', // Change from 'company_name' to 'name'
-                         'symbol',
-                         'prices' => [
-                             '*' => [
-                                 'id',
-                                 'stock_id',
-                                 'open_price',
-                                 'close_price',
-                                 'high_price',
-                                 'low_price',
-                                 'current_price',
-                                 'date',
-                             ]
-                         ]
-                     ]
-                 ]
-             ]);
+        // Assert: Verify response structure and data
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Successfully fetched all stock with its prices',
+            ])
+            ->assertJsonStructure([
+                'message',
+                'data' => [
+                    '*' => [
+                        'id',
+                        'name', // Change from 'company_name' to 'name'
+                        'symbol',
+                        'prices' => [
+                            '*' => [
+                                'id',
+                                'stock_id',
+                                'open_price',
+                                'close_price',
+                                'high_price',
+                                'low_price',
+                                'current_price',
+                                'date',
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
 
-    $this->assertCount(3, $response->json('data'));
-   }
-
+        $this->assertCount(3, $response->json('data'));
+    }
 
     #[Test]
     public function it_can_store_a_new_stock_price()
     {
-    $stock = Stock::factory()->create();
+        $stock = Stock::factory()->create();
 
-    $data = [
-        'stock_id' => $stock->id,
-        'current_price' => 150.75,
-        'open_price' => 150.00,
-        'close_price' => 151.00,
-        'high_price' => 152.00,
-        'low_price' => 149.50,
-        'volume' => 100000,
-        'date' => now()->toDateTimeString(),
-    ];
+        $data = [
+            'stock_id' => $stock->id,
+            'current_price' => 150.75,
+            'open_price' => 150.00,
+            'close_price' => 151.00,
+            'high_price' => 152.00,
+            'low_price' => 149.50,
+            'volume' => 100000,
+            'date' => now()->toDateTimeString(),
+        ];
 
-    $response = $this->postJson('/api/v1/stock-prices', $data);
+        $response = $this->postJson('/api/v1/stock-prices', $data);
 
+        $response->assertStatus(201)
+            ->assertJson([
+                'message' => 'Successfully created new stock price',
+            ])
+            ->assertJsonStructure([
+                'message',
+                'data' => [
+                    'id',
+                    'stock_id',
+                    'open_price',
+                    'close_price',
+                    'high_price',
+                    'low_price',
+                    'current_price',
+                    'date',
+                ],
+            ]);
 
-
-    $response->assertStatus(201)
-             ->assertJson([
-                 'message' => 'Successfully created new stock price',
-             ])
-             ->assertJsonStructure([
-                 'message',
-                 'data' => [
-                     'id',
-                     'stock_id',
-                     'open_price',
-                     'close_price',
-                     'high_price',
-                     'low_price',
-                     'current_price',
-                     'date',
-                 ]
-             ]);
-
-    $this->assertDatabaseHas('stock_prices', [
-        'stock_id' => $stock->id,
-        'current_price' => 150.75,
-    ]);
+        $this->assertDatabaseHas('stock_prices', [
+            'stock_id' => $stock->id,
+            'current_price' => 150.75,
+        ]);
     }
 
     #[Test]
@@ -125,13 +122,13 @@ class StockPriceTest extends TestCase
 
         // Assert: Verify 422 response due to validation failure
         $response->assertStatus(422)
-                 ->assertJson([
-                     'success' => false,
-                     'message' => 'Validation failed.',
-                     'errors' => [
-                         'stock_id' => ['The selected stock does not exist.'],
-                     ]
-                 ]);
+            ->assertJson([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => [
+                    'stock_id' => ['The selected stock does not exist.'],
+                ],
+            ]);
     }
 
     #[Test]
@@ -149,14 +146,14 @@ class StockPriceTest extends TestCase
 
         // Assert: Verify 422 validation error
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors(['current_price'])
-                 ->assertJson([
-                     'success' => false,
-                     'message' => 'Validation failed.',
-                     'errors' => [
-                         'current_price' => ['Current price must be a numeric value.'],
-                     ]
-                 ]);
+            ->assertJsonValidationErrors(['current_price'])
+            ->assertJson([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => [
+                    'current_price' => ['Current price must be a numeric value.'],
+                ],
+            ]);
     }
 
     #[Test]
@@ -171,22 +168,22 @@ class StockPriceTest extends TestCase
 
         // Assert: Verify response structure
         $response->assertStatus(200)
-                 ->assertJson([
-                     'message' => "Successfully fetched stock price data with ID {$stockPrice->id}",
-                 ])
-                 ->assertJsonStructure([
-                     'message',
-                     'data' => [
-                         'id',
-                         'stock_id',
-                         'open_price',
-                         'close_price',
-                         'high_price',
-                         'low_price',
-                         'current_price',
-                         'date',
-                     ]
-                 ]);
+            ->assertJson([
+                'message' => "Successfully fetched stock price data with ID {$stockPrice->id}",
+            ])
+            ->assertJsonStructure([
+                'message',
+                'data' => [
+                    'id',
+                    'stock_id',
+                    'open_price',
+                    'close_price',
+                    'high_price',
+                    'low_price',
+                    'current_price',
+                    'date',
+                ],
+            ]);
     }
 
     #[Test]
@@ -197,9 +194,9 @@ class StockPriceTest extends TestCase
 
         // Assert: Verify 404 response
         $response->assertStatus(404)
-                 ->assertJson([
-                     'message' => 'Could not find stock price data with ID 999',
-                 ]);
+            ->assertJson([
+                'message' => 'Could not find stock price data with ID 999',
+            ]);
     }
 
     #[Test]
@@ -215,9 +212,9 @@ class StockPriceTest extends TestCase
 
         // Assert: Verify 400 response
         $response->assertStatus(400)
-                 ->assertJson([
-                     'message' => 'You cannot change stock previous price',
-                 ]);
+            ->assertJson([
+                'message' => 'You cannot change stock previous price',
+            ]);
     }
 
     #[Test]
@@ -231,9 +228,9 @@ class StockPriceTest extends TestCase
 
         // Assert: Verify 400 response
         $response->assertStatus(400)
-                 ->assertJson([
-                     'message' => 'You cannot delete stock previous price',
-                 ]);
+            ->assertJson([
+                'message' => 'You cannot delete stock previous price',
+            ]);
     }
 
     #[Test]
@@ -248,31 +245,31 @@ class StockPriceTest extends TestCase
 
         // Assert: Verify response structure and data
         $response->assertStatus(200)
-                 ->assertJson([
-                     'message' => 'Successfully rendered stock all historically data',
-                 ])
-                 ->assertJsonStructure([
-                     'message',
-                     'data' => [
-                         'stock' => [
-                             'id',
-                             'company_name', // Adjusted from 'name'
-                             'symbol',
-                         ],
-                         'historic' => [
-                             '*' => [
-                                 'id',
-                                 'stock_id',
-                                 'open_price',
-                                 'close_price',
-                                 'high_price',
-                                 'low_price',
-                                 'current_price',
-                                 'date',
-                             ]
-                         ]
-                     ]
-                 ]);
+            ->assertJson([
+                'message' => 'Successfully rendered stock all historically data',
+            ])
+            ->assertJsonStructure([
+                'message',
+                'data' => [
+                    'stock' => [
+                        'id',
+                        'company_name', // Adjusted from 'name'
+                        'symbol',
+                    ],
+                    'historic' => [
+                        '*' => [
+                            'id',
+                            'stock_id',
+                            'open_price',
+                            'close_price',
+                            'high_price',
+                            'low_price',
+                            'current_price',
+                            'date',
+                        ],
+                    ],
+                ],
+            ]);
 
         $this->assertCount(5, $response->json('data.historic'));
     }
@@ -285,9 +282,9 @@ class StockPriceTest extends TestCase
 
         // Assert: Verify 404 response
         $response->assertStatus(404)
-                 ->assertJson([
-                     'message' => 'Stock not found',
-                     'data' => null,
-                 ]);
+            ->assertJson([
+                'message' => 'Stock not found',
+                'data' => null,
+            ]);
     }
 }

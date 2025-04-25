@@ -29,12 +29,13 @@ class ChangePasswordRequest extends FormRequest
                 'min:8',
                 'max:50',
                 'confirmed',
-                'different:recent_password'
-            ]
+                'different:recent_password',
+            ],
         ];
     }
 
-    public function messages(){
+    public function messages()
+    {
         return [
             'recent_password.required' => 'Recent password is missing',
             'new_password.required' => 'New password is required',
@@ -42,7 +43,7 @@ class ChangePasswordRequest extends FormRequest
             'new_password.max' => 'Password must not exceed 50 characters',
             'new_password.regex' => 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
             'new_password.confirmed' => 'Password confirmation does not match',
-            'new_password.different' => 'New password must not be same as old'
+            'new_password.different' => 'New password must not be same as old',
         ];
     }
 }

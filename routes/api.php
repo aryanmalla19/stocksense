@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HoldingController;
 use App\Http\Controllers\IpoApplicationController;
@@ -8,8 +9,8 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\SectorController;
-use App\Http\Controllers\SseController;
 use App\Http\Controllers\SocialiteController;
+use App\Http\Controllers\SseController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\StockPriceController;
 use App\Http\Controllers\TransactionController;
@@ -63,7 +64,6 @@ Route::prefix('v1')->group(function () {
             ->only(['store', 'update', 'destroy'])->middleware('isAdmin');
         Route::get('/stocks/{stock}/history', [StockPriceController::class, 'historyStockPrices'])->name('stocks.history');
 
-
         Route::get('/portfolios', PortfolioController::class)->name('portfolios');
         Route::apiResource('/holdings', HoldingController::class)
             ->only(['index', 'show'])
@@ -77,12 +77,14 @@ Route::prefix('v1')->group(function () {
 
         // Sectors
         Route::apiResource('/sectors', SectorController::class)
-            ->only(['index','show'])
+            ->only(['index', 'show'])
             ->names('sectors');
         Route::apiResource('/sectors', SectorController::class)
-            ->only(['store','update', 'destroy'])
+            ->only(['store', 'update', 'destroy'])
             ->names('sectors')
-            ->middleware('auth:api');
+            ->middleware('isAdmin');
+        Route::get('/stats/sectors', [SectorController::class, 'stats']);
+        Route::get('/users/stats/sectors', [SectorController::class, 'userStats']);
 
         // Transaction
         Route::apiResource('/transactions', TransactionController::class)
@@ -91,14 +93,16 @@ Route::prefix('v1')->group(function () {
 
         // Watchlist
         Route::apiResource('/watchlists', WatchlistController::class)
-        ->only(['index', 'store', 'destroy']);
+            ->only(['index', 'store', 'destroy']);
 
         // Notifications
         Route::get('/users/notifications', NotificationController::class);
 
         // Admin
         Route::middleware('isAdmin')->prefix('admin')->group(function () {
-            Route::get('/ipo-details', [IpoDetailController::class, 'adminIndex']);
+            Route::get('/users', [AdminController::class, 'users']);
+            Route::get('/users/{id}', [AdminController::class, 'user']);
+            Route::get('/ipo-details/{id}/applications', [AdminController::class, 'ipoApplications']);
         });
     });
 });

@@ -41,7 +41,6 @@ class TransactionController extends Controller
             ]);
     }
 
-
     public function store(Request $request)
     {
         $attributes = $request->validate([

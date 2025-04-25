@@ -1,10 +1,9 @@
 <?php
 
 namespace App\Listeners;
-use App\Events\GeneralNotification;
+
 use Illuminate\Notifications\Events\NotificationSent;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 
 class BroadcastNotificationSent
 {
@@ -12,8 +11,9 @@ class BroadcastNotificationSent
     {
         if ($event->channel === 'database') {
 
-            if ($event->channel !== 'database')
+            if ($event->channel !== 'database') {
                 return;
+            }
 
             $userId = $event->notifiable->id;
 
@@ -26,7 +26,7 @@ class BroadcastNotificationSent
             $existing = Cache::get($cacheKey, []);
             $existing[] = $data;
 
-            Cache::put($cacheKey, $existing, 300); 
+            Cache::put($cacheKey, $existing, 300);
 
         }
     }

@@ -6,7 +6,6 @@ use App\Events\UserRegistered;
 use App\Mail\OtpVerification;
 use App\Models\User;
 use App\Notifications\GeneralNotification;
-use App\Notifications\UserLogin;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -107,10 +106,10 @@ class AuthService
     {
         $user = auth('api')->user();
 
-        if (!Hash::check($data['recent_password'], $user->password)) {
+        if (! Hash::check($data['recent_password'], $user->password)) {
             return [
                 'message' => 'Your current password did not match',
-                'status' => 422
+                'status' => 422,
             ];
         }
 
@@ -120,15 +119,14 @@ class AuthService
 
             return [
                 'message' => 'Password changed successfully',
-                'status' => 200
+                'status' => 200,
             ];
 
         } catch (\Exception $e) {
             return [
-                'message' => 'Error updating password: ' . $e->getMessage(),
-                'status' => 400
+                'message' => 'Error updating password: '.$e->getMessage(),
+                'status' => 400,
             ];
         }
     }
-
 }

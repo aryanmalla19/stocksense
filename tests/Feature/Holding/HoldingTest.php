@@ -2,13 +2,13 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use App\Models\User;
-use App\Models\Portfolio;
 use App\Models\Holding;
-use App\Models\Stock;
+use App\Models\Portfolio;
 use App\Models\Sector;
+use App\Models\Stock;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class HoldingTest extends TestCase
 {
@@ -35,24 +35,24 @@ class HoldingTest extends TestCase
         ]);
 
         $response = $this->actingAs($user, 'api')
-                        ->getJson('/api/v1/users/holdings');
+            ->getJson('/api/v1/users/holdings');
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'message' => 'Successfully fetched user holdings',
-                     'data' => [
-                         [
-                             'stock_id' => $stock->id,
-                             'quantity' => 10,
-                             'average_price' => '250.05', // String due to decimal:2 cast
-                             'stock' => [
-                                 'id' => $stock->id,
-                                 'symbol' => $stock->symbol,
-                                 'company_name' => $stock->company_name,
-                             ],
-                         ],
-                     ],
-                 ]);
+            ->assertJson([
+                'message' => 'Successfully fetched user holdings',
+                'data' => [
+                    [
+                        'stock_id' => $stock->id,
+                        'quantity' => 10,
+                        'average_price' => '250.05', // String due to decimal:2 cast
+                        'stock' => [
+                            'id' => $stock->id,
+                            'symbol' => $stock->symbol,
+                            'company_name' => $stock->company_name,
+                        ],
+                    ],
+                ],
+            ]);
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
@@ -70,22 +70,22 @@ class HoldingTest extends TestCase
         ]);
 
         $response = $this->actingAs($user, 'api')
-                        ->getJson("/api/v1/users/holdings/{$holding->id}");
+            ->getJson("/api/v1/users/holdings/{$holding->id}");
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'message' => 'Holding details fetched successfully',
-                     'data' => [
-                         'stock_id' => $stock->id,
-                         'quantity' => 20,
-                         'average_price' => '225.00', // String due to decimal:2 cast
-                         'stock' => [
-                             'id' => $stock->id,
-                             'symbol' => $stock->symbol,
-                             'company_name' => $stock->company_name,
-                         ],
-                     ],
-                 ]);
+            ->assertJson([
+                'message' => 'Holding details fetched successfully',
+                'data' => [
+                    'stock_id' => $stock->id,
+                    'quantity' => 20,
+                    'average_price' => '225.00', // String due to decimal:2 cast
+                    'stock' => [
+                        'id' => $stock->id,
+                        'symbol' => $stock->symbol,
+                        'company_name' => $stock->company_name,
+                    ],
+                ],
+            ]);
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
@@ -104,13 +104,13 @@ class HoldingTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->actingAs($user, 'api')
-                        ->getJson('/api/v1/users/holdings');
+            ->getJson('/api/v1/users/holdings');
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'message' => 'Successfully fetched user holdings',
-                     'data' => [],
-                 ]);
+            ->assertJson([
+                'message' => 'Successfully fetched user holdings',
+                'data' => [],
+            ]);
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
@@ -129,7 +129,7 @@ class HoldingTest extends TestCase
         ]);
 
         $response = $this->actingAs($user2, 'api')
-                        ->getJson("/api/v1/users/holdings/{$holding->id}");
+            ->getJson("/api/v1/users/holdings/{$holding->id}");
 
         $response->assertStatus(403); // Policy denies access to other user's holding
     }

@@ -68,5 +68,4 @@ class IpoDetail extends Model
     {
         return $query->where('stock_id', $id);
     }
-
 }

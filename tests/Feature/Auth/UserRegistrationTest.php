@@ -2,9 +2,8 @@
 
 namespace Tests\Feature\Auth;
 
-use Tests\TestCase;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class UserRegistrationTest extends TestCase
 {
@@ -20,20 +19,20 @@ class UserRegistrationTest extends TestCase
         ]);
 
         $response->assertStatus(201)
-                 ->assertJsonStructure([
-                     'message',
-                     'user' => [
-                         'name',
-                         'email',
-                     ],
-                 ])
-                 ->assertJson([
-                     'message' => 'User registered successfully. Check email for verification',
-                     'user' => [
-                         'name' => 'John Doe',
-                         'email' => 'john@example.com',
-                     ],
-                 ]);
+            ->assertJsonStructure([
+                'message',
+                'user' => [
+                    'name',
+                    'email',
+                ],
+            ])
+            ->assertJson([
+                'message' => 'User registered successfully. Check email for verification',
+                'user' => [
+                    'name' => 'John Doe',
+                    'email' => 'john@example.com',
+                ],
+            ]);
 
         $this->assertDatabaseHas('users', [
             'email' => 'john@example.com',
@@ -53,6 +52,6 @@ class UserRegistrationTest extends TestCase
         ]);
 
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors(['name', 'email', 'password']);
+            ->assertJsonValidationErrors(['name', 'email', 'password']);
     }
 }

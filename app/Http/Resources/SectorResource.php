@@ -17,7 +17,7 @@ class SectorResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'total_no_of_stocks' => $this->whenLoaded('stocks', function (){
+            'total_no_of_stocks' => $this->whenLoaded('stocks', function () {
                 return $this->stocks->count();
             }),
             'total_price' => $this->whenLoaded('stocks', function () {

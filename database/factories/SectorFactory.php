@@ -14,7 +14,7 @@ class SectorFactory extends Factory
             'name' => $this->faker->randomElement([
                 'Banking', 'Hydropower', 'Life Insurance', 'Non-life Insurance',
                 'Health', 'Manufacturing', 'Hotel', 'Trading',
-                'Microfinance', 'Finance', 'Investment', 'Others'
+                'Microfinance', 'Finance', 'Investment', 'Others',
             ]),
         ];
     }

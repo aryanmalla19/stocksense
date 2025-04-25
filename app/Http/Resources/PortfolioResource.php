@@ -17,6 +17,7 @@ class PortfolioResource extends JsonResource
                 foreach ($this->holdings as $holding) {
                     $sum += $holding->average_price * $holding->quantity;
                 }
+
                 return round($sum, 2);
             }, 0.00),
             'net_worth' => $this->whenLoaded('holdings', function () {
@@ -24,6 +25,7 @@ class PortfolioResource extends JsonResource
                 foreach ($this->holdings as $holding) {
                     $sum += $holding->stock->latestPrice->current_price * $holding->quantity;
                 }
+
                 return round($sum, 2);
             }, 0.00),
             'gain_loss' => $this->whenLoaded('holdings', function () {
@@ -33,6 +35,7 @@ class PortfolioResource extends JsonResource
                     $net = $holding->stock->latestPrice->current_price * $holding->quantity;
                     $sum += $net - $investment;
                 }
+
                 return round($sum, 2);
             }, 0.00),
         ];

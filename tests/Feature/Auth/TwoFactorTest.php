@@ -2,12 +2,12 @@
 
 namespace Tests\Feature\Auth;
 
-use Tests\TestCase;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tymon\JWTAuth\Facades\JWTAuth;
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
+use Tests\TestCase;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class TwoFactorTest extends TestCase
 {
@@ -36,12 +36,12 @@ class TwoFactorTest extends TestCase
         ]);
 
         $response->assertStatus(200)
-                 ->assertJsonStructure([
-                     'access_token',
-                     'refresh_token',
-                     'token_type',
-                     'expires_in',
-                 ]);
+            ->assertJsonStructure([
+                'access_token',
+                'refresh_token',
+                'token_type',
+                'expires_in',
+            ]);
 
         $user = $user->fresh();
         $this->assertNull($user->two_factor_otp);
@@ -70,7 +70,7 @@ class TwoFactorTest extends TestCase
         ]);
 
         $response->assertStatus(401)
-                 ->assertJson(['error' => 'Invalid OTP']);
+            ->assertJson(['error' => 'Invalid OTP']);
     }
 
     public function test_2fa_verification_fails_with_expired_otp()
@@ -90,7 +90,7 @@ class TwoFactorTest extends TestCase
         ]);
 
         $response->assertStatus(401)
-                 ->assertJson(['error' => 'OTP expired']);
+            ->assertJson(['error' => 'OTP expired']);
     }
 
     public function test_2fa_verification_fails_with_invalid_token()
@@ -109,7 +109,7 @@ class TwoFactorTest extends TestCase
         ]);
 
         $response->assertStatus(401)
-                 ->assertJson(['error' => 'User not found or invalid token']);
+            ->assertJson(['error' => 'User not found or invalid token']);
     }
 
     public function test_authenticated_user_can_enable_2fa()
@@ -121,10 +121,10 @@ class TwoFactorTest extends TestCase
         $token = JWTAuth::fromUser($user);
 
         $response = $this->withHeaders(['Authorization' => "Bearer $token"])
-                         ->postJson('/api/v1/auth/2fa/enable');
+            ->postJson('/api/v1/auth/2fa/enable');
 
         $response->assertStatus(200)
-                 ->assertJson(['message' => '2FA enabled successfully']);
+            ->assertJson(['message' => '2FA enabled successfully']);
 
         $this->assertTrue($user->fresh()->two_factor_enabled);
     }
@@ -140,10 +140,10 @@ class TwoFactorTest extends TestCase
         $token = JWTAuth::fromUser($user);
 
         $response = $this->withHeaders(['Authorization' => "Bearer $token"])
-                         ->postJson('/api/v1/auth/2fa/disable');
+            ->postJson('/api/v1/auth/2fa/disable');
 
         $response->assertStatus(200)
-                 ->assertJson(['message' => '2FA disabled successfully']);
+            ->assertJson(['message' => '2FA disabled successfully']);
 
         $user = $user->fresh();
         $this->assertFalse($user->two_factor_enabled);
@@ -156,6 +156,6 @@ class TwoFactorTest extends TestCase
         $response = $this->postJson('/api/v1/auth/2fa/enable');
 
         $response->assertStatus(401)
-                 ->assertJson(['message' => 'Unauthenticated.']); // <-- match actual response
+            ->assertJson(['message' => 'Unauthenticated.']); // <-- match actual response
     }
 }

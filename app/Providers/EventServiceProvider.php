@@ -3,10 +3,8 @@
 namespace App\Providers;
 
 use App\Listeners\BroadcastNotificationSent;
-use Illuminate\Notifications\Events\NotificationSent;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Notifications\Events\NotificationSent;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -18,6 +16,6 @@ class EventServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        //dd('Event service provider is working');
+        // dd('Event service provider is working');
     }
 }

@@ -16,6 +16,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 class AuthController extends Controller
 {
     protected AuthService $authService;
+
     public function __construct(AuthService $authService)
     {
         $this->authService = $authService;
@@ -275,7 +276,8 @@ class AuthController extends Controller
     }
 
     // change user password
-    public function changePassword(ChangePasswordRequest $request){
+    public function changePassword(ChangePasswordRequest $request)
+    {
         $result = $this->authService->changePassword($request->validated());
 
         return response()->json([

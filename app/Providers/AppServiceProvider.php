@@ -4,8 +4,6 @@ namespace App\Providers;
 
 use App\Models\Holding;
 use App\Policies\HoldingPolicy;
-use Illuminate\Auth\Notifications\VerifyEmail;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 

@@ -20,11 +20,11 @@ class IpoDetailController extends Controller
         if (request('stock_id')) {
             $ipoDetails->stock(request('stock_id'));
         }
-        if(request('status')){
+        if (request('status')) {
             $ipoDetails->whereIpoStatus(request('status'));
         }
 
-        $ipoDetails->orderBy('close_date','desc');
+        $ipoDetails->orderBy('close_date', 'desc');
 
         $ipoDetails = $ipoDetails->get();
 
@@ -58,7 +58,7 @@ class IpoDetailController extends Controller
         $ipoDetail = IpoDetail::create($data);
 
         $users = User::get();
-        foreach($users as $user){
+        foreach ($users as $user) {
             $user->notify(new IpoCreated($ipoDetail));
         }
 
@@ -119,23 +119,4 @@ class IpoDetailController extends Controller
             'message' => 'Successfully deleted IPO detail with ID: '.$id,
         ]);
     }
-
-    public function adminIndex()
-    {
-        $user = auth()->user();
-
-        $ipoDetails = IpoDetail::query();
-
-        if (request('stock_id')) {
-            $ipoDetails->stock(request('stock_id'));
-            $ipoDetails->with(['applications', 'stock']);
-        }
-        $ipoDetails = $ipoDetails->get();
-
-        return response()->json([
-            'message' => 'Successfully fetched all IPO details with applications',
-            'data' => IpoDetailResource::collection($ipoDetails),
-        ]);
-    }
-
 }

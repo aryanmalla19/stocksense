@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PasswordReset\ResetPasswordRequest;
 use App\Http\Requests\PasswordReset\SendResetPasswordRequest;
 use App\Models\User;
+use App\Notifications\PasswordResetNotification;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
-use App\Notifications\PasswordResetNotification;
+
 class PasswordResetController extends Controller
 {
     public function sendResetPassword(SendResetPasswordRequest $request)
@@ -24,6 +25,7 @@ class PasswordResetController extends Controller
             ? response()->json(['message' => __('A password reset link has been sent to your email.')], 200)
             : response()->json(['error' => __('We cannot find a user with that email address.')], 400);
     }
+
     public function resetPassword(ResetPasswordRequest $request)
     {
         $data = $request->only('email', 'password', 'password_confirmation', 'token');
@@ -36,7 +38,7 @@ class PasswordResetController extends Controller
 
         $status = Password::reset(
             $data,
-            function (User $user, string $password) use ($data) {
+            function (User $user, string $password) {
 
                 $user->forceFill([
                     'password' => Hash::make($password),
@@ -57,7 +59,6 @@ class PasswordResetController extends Controller
             default => response()->json(['error' => __('Failed to reset the password.')], 400),
         };
     }
-
 
     public function resetPasswordForm(Request $request)
     {

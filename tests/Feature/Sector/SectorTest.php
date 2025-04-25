@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use App\Models\Sector;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class SectorTest extends TestCase
 {
@@ -24,7 +24,7 @@ class SectorTest extends TestCase
         $sectorNames = [
             'Banking', 'Hydropower', 'Life Insurance', 'Non-life Insurance',
             'Health', 'Manufacturing', 'Hotel', 'Trading',
-            'Microfinance', 'Finance', 'Investment', 'Others'
+            'Microfinance', 'Finance', 'Investment', 'Others',
         ];
 
         foreach ($sectorNames as $name) {
@@ -32,27 +32,27 @@ class SectorTest extends TestCase
         }
 
         $response = $this->actingAs($user, 'api')
-                        ->getJson('/api/v1/sectors');
+            ->getJson('/api/v1/sectors');
 
-        // dd($response->json());                
+        // dd($response->json());
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'status' => 'success',
-                     'message' => 'Successfully fetched all sectors data',
-                 ])
-                 ->assertJsonStructure([
-                     'status',
-                     'message',
-                     'data' => [
-                         'data' => [
-                             '*' => ['id', 'name'],
-                         ],
-                         'current_page',
-                         'per_page',
-                         'total',
-                     ],
-                 ]);
+            ->assertJson([
+                'status' => 'success',
+                'message' => 'Successfully fetched all sectors data',
+            ])
+            ->assertJsonStructure([
+                'status',
+                'message',
+                'data' => [
+                    'data' => [
+                        '*' => ['id', 'name'],
+                    ],
+                    'current_page',
+                    'per_page',
+                    'total',
+                ],
+            ]);
 
         // Verify the sector data
         $responseData = $response->json('data.data');
@@ -77,18 +77,18 @@ class SectorTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->actingAs($user, 'api')
-                        ->postJson('/api/v1/sectors', [
-                            'name' => 'Banking',
-                        ]);
+            ->postJson('/api/v1/sectors', [
+                'name' => 'Banking',
+            ]);
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'status' => 'success',
-                     'message' => 'Successfully created sector',
-                     'data' => [
-                         'name' => 'Banking',
-                     ],
-                 ]);
+            ->assertJson([
+                'status' => 'success',
+                'message' => 'Successfully created sector',
+                'data' => [
+                    'name' => 'Banking',
+                ],
+            ]);
 
         $this->assertDatabaseHas('sectors', [
             'name' => 'Banking',
@@ -100,19 +100,19 @@ class SectorTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->actingAs($user, 'api')
-                        ->postJson('/api/v1/sectors', [
-                            'name' => 'invalid-sector',
-                        ]);
+            ->postJson('/api/v1/sectors', [
+                'name' => 'invalid-sector',
+            ]);
 
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors(['name'])
-                 ->assertJson([
-                     'success' => false,
-                     'message' => 'Validation failed.',
-                     'errors' => [
-                         'name' => ['Sector name must be in Predefined values'],
-                     ],
-                 ]);
+            ->assertJsonValidationErrors(['name'])
+            ->assertJson([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => [
+                    'name' => ['Sector name must be in Predefined values'],
+                ],
+            ]);
     }
 
     public function test_create_sector_fails_with_missing_name()
@@ -120,17 +120,17 @@ class SectorTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->actingAs($user, 'api')
-                        ->postJson('/api/v1/sectors', []);
+            ->postJson('/api/v1/sectors', []);
 
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors(['name'])
-                 ->assertJson([
-                     'success' => false,
-                     'message' => 'Validation failed.',
-                     'errors' => [
-                         'name' => ['Sector name is required'],
-                     ],
-                 ]);
+            ->assertJsonValidationErrors(['name'])
+            ->assertJson([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => [
+                    'name' => ['Sector name is required'],
+                ],
+            ]);
     }
 
     public function test_create_sector_fails_with_duplicate_name()
@@ -139,19 +139,19 @@ class SectorTest extends TestCase
         Sector::factory()->create(['name' => 'Banking']);
 
         $response = $this->actingAs($user, 'api')
-                        ->postJson('/api/v1/sectors', [
-                            'name' => 'Banking',
-                        ]);
+            ->postJson('/api/v1/sectors', [
+                'name' => 'Banking',
+            ]);
 
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors(['name'])
-                 ->assertJson([
-                     'success' => false,
-                     'message' => 'Validation failed.',
-                     'errors' => [
-                         'name' => ['Sector name must be unique'],
-                     ],
-                 ]);
+            ->assertJsonValidationErrors(['name'])
+            ->assertJson([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => [
+                    'name' => ['Sector name must be unique'],
+                ],
+            ]);
     }
 
     public function test_authenticated_user_can_retrieve_specific_sector()
@@ -162,17 +162,17 @@ class SectorTest extends TestCase
         ]);
 
         $response = $this->actingAs($user, 'api')
-                        ->getJson("/api/v1/sectors/{$sector->id}");
+            ->getJson("/api/v1/sectors/{$sector->id}");
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'status' => 'success',
-                     'message' => 'Successfully fetched sector data',
-                     'data' => [
-                         'id' => $sector->id,
-                         'name' => 'Finance',
-                     ],
-                 ]);
+            ->assertJson([
+                'status' => 'success',
+                'message' => 'Successfully fetched sector data',
+                'data' => [
+                    'id' => $sector->id,
+                    'name' => 'Finance',
+                ],
+            ]);
     }
 
     public function test_retrieve_non_existent_sector_fails()
@@ -180,7 +180,7 @@ class SectorTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->actingAs($user, 'api')
-                        ->getJson('/api/v1/sectors/999');
+            ->getJson('/api/v1/sectors/999');
 
         $response->assertStatus(404);
     }
@@ -193,19 +193,19 @@ class SectorTest extends TestCase
         ]);
 
         $response = $this->actingAs($user, 'api')
-                        ->putJson("/api/v1/sectors/{$sector->id}", [
-                            'name' => 'Manufacturing',
-                        ]);
+            ->putJson("/api/v1/sectors/{$sector->id}", [
+                'name' => 'Manufacturing',
+            ]);
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'status' => 'success',
-                     'message' => 'Successfully updated sector with ID ' . $sector->id,
-                     'data' => [
-                         'id' => $sector->id,
-                         'name' => 'Manufacturing',
-                     ],
-                 ]);
+            ->assertJson([
+                'status' => 'success',
+                'message' => 'Successfully updated sector with ID '.$sector->id,
+                'data' => [
+                    'id' => $sector->id,
+                    'name' => 'Manufacturing',
+                ],
+            ]);
 
         $this->assertDatabaseHas('sectors', [
             'id' => $sector->id,
@@ -221,41 +221,41 @@ class SectorTest extends TestCase
         ]);
 
         $response = $this->actingAs($user, 'api')
-                        ->putJson("/api/v1/sectors/{$sector->id}", [
-                            'name' => 'invalid-sector',
-                        ]);
+            ->putJson("/api/v1/sectors/{$sector->id}", [
+                'name' => 'invalid-sector',
+            ]);
 
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors(['name'])
-                 ->assertJson([
-                     'success' => false,
-                     'message' => 'Validation failed.',
-                     'errors' => [
-                         'name' => ['The sector name must be one of the predefined values.'],
-                     ],
-                 ]);
+            ->assertJsonValidationErrors(['name'])
+            ->assertJson([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => [
+                    'name' => ['The sector name must be one of the predefined values.'],
+                ],
+            ]);
     }
 
     public function test_update_sector_fails_with_duplicate_name()
     {
-    $user = User::factory()->create();
-    Sector::factory()->create(['name' => 'Investment']);
-    $sector = Sector::factory()->create(['name' => 'Microfinance']);
+        $user = User::factory()->create();
+        Sector::factory()->create(['name' => 'Investment']);
+        $sector = Sector::factory()->create(['name' => 'Microfinance']);
 
-    $response = $this->actingAs($user, 'api')
-                    ->putJson("/api/v1/sectors/{$sector->id}", [
-                        'name' => 'Investment',
-                    ]);
+        $response = $this->actingAs($user, 'api')
+            ->putJson("/api/v1/sectors/{$sector->id}", [
+                'name' => 'Investment',
+            ]);
 
-    $response->assertStatus(422)
-             ->assertJsonValidationErrors(['name'])
-             ->assertJson([
-                 'success' => false,
-                 'message' => 'Validation failed.',
-                 'errors' => [
-                     'name' => ['The sector name must be unique.'],
-                 ],
-             ]);
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['name'])
+            ->assertJson([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => [
+                    'name' => ['The sector name must be unique.'],
+                ],
+            ]);
     }
 
     public function test_authenticated_user_can_delete_sector()
@@ -264,13 +264,13 @@ class SectorTest extends TestCase
         $sector = Sector::factory()->create();
 
         $response = $this->actingAs($user, 'api')
-                        ->deleteJson("/api/v1/sectors/{$sector->id}");
+            ->deleteJson("/api/v1/sectors/{$sector->id}");
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'status' => 'success',
-                     'message' => 'Successfully deleted sector with ID ' . $sector->id,
-                 ]);
+            ->assertJson([
+                'status' => 'success',
+                'message' => 'Successfully deleted sector with ID '.$sector->id,
+            ]);
 
         $this->assertDatabaseMissing('sectors', ['id' => $sector->id]);
     }
@@ -280,7 +280,7 @@ class SectorTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->actingAs($user, 'api')
-                        ->deleteJson('/api/v1/sectors/999');
+            ->deleteJson('/api/v1/sectors/999');
 
         $response->assertStatus(404);
     }
