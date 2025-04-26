@@ -5,20 +5,34 @@ namespace App\Http\Controllers;
 use App\Http\Resources\StockResource;
 use App\Models\Stock;
 use Illuminate\Http\Response;
+use Illuminate\Support\Carbon;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class StockPriceController extends Controller
 {
     public function historyStockPrices($id)
     {
-        $stock = Stock::with('prices')->find($id);
+        $stock = Stock::with(['prices', 'sector'])->find($id);
 
         if (! $stock) {
             return response()->json(['message' => 'Stock not found'], 404);
         }
 
-        return new StockResource($stock->load(['prices', 'sector']));
+        $filteredPrices = $stock->prices
+            ->groupBy(function ($price) {
+                return Carbon::parse($price->date)->toDateString();
+            })
+            ->map(function ($dailyPrices) {
+                return $dailyPrices->sortByDesc('date')->first();
+            })
+            ->values();
+
+        $stock->setRelation('prices', $filteredPrices);
+
+        return new StockResource($stock);
     }
+
+
 
     public function historyStockPricesLive($id)
     {
