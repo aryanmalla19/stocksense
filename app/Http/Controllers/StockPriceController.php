@@ -18,46 +18,37 @@ class StockPriceController extends Controller
 
         return new StockResource($stock->load(['prices', 'sector']));
     }
-
     public function historyStockPricesLive($id)
     {
-        $stock = Stock::with('prices')->find($id);
-
-        if (! $stock) {
-            return response()->json(['message' => 'Stock not found'], 404);
-        }
-
         $response = new StreamedResponse(function () use ($id) {
-            $stock = Stock::with('prices')->find($id); // Send initial snapshot
-            echo 'data: '.json_encode([
-                'type' => 'initial',
-                'data' => $stock,
-            ])."\n\n";
-            ob_flush();
-            flush();
+            ignore_user_abort(true);
+            set_time_limit(0);
+            ob_end_clean();
+            header('Content-Encoding: none');
+
+            $stock = Stock::with('prices')->find($id);
+            echo "data: ".json_encode(['type' => 'initial', 'data' => $stock])."\n\n";
+            ob_flush(); flush();
 
             while (true) {
                 $latest = Stock::find($id)?->latestPrice;
                 if ($latest) {
-                    echo 'data: '.json_encode([
-                        'type' => 'update',
-                        'data' => $latest,
-                    ])."\n\n";
-                } else {
-                    echo "event: error\ndata: ".json_encode(['message' => 'No latest price'])."\n\n";
+                    echo "data: ".json_encode(['type' => 'update', 'data' => $latest])."\n\n";
                 }
 
-                ob_flush();
-                flush();
+                echo "event: ping\ndata: {}\n\n";
+                ob_flush(); flush();
                 sleep(5);
             }
         });
 
+
         $response->headers->set('Content-Type', 'text/event-stream');
         $response->headers->set('Cache-Control', 'no-cache');
         $response->headers->set('Connection', 'keep-alive');
-//        $response->headers->set('X-Accel-Buffering', 'no');
+        $response->headers->set('X-Accel-Buffering', 'no');
 
         return $response;
     }
+
 }
