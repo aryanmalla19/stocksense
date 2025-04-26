@@ -96,7 +96,10 @@ Route::prefix('v1')->group(function () {
             ->only(['index', 'store', 'destroy']);
 
         // Notifications
-        Route::get('/users/notifications', NotificationController::class);
+        Route::apiResource('/users/notifications', NotificationController::class)->names('notifications')->parameters([
+            'notifications' => 'id'
+        ]);
+        Route::put('/users/markasread-notifications', [NotificationController::class, 'markAllAsRead']);
 
         // Admin
         Route::middleware('isAdmin')->prefix('admin')->group(function () {
