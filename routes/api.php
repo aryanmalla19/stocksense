@@ -56,7 +56,7 @@ Route::prefix('v1')->group(function () {
         });
 
         Route::get('/profile', [UserController::class, 'index']);
-        Route::put('/profile', [UserController::class, 'update']);
+        Route::post('/profile', [UserController::class, 'update']);
         // Stocks & Stock Prices
         Route::apiResource('/stocks', StockController::class)->names('stocks')
             ->only(['index', 'show']);
@@ -105,6 +105,7 @@ Route::prefix('v1')->group(function () {
             Route::get('/ipo-details/{id}/applications', [AdminController::class, 'ipoApplications']);
         });
     });
+Route::get('/meow', [StockPriceController::class, 'stream']);
 });
 
 Route::get('/stocks/{stock}/history', [StockPriceController::class, 'historyStockPricesLive'])->name('stocks.history');

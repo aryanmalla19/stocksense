@@ -22,7 +22,7 @@ class UserResource extends JsonResource
             'is_active' => $this->is_active,
             'phone_number' => $this->phone_number,
             'bio' => $this->bio,
-            'profile_image' => $this->profile_image ? asset($this->profile_image) : asset('images/default-profile.png'),
+            'profile_image' => $this->profile_image ? asset('/storage/'.$this->profile_image) : asset('images/default-profile.png'),
             'two_factor_enabled' => $this->two_factor_enabled,
             'theme' => $this->whenLoaded('setting', fn () => $this->setting->mode),
             'notification_enabled' => $this->whenLoaded('setting', fn () => $this->setting->notification_enabled),
