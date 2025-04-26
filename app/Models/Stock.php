@@ -33,8 +33,6 @@ class Stock extends Model
         'is_listed' => 'boolean',
     ];
 
-    
-
     /**
      * Get the sector that this stock belongs to.
      */
@@ -98,7 +96,7 @@ class Stock extends Model
 
     public function scopeSymbol($query, $symbol)
     {
-        return $query->whereRaw('LOWER(symbol) LIKE ?', ['%' . strtolower($symbol) . '%']);
+        return $query->whereRaw('LOWER(symbol) LIKE ?', ['%'.strtolower($symbol).'%']);
     }
 
     public function scopeSortColumn($query, $column, $direction)
@@ -110,7 +108,7 @@ class Stock extends Model
                 'sort_value' => StockPrice::select($column)
                     ->whereColumn('stock_prices.stock_id', 'stocks.id')
                     ->latest('date') // or latest('id') if needed
-                    ->limit(1)
+                    ->limit(1),
             ])->orderBy('sort_value', $direction);
 
             return $query;
@@ -118,6 +116,4 @@ class Stock extends Model
 
         return $query->orderBy($column, $direction);
     }
-
-
 }

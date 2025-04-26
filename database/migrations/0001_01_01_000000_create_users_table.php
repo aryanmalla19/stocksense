@@ -23,6 +23,9 @@ return new class extends Migration
             $table->text('refresh_token')->nullable();
             $table->index('refresh_token');
             $table->timestamp('refresh_token_expires_at')->nullable();
+            $table->string('profile_image')->nullable();
+            $table->string('phone_number')->nullable();
+            $table->string('bio')->nullable();
             $table->string('google_id')->nullable();
             $table->rememberToken();
             $table->timestamps();

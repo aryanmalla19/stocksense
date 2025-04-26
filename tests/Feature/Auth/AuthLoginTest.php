@@ -2,11 +2,10 @@
 
 namespace Tests\Feature\Auth;
 
-use Tests\TestCase;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tymon\JWTAuth\Facades\JWTAuth;
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class AuthLoginTest extends TestCase
 {
@@ -34,15 +33,15 @@ class AuthLoginTest extends TestCase
         ]);
 
         $response->assertStatus(200)
-                 ->assertJsonStructure([
-                     'access_token',
-                     'token_type',
-                     'expires_in',
-                     'refresh_token',
-                 ])
-                 ->assertJson([
-                     'token_type' => 'bearer',
-                 ]);
+            ->assertJsonStructure([
+                'access_token',
+                'token_type',
+                'expires_in',
+                'refresh_token',
+            ])
+            ->assertJson([
+                'token_type' => 'bearer',
+            ]);
 
         $this->assertDatabaseHas('users', [
             'email' => 'john@example.com',
@@ -67,17 +66,17 @@ class AuthLoginTest extends TestCase
         ]);
 
         $response->assertStatus(202)
-                 ->assertJsonStructure([
-                     'message',
-                     'private_token',
-                     'otp_length',
-                     'expires_in',
-                 ])
-                 ->assertJson([
-                     'message' => 'OTP required for 2FA authentication.',
-                     'otp_length' => 6,
-                     'expires_in' => 300,
-                 ]);
+            ->assertJsonStructure([
+                'message',
+                'private_token',
+                'otp_length',
+                'expires_in',
+            ])
+            ->assertJson([
+                'message' => 'OTP required for 2FA authentication.',
+                'otp_length' => 6,
+                'expires_in' => 300,
+            ]);
 
         $this->assertDatabaseHas('users', [
             'email' => 'john@example.com',
@@ -100,9 +99,9 @@ class AuthLoginTest extends TestCase
         ]);
 
         $response->assertStatus(401)
-                 ->assertJson([
-                     'error' => 'Invalid password',
-                 ]);
+            ->assertJson([
+                'error' => 'Invalid password',
+            ]);
     }
 
     public function test_login_fails_with_nonexistent_email()
@@ -113,9 +112,9 @@ class AuthLoginTest extends TestCase
         ]);
 
         $response->assertStatus(401)
-                 ->assertJson([
-                     'error' => 'Email does not exist',
-                 ]);
+            ->assertJson([
+                'error' => 'Email does not exist',
+            ]);
     }
 
     public function test_login_fails_with_unverified_email()
@@ -132,9 +131,9 @@ class AuthLoginTest extends TestCase
         ]);
 
         $response->assertStatus(403)
-                 ->assertJson([
-                     'error' => 'Please verify your email before logging in.',
-                 ]);
+            ->assertJson([
+                'error' => 'Please verify your email before logging in.',
+            ]);
     }
 
     public function test_login_fails_validation_with_missing_fields()
@@ -143,16 +142,16 @@ class AuthLoginTest extends TestCase
             'email' => '',
             'password' => '',
         ]);
-    
+
         $response->assertStatus(422)
-                 ->assertJsonStructure([
-                     'success',
-                     'message',
-                     'errors' => ['email', 'password'],
-                 ])
-                 ->assertJson([
-                     'success' => false,
-                     'message' => 'Validation failed.',
-                 ]);
+            ->assertJsonStructure([
+                'success',
+                'message',
+                'errors' => ['email', 'password'],
+            ])
+            ->assertJson([
+                'success' => false,
+                'message' => 'Validation failed.',
+            ]);
     }
 }

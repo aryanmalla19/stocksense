@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Models\IpoApplication;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -18,6 +17,7 @@ class IpoDetailResource extends JsonResource
     {
         $user = auth()->user();
         $isAdmin = $user?->role == 'admin';
+
         return [
             'id' => $this->id,
             'issue_price' => $this->issue_price,
@@ -29,7 +29,7 @@ class IpoDetailResource extends JsonResource
             'days_until_open' => (int) Carbon::now()->diffInDays(Carbon::parse($this->open_date), false),
             'company_name' => $this->whenLoaded('stock')->company_name ?? null,
             'stock_id' => $this->stock_id,
-            'has_applied' => $this->whenLoaded('applications', function() use ($user){
+            'has_applied' => $this->whenLoaded('applications', function () use ($user) {
                 return $this->applications->contains('user_id', $user?->id);
             }),
             'stock' => new StockResource($this->whenLoaded('stock')),

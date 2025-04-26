@@ -16,6 +16,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 class AuthController extends Controller
 {
     protected AuthService $authService;
+
     public function __construct(AuthService $authService)
     {
         $this->authService = $authService;
@@ -210,7 +211,6 @@ class AuthController extends Controller
 
         $user = User::where('refresh_token', $data['refresh_token'])->first();
 
-        // Check if user exists and token is still valid
         if (! $user || Carbon::now()->greaterThan($user->refresh_token_expires_at)) {
             return response()->json(['error' => 'Invalid or expired refresh token'], 401);
         }
@@ -221,16 +221,15 @@ class AuthController extends Controller
         // Generate a new refresh token
         $newRefreshToken = Str::random(32);
 
-        // Update refresh token in the database
         $user->forceFill([
             'refresh_token' => $newRefreshToken,
-            'refresh_token_expires_at' => Carbon::now()->addDays(30)->toDateTimeString(), // Ensure timestamp format
+            'refresh_token_expires_at' => Carbon::now()->addDays(30)->toDateTimeString(),
         ])->save();
 
         return response()->json([
             'access_token' => $newAccessToken,
             'token_type' => 'bearer',
-            'expires_in' => config('jwt.ttl') * 60, // Access token TTL in seconds
+            'expires_in' => config('jwt.ttl') * 60,
             'refresh_token' => $newRefreshToken,
         ]);
     }
@@ -267,10 +266,8 @@ class AuthController extends Controller
     {
         $user = JWTAuth::user();
 
-        // Invalidate the current access token
         JWTAuth::invalidate(JWTAuth::getToken());
 
-        // Clear the refresh token from the database
         $user->forceFill(['refresh_token' => null, 'refresh_token_expires_at' => null])->save();
 
         return response()->json([
@@ -279,29 +276,12 @@ class AuthController extends Controller
     }
 
     // change user password
-    public function changePassword(ChangePasswordRequest $request){
+    public function changePassword(ChangePasswordRequest $request)
+    {
         $result = $this->authService->changePassword($request->validated());
 
-        return response()->json(
-            [
-                'message' => $result['message'],
-            ],
-            $result['status']
-        );
-    }
-
-    public function me(){
-    $data = auth('api')->user();
-
-    unset(
-        $data['id'],
-        $data['refresh_token'],
-        $data['refresh_token_expires_at'],
-        $data['two_factor_secret'],
-        $data['two_factor_otp'],
-        $data['two_factor_expires_at']
-    );
-
-    return $data;
+        return response()->json([
+            'message' => $result['message'],
+        ], $result['status']);
     }
 }

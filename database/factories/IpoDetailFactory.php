@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\IpoDetailStatus;
 use App\Models\IpoDetail;
 use App\Models\Stock;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -28,7 +29,7 @@ class IpoDetailFactory extends Factory
             'open_date' => $openDate,
             'close_date' => $closeDate,
             'listing_date' => $listingDate,
-            'ipo_status' => $this->faker->randomElement(['pending', 'opened', 'closed']),
+            'ipo_status' => $this->faker->randomElement(array_column(IpoDetailStatus::cases(), 'value')),
             'created_at' => $this->faker->dateTimeThisYear(),
             'updated_at' => $this->faker->dateTimeThisYear(),
         ];
@@ -41,6 +42,6 @@ class IpoDetailFactory extends Factory
      */
     public function opened()
     {
-        return $this->state(['ipo_status' => 'opened']);
+        return $this->state(['ipo_status' => IpoDetailStatus::Opened]);
     }
 }

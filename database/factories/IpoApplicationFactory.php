@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\IpoApplicationStatus;
 use App\Models\IpoApplication;
 use App\Models\IpoDetail;
 use App\Models\User;
@@ -22,9 +23,9 @@ class IpoApplicationFactory extends Factory
             ->hasPortfolio()
             ->create();
         $ipo = IpoDetail::inRandomOrder()->first() ?? IpoDetail::factory()->create();
-        $status = $this->faker->randomElement(['pending', 'allotted', 'not_allotted']);
+        $status = $this->faker->randomElement(array_column(IpoApplicationStatus::cases(), 'value'));
         $appliedShares = $this->faker->numberBetween(10, 15);
-        $allottedShares = $status === 'allotted' ? $this->faker->numberBetween(1, $appliedShares) : null;
+        $allottedShares = $status === IpoApplicationStatus::Allotted ? $this->faker->numberBetween(1, $appliedShares) : null;
 
         return [
             'user_id' => $user->id,
@@ -47,7 +48,7 @@ class IpoApplicationFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'status' => 'allotted',
+                'status' => IpoApplicationStatus::Allotted,
                 'allotted_shares' => $this->faker->numberBetween(1, $attributes['applied_shares']),
             ];
         });

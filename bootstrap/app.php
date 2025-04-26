@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Middleware\ApiExceptionMiddleware;
 use App\Http\Middleware\IsAdmin;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -19,7 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'cors' => HandleCors::class,
-            'isAdmin' => IsAdmin::class
+            'isAdmin' => IsAdmin::class,
         ]);
         $middleware->throttleApi('60,1');
     })

@@ -17,17 +17,28 @@ use Illuminate\Http\Request;
  */
 class TransactionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $transactions = auth()->user()
+        $query = auth()->user()
             ->transactions()
             ->with('stock')
-            ->get();
+            ->orderBy('created_at', 'desc');
 
-        return response()->json([
-            'message' => 'Successfully fetched all transactions',
-            'data' => TransactionResource::collection($transactions),
-        ]);
+        // Filter by type
+        if ($request->has('type')) {
+            $query->where('type', $request->type);
+        }
+
+        if ($request->has('from') && $request->has('to')) {
+            $query->whereBetween('created_at', [$request->from, $request->to]);
+        }
+
+        $transactions = $query->paginate(10);
+
+        return TransactionResource::collection($transactions)
+            ->additional([
+                'message' => 'Successfully fetched filtered transactions',
+            ]);
     }
 
     public function store(Request $request)
@@ -94,55 +105,6 @@ class TransactionController extends Controller
         return response()->json([
             'message' => 'Successfully fetched transaction data',
             'data' => new TransactionResource($transaction),
-        ]);
-    }
-
-    public function update(Request $request, string $id)
-    {
-        //        $transaction = Transaction::find($id);
-        //
-        //        if (! $transaction) {
-        //            return response()->json([
-        //                'message' => 'No Stock found with ID '.$id,
-        //            ], 404);
-        //        }
-        //
-        //        $data = $request->validate([
-        //            'symbol' => 'sometimes|string|max:6|unique:stocks,symbol,'.$id,
-        //            'name' => 'sometimes|string',
-        //            'sector_id' => 'sometimes|integer|exists:sectors,id',
-        //        ]);
-        //
-        //        $transaction->forceFill([
-        //            'user_id' => $request->user_id,
-        //            'stock_id' => $request->stock_id,
-        //            'type' => $request->type,
-        //            'quantity' => $request->quantity,
-        //            'price' => $request->price,
-        //            'transaction_fee' => $request->transaction_fee,
-        //        ]);
-        //        $transaction->save();
-        //        $transaction->load('stock');
-        //
-        //        return response()->json([
-        //            'message' => 'Stock successfully updated',
-        //            'data' => new TransactionResource($transaction),
-        //        ]);
-    }
-
-    public function destroy(string $id)
-    {
-        $transaction = Transaction::find($id);
-
-        if (empty($transaction)) {
-            return response()->json([
-                'message' => 'No transaction found with ID '.$id,
-            ], 404);
-        }
-        $transaction->delete();
-
-        return response()->json([
-            'message' => 'Successfully deleted transaction with ID '.$id,
         ]);
     }
 }

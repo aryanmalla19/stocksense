@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\IpoDetailStatus;
 use App\Jobs\AllotIpoJob;
 use App\Models\IpoDetail;
 use Illuminate\Console\Command;
@@ -31,18 +32,17 @@ class CheckIpoListing extends Command
             $now = now()->format('Y-m-d H:i:00');
 
             $ipos = IpoDetail::where('listing_date', $now)
-                ->whereIn('ipo_status', ['opened', 'pending', 'closed'])
+                ->whereIn('ipo_status', [IpoDetailStatus::Upcoming->value, IpoDetailStatus::Opened->value, IpoDetailStatus::Closed->value])
                 ->get();
-
 
             foreach ($ipos as $ipo) {
                 AllotIpoJob::dispatch($ipo);
             }
 
-            $this->info('Checked IPOs and dispatched ' . $ipos->count() . ' allotment jobs.');
-            \Log::info('ipo:check-listings ran successfully, dispatched ' . $ipos->count() . ' jobs.');
+            $this->info('Checked IPOs and dispatched '.$ipos->count().' allotment jobs.');
+            \Log::info('ipo:check-listings ran successfully, dispatched '.$ipos->count().' jobs.');
         } catch (\Exception $e) {
-            \Log::error('Error in ipo:check-listings: ' . $e->getMessage());
+            \Log::error('Error in ipo:check-listings: '.$e->getMessage());
             $this->error('An error occurred while checking IPOs.');
         }
     }

@@ -2,28 +2,27 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
-use App\Services\AuthService;
-use App\Models\User;
 use App\Events\UserRegistered;
-use Mockery;
+use App\Models\User;
+use App\Services\AuthService;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
+use Mockery;
+use Tests\TestCase;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use Carbon\Carbon;
 
 class AuthServiceTest extends TestCase
 {
     protected AuthService $authService;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->authService = new AuthService();
+        $this->authService = new AuthService;
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         Mockery::close();
         parent::tearDown();
@@ -31,7 +30,7 @@ class AuthServiceTest extends TestCase
 
     public function test_register_creates_user_successfully()
     {
-        $user = Mockery::mock('overload:' . User::class);
+        $user = Mockery::mock('overload:'.User::class);
         $user->shouldReceive('save')->once()->andReturn(true);
         $user->name = 'John Doe';
         $user->email = 'john@example.com';
@@ -57,7 +56,7 @@ class AuthServiceTest extends TestCase
 
     public function test_register_fails_when_save_fails()
     {
-        $user = Mockery::mock('overload:' . User::class);
+        $user = Mockery::mock('overload:'.User::class);
         $user->shouldReceive('save')->once()->andReturn(false);
 
         $data = [
@@ -74,7 +73,7 @@ class AuthServiceTest extends TestCase
 
     public function test_login_succeeds_with_valid_credentials()
     {
-        $userMock = Mockery::mock('alias:' . User::class);
+        $userMock = Mockery::mock('alias:'.User::class);
         $userMock->shouldReceive('where')->with('email', 'john@example.com')->andReturnSelf();
         $userMock->shouldReceive('first')->andReturnSelf();
         $userMock->shouldReceive('hasVerifiedEmail')->andReturn(true);
@@ -107,7 +106,7 @@ class AuthServiceTest extends TestCase
 
     public function test_login_fails_with_invalid_password()
     {
-        $userMock = Mockery::mock('alias:' . User::class);
+        $userMock = Mockery::mock('alias:'.User::class);
         $userMock->shouldReceive('where')->with('email', 'john@example.com')->andReturnSelf();
         $userMock->shouldReceive('first')->andReturnSelf();
         $userMock->password = Hash::make('Password@123');
@@ -125,7 +124,7 @@ class AuthServiceTest extends TestCase
 
     public function test_login_fails_with_nonexistent_email()
     {
-        $userMock = Mockery::mock('alias:' . User::class);
+        $userMock = Mockery::mock('alias:'.User::class);
         $userMock->shouldReceive('where')->with('email', 'john@example.com')->andReturnSelf();
         $userMock->shouldReceive('first')->andReturn(null);
 
@@ -142,7 +141,7 @@ class AuthServiceTest extends TestCase
 
     public function test_login_fails_with_unverified_email()
     {
-        $userMock = Mockery::mock('alias:' . User::class);
+        $userMock = Mockery::mock('alias:'.User::class);
         $userMock->shouldReceive('where')->with('email', 'john@example.com')->andReturnSelf();
         $userMock->shouldReceive('first')->andReturnSelf();
         $userMock->shouldReceive('hasVerifiedEmail')->andReturn(false);
@@ -161,7 +160,7 @@ class AuthServiceTest extends TestCase
 
     public function test_login_prompts_2fa_when_enabled()
     {
-        $userMock = Mockery::mock('alias:' . User::class);
+        $userMock = Mockery::mock('alias:'.User::class);
         $userMock->shouldReceive('where')->with('email', 'john@example.com')->andReturnSelf();
         $userMock->shouldReceive('first')->andReturnSelf();
         $userMock->shouldReceive('hasVerifiedEmail')->andReturn(true);

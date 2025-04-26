@@ -62,7 +62,6 @@ class IpoApplicationController extends Controller
         ]);
     }
 
-
     public function show(string $id)
     {
         $ipoApplication = IpoApplication::find($id)->load('ipo');

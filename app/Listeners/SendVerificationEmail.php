@@ -22,6 +22,8 @@ class SendVerificationEmail implements ShouldQueue
      */
     public function handle(UserRegistered $event): void
     {
-        Mail::to($event->user->email)->queue(new UserVerification($event->user));
+        if(!$event->user->google_id){
+            Mail::to($event->user->email)->queue(new UserVerification($event->user));
+        }
     }
 }

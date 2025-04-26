@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Auth;
 
-use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthLogoutTest extends TestCase
@@ -26,12 +26,12 @@ class AuthLogoutTest extends TestCase
 
         $token = JWTAuth::fromUser($user);
         $response = $this->withHeaders(['Authorization' => "Bearer $token"])
-                         ->postJson('/api/v1/auth/logout');
+            ->postJson('/api/v1/auth/logout');
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'message' => 'Successfully logged out',
-                 ]);
+            ->assertJson([
+                'message' => 'Successfully logged out',
+            ]);
 
         $this->assertDatabaseHas('users', [
             'email' => 'john@example.com',
@@ -48,8 +48,8 @@ class AuthLogoutTest extends TestCase
         $response = $this->postJson('/api/v1/auth/logout');
 
         $response->assertStatus(401)
-                 ->assertJson([
-                     'message' => 'Unauthenticated.',
-                 ]);
+            ->assertJson([
+                'message' => 'Unauthenticated.',
+            ]);
     }
 }

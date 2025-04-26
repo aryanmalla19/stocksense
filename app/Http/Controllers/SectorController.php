@@ -9,27 +9,12 @@ use App\Models\Sector;
 
 class SectorController extends Controller
 {
-    // public function __construct()
-    // {
-    //     $this->middleware('auth:api');
-    // }
     public function index()
-{
-    $sectors = Sector::paginate(15); // Paginate the results
-    $resource = SectorResource::collection($sectors);
-    $paginationData = $resource->response()->getData(true);
+    {
+        $sectors = Sector::all();
 
-    return response()->json([
-        'status' => 'success',
-        'message' => 'Successfully fetched all sectors data',
-        'data' => [
-            'data' => $paginationData['data'],
-            'current_page' => $paginationData['meta']['current_page'],
-            'per_page' => $paginationData['meta']['per_page'],
-            'total' => $paginationData['meta']['total'],
-        ],
-    ]);
-}
+        return SectorResource::collection($sectors);
+    }
 
     public function store(StoreSectorRequest $request)
     {
@@ -43,54 +28,66 @@ class SectorController extends Controller
         ]);
     }
 
-    /**
-     * Display the specified sector.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show(string $id)
+    public function show(Sector $sector)
     {
-        // Find sector or fail with a 404 response
-        $sector = $this->findSectorOrFail($id);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Successfully fetched sector data',
-            'data' => new SectorResource($sector),
-        ]);
+        return new SectorResource($sector->load('stocks.latestPrice'));
     }
 
-    public function update(UpdateSectorRequest $request, string $id)
+    public function update(UpdateSectorRequest $request, Sector $sector)
     {
-        // Find sector or fail with a 404 response
-        $sector = $this->findSectorOrFail($id);
-
-        // Update the sector with validated data
         $sector->update($request->validated());
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Successfully updated sector with ID '.$id,
-            'data' => new SectorResource($sector),
+            'message' => 'Successfully updated sector with ID '.$sector->id,
         ]);
     }
 
-    public function destroy(string $id)
+    public function destroy(Sector $sector)
     {
-        // Find sector or fail with a 404 response
-        $sector = $this->findSectorOrFail($id);
-
-        // Delete the sector
         $sector->delete();
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Successfully deleted sector with ID '.$id,
+            'message' => 'Successfully deleted sector with ID '.$sector->id,
         ]);
     }
 
-    protected function findSectorOrFail(string $id)
+    public function stats()
     {
-        return Sector::findOrFail($id); // Automatically throws 404 if not found
+        $sectors = Sector::withCount('stocks')->get();
+
+        $chartData = $sectors->map(function ($sector) {
+            return [
+                'name' => $sector->name,
+                'value' => $sector->stocks_count,
+            ];
+        });
+
+        return response()->json([
+            'data' => $chartData,
+        ]);
+    }
+
+    public function userStats()
+    {
+        $user = auth()->user();
+
+        $stocks = $user->portfolio->holdings->pluck('stock')->flatten();
+
+        $groupedBySector = $stocks->groupBy(function ($stock) {
+            return $stock->sector->name ?? 'Unknown';
+        });
+
+        $chartData = $groupedBySector->map(function ($stocks, $sectorName) {
+            return [
+                'name' => $sectorName,
+                'value' => $stocks->count(),
+            ];
+        })->values();
+
+        return response()->json([
+            'data' => $chartData,
+        ]);
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Sector;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Log;
 
 class UpdateSectorRequest extends FormRequest
 {
@@ -15,13 +14,12 @@ class UpdateSectorRequest extends FormRequest
     public function rules(): array
     {
         $sectorId = $this->route('sector');
-        Log::info('Sector ID for unique validation: ' . $sectorId); // Debugging
 
         return [
             'name' => [
                 'required',
                 'in:Banking,Hydropower,Life Insurance,Non-life Insurance,Health,Manufacturing,Hotel,Trading,Microfinance,Finance,Investment,Others',
-                'unique:sectors,name,' . $sectorId,
+                'unique:sectors,name,'.$sectorId,
             ],
         ];
     }

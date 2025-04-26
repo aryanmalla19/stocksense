@@ -8,12 +8,12 @@ use Illuminate\Support\Facades\DB;
 
 class WatchlistController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $watchlists = auth()->user()->watchlists()->with(['stock.latestPrice', 'stock.sector'])->get();
+        $watchlists = auth()->user()
+            ->watchlists()
+            ->with(['stock.latestPrice', 'stock.sector'])
+            ->get();
 
         return response()->json([
             'message' => 'Successfully fetched all watchlist data',
@@ -21,9 +21,6 @@ class WatchlistController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreWatchlistRequest $request)
     {
         $data = $request->validated();
@@ -44,9 +41,6 @@ class WatchlistController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $stockId)
     {
         $userId = auth()->id();

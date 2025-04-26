@@ -2,11 +2,10 @@
 
 namespace Tests\Feature\Auth;
 
-use Tests\TestCase;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tymon\JWTAuth\Facades\JWTAuth;
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class AuthRefreshTest extends TestCase
 {
@@ -32,15 +31,15 @@ class AuthRefreshTest extends TestCase
         ]);
 
         $response->assertStatus(200)
-                 ->assertJsonStructure([
-                     'access_token',
-                     'token_type',
-                     'expires_in',
-                     'refresh_token',
-                 ])
-                 ->assertJson([
-                     'token_type' => 'bearer',
-                 ]);
+            ->assertJsonStructure([
+                'access_token',
+                'token_type',
+                'expires_in',
+                'refresh_token',
+            ])
+            ->assertJson([
+                'token_type' => 'bearer',
+            ]);
 
         $this->assertDatabaseHas('users', [
             'email' => 'john@example.com',
@@ -63,9 +62,9 @@ class AuthRefreshTest extends TestCase
         ]);
 
         $response->assertStatus(401)
-                 ->assertJson([
-                     'error' => 'Invalid or expired refresh token',
-                 ]);
+            ->assertJson([
+                'error' => 'Invalid or expired refresh token',
+            ]);
     }
 
     public function test_refresh_fails_with_expired_token()
@@ -81,9 +80,9 @@ class AuthRefreshTest extends TestCase
         ]);
 
         $response->assertStatus(401)
-                 ->assertJson([
-                     'error' => 'Invalid or expired refresh token',
-                 ]);
+            ->assertJson([
+                'error' => 'Invalid or expired refresh token',
+            ]);
     }
 
     public function test_refresh_fails_validation_with_missing_token()
@@ -91,9 +90,9 @@ class AuthRefreshTest extends TestCase
         $response = $this->postJson('/api/v1/auth/refresh', []);
 
         $response->assertStatus(422)
-                 ->assertJsonStructure([
-                     'message',
-                     'errors' => ['refresh_token'],
-                 ]);
+            ->assertJsonStructure([
+                'message',
+                'errors' => ['refresh_token'],
+            ]);
     }
 }

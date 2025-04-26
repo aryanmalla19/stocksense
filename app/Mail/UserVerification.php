@@ -36,7 +36,6 @@ class UserVerification extends Mailable implements ShouldQueue
     /**
      * Get the message content definition.
      */
-
     public function content(): Content
     {
         $temporarySignedURL = URL::temporarySignedRoute(
