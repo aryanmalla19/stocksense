@@ -105,6 +105,7 @@ Route::prefix('v1')->group(function () {
             Route::get('/ipo-details/{id}/applications', [AdminController::class, 'ipoApplications']);
         });
     });
+Route::get('/meow', [StockPriceController::class, 'stream']);
 });
 
 Route::get('/stocks/{stock}/history', [StockPriceController::class, 'historyStockPricesLive'])->name('stocks.history');
