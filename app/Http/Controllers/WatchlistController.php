@@ -13,13 +13,11 @@ class WatchlistController extends Controller
         $watchlists = auth()->user()
             ->watchlists()
             ->with(['stock.latestPrice', 'stock.sector'])
-            ->get();
+            ->paginate(10);
 
-        return response()->json([
-            'message' => 'Successfully fetched all watchlist data',
-            'data' => WatchListResource::collection($watchlists),
-        ]);
+        return WatchListResource::collection($watchlists);
     }
+
 
     public function store(StoreWatchlistRequest $request)
     {
