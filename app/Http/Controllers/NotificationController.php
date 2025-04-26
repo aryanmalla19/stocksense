@@ -16,19 +16,24 @@ class NotificationController extends Controller
     {
         $user = auth('api')->user();
 
-        $unread = $user->unreadNotifications;
-        $read = $user->readNotifications;
+        $notifications = $user->notifications()
+            ->orderByRaw('read_at IS NULL DESC')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
 
-        // unread first, then read
-        $combined = $unread->merge($read); 
-
-        if ($combined->isEmpty()) {
+        if ($notifications->isEmpty()) {
             return response()->json(['message' => 'No notifications found'], 200);
         }
 
         return response()->json([
             'message' => 'Successfully fetched user\'s notifications',
-            'data' => NotificationResource::collection($combined),
+            'data' => NotificationResource::collection($notifications),
+            'meta' => [
+                'current_page' => $notifications->currentPage(),
+                'last_page' => $notifications->lastPage(),
+                'per_page' => $notifications->perPage(),
+                'total' => $notifications->total(),
+            ]
         ], 200);
     }
 
