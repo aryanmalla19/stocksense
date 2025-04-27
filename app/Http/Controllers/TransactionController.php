@@ -7,6 +7,7 @@ use App\Events\SoldStock;
 use App\Http\Resources\TransactionResource;
 use App\Models\Stock;
 use App\Models\Transaction;
+use App\Notifications\GeneralNotification;
 use Illuminate\Http\Request;
 
 /**
@@ -79,11 +80,16 @@ class TransactionController extends Controller
         // Create transaction
         $transaction = $user->transactions()->create($attributes);
         $transaction->load('stock');
-
         // Dispatch appropriate event
         match ($transaction->type) {
-            'buy' => event(new BroughtStock($transaction, $user)),
-            'sell' => event(new SoldStock($transaction, $user)),
+            'buy' => [
+                event(new BroughtStock($transaction, $user)),
+                $user->notify(new GeneralNotification('Buy Transaction', 'You successfully bought stocks ' . $transaction->stock->symbol . '.')),
+            ],
+            'sell' => [
+                event(new SoldStock($transaction, $user)),
+                $user->notify(new GeneralNotification('Sell Transaction', 'You successfully sold stocks ' . $transaction->stock->symbol . '.')),
+            ],
         };
 
         return response()->json([
