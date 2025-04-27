@@ -184,5 +184,42 @@ class StockTest extends TestCase
                 ],
             ]);
     }
+    // === Admin Stock Management Tests ===
 
-    
+    /**
+     * Test that an admin can create a stock.
+     */
+    #[Test]
+    public function test_admin_can_create_stock(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $sector = Sector::factory()->create();
+
+        $response = $this->actingAs($admin, 'api')->postJson('/api/v1/stocks', [
+            'symbol' => 'AAPL',
+            'company_name' => 'Apple Inc.',
+            'sector_id' => $sector->id,
+            'description' => 'Technology company',
+        ]);
+
+        $response->assertStatus(201)
+            ->assertJson([
+                'message' => 'Successfully registered stock',
+                'data' => [
+                    'symbol' => 'AAPL',
+                    'company_name' => 'Apple Inc.',
+                    'sector_id' => $sector->id,
+                    'is_listed' => false,
+                    'sector' => $sector->name,
+                    'is_watchlist' => false,
+                ],
+            ]);
+
+        $this->assertDatabaseHas('stocks', [
+            'symbol' => 'AAPL',
+            'company_name' => 'Apple Inc.',
+            'sector_id' => $sector->id,
+            'is_listed' => false,
+        ]);
+    }
+
