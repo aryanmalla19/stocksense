@@ -94,6 +94,7 @@ Route::prefix('v1')->group(function () {
         // Watchlist
         Route::apiResource('/watchlists', WatchlistController::class)
             ->only(['index', 'store', 'destroy']);
+        Route::post('/watchlists/multiple-delete', [WatchlistController::class, 'multipleDelete']);
 
         // Notifications
         Route::apiResource('/users/notifications', NotificationController::class)->names('notifications')->parameters([
