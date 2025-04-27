@@ -15,20 +15,14 @@ class StockTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * Set up the test environment.
-     */
+ 
     protected function setUp(): void
     {
         parent::setUp();
         $this->artisan('migrate', ['--database' => 'sqlite']);
     }
 
-    // === Authentication Tests ===
 
-    /**
-     * Test that unauthenticated users cannot access stock endpoints.
-     */
     #[Test]
     public function test_unauthenticated_user_cannot_access_endpoints(): void
     {
@@ -42,11 +36,7 @@ class StockTest extends TestCase
         $this->deleteJson("/api/v1/stocks/{$stock->id}")->assertStatus(401);
     }
 
-    // === Stock Viewing Tests ===
 
-    /**
-     * Test that an authenticated user can view all listed stocks.
-     */
     #[Test]
     public function test_authenticated_user_can_view_stocks(): void
     {
@@ -107,7 +97,8 @@ class StockTest extends TestCase
             ])
             ->assertJsonMissing(['symbol' => 'GOOGL']);
     }
-     /**
+
+    /**
      * Test that an authenticated user can view a specific listed stock.
      */
     #[Test]
@@ -139,7 +130,8 @@ class StockTest extends TestCase
                 ],
             ]);
     }
-     /**
+
+    /**
      * Test that viewing an unlisted stock returns a 404 error.
      */
     #[Test]
@@ -184,6 +176,7 @@ class StockTest extends TestCase
                 ],
             ]);
     }
+
     // === Admin Stock Management Tests ===
 
     /**
@@ -222,6 +215,7 @@ class StockTest extends TestCase
             'is_listed' => false,
         ]);
     }
+
     /**
      * Test that an admin can update a stock.
      */
@@ -245,7 +239,7 @@ class StockTest extends TestCase
                     'symbol' => 'GOOGL',
                     'company_name' => 'Alphabet Inc.',
                     'sector_id' => $sector->id,
-                    'is_listed' => 1, // TODO: Fix cast issue
+                    'is_listed' => 1,
                     'is_watchlist' => false,
                 ],
             ]);
@@ -256,6 +250,7 @@ class StockTest extends TestCase
             'company_name' => 'Alphabet Inc.',
         ]);
     }
+
     /**
      * Test that an admin can delete a stock.
      */
@@ -276,4 +271,33 @@ class StockTest extends TestCase
         $this->assertDatabaseMissing('stocks', ['id' => $stock->id]);
     }
 
-    
+    /**
+     * Test that a non-admin cannot create, update, or delete stocks.
+     */
+    #[Test]
+    public function test_non_admin_cannot_create_update_delete_stocks(): void
+    {
+        $user = User::factory()->create(['role' => 'user']);
+        $sector = Sector::factory()->create();
+        $stock = Stock::factory()->create(['sector_id' => $sector->id]);
+
+        $this->actingAs($user, 'api')
+            ->postJson('/api/v1/stocks', [
+                'symbol' => 'AAPL',
+                'company_name' => 'Apple Inc.',
+                'sector_id' => $sector->id,
+            ])
+            ->assertStatus(403);
+
+        $this->actingAs($user, 'api')
+            ->putJson("/api/v1/stocks/{$stock->id}", [
+                'symbol' => 'GOOGL',
+                'company_name' => 'Alphabet Inc.',
+            ])
+            ->assertStatus(403);
+
+        $this->actingAs($user, 'api')
+            ->deleteJson("/api/v1/stocks/{$stock->id}")
+            ->assertStatus(403);
+    }
+}
