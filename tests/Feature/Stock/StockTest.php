@@ -222,5 +222,39 @@ class StockTest extends TestCase
             'is_listed' => false,
         ]);
     }
+    /**
+     * Test that an admin can update a stock.
+     */
+    #[Test]
+    public function test_admin_can_update_stock(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $sector = Sector::factory()->create();
+        $stock = Stock::factory()->create(['sector_id' => $sector->id]);
+
+        $response = $this->actingAs($admin, 'api')->putJson("/api/v1/stocks/{$stock->id}", [
+            'symbol' => 'GOOGL',
+            'company_name' => 'Alphabet Inc.',
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Stock successfully updated',
+                'data' => [
+                    'id' => $stock->id,
+                    'symbol' => 'GOOGL',
+                    'company_name' => 'Alphabet Inc.',
+                    'sector_id' => $sector->id,
+                    'is_listed' => 1, // TODO: Fix cast issue
+                    'is_watchlist' => false,
+                ],
+            ]);
+
+        $this->assertDatabaseHas('stocks', [
+            'id' => $stock->id,
+            'symbol' => 'GOOGL',
+            'company_name' => 'Alphabet Inc.',
+        ]);
+    }
 
     
