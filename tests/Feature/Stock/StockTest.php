@@ -139,4 +139,50 @@ class StockTest extends TestCase
                 ],
             ]);
     }
+     /**
+     * Test that viewing an unlisted stock returns a 404 error.
+     */
+    #[Test]
+    public function test_viewing_unlisted_stock_returns_404(): void
+    {
+        $user = User::factory()->create();
+        $sector = Sector::factory()->create();
+        $stock = Stock::factory()->create(['sector_id' => $sector->id, 'is_listed' => false]);
+
+        $response = $this->actingAs($user, 'api')->getJson("/api/v1/stocks/{$stock->id}");
+
+        $response->assertStatus(404)
+            ->assertJson([
+                'message' => 'No listed stock found with ID '.$stock->id,
+            ]);
+    }
+
+    // === Watchlist Tests ===
+
+    /**
+     * Test that the is_watchlist field works correctly for a stock.
+     */
+    #[Test]
+    public function test_is_watchlist_field_works_correctly(): void
+    {
+        $user = User::factory()->create();
+        $sector = Sector::factory()->create();
+        $stock = Stock::factory()->create(['sector_id' => $sector->id, 'is_listed' => true]);
+        Watchlist::factory()->create(['user_id' => $user->id, 'stock_id' => $stock->id]);
+
+        $response = $this->actingAs($user, 'api')->getJson('/api/v1/stocks');
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Successfully fetched all stocks',
+                'data' => [
+                    [
+                        'id' => $stock->id,
+                        'symbol' => $stock->symbol,
+                        'is_watchlist' => true,
+                    ],
+                ],
+            ]);
+    }
+
     
