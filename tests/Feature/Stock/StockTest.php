@@ -139,5 +139,4 @@ class StockTest extends TestCase
                 ],
             ]);
     }
-
-   
+    
