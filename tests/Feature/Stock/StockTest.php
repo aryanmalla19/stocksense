@@ -256,5 +256,24 @@ class StockTest extends TestCase
             'company_name' => 'Alphabet Inc.',
         ]);
     }
+    /**
+     * Test that an admin can delete a stock.
+     */
+    #[Test]
+    public function test_admin_can_delete_stock(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $sector = Sector::factory()->create();
+        $stock = Stock::factory()->create(['sector_id' => $sector->id]);
+
+        $response = $this->actingAs($admin, 'api')->deleteJson("/api/v1/stocks/{$stock->id}");
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Successfully deleted stock with ID '.$stock->id,
+            ]);
+
+        $this->assertDatabaseMissing('stocks', ['id' => $stock->id]);
+    }
 
     
