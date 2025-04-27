@@ -69,9 +69,7 @@ class StockTest extends TestCase
             ]);
     }
 
-    /**
-     * Test that an authenticated user can filter stocks by symbol.
-     */
+
     #[Test]
     public function test_authenticated_user_can_filter_stocks_by_symbol(): void
     {
@@ -98,9 +96,7 @@ class StockTest extends TestCase
             ->assertJsonMissing(['symbol' => 'GOOGL']);
     }
 
-    /**
-     * Test that an authenticated user can view a specific listed stock.
-     */
+
     #[Test]
     public function test_authenticated_user_can_view_specific_listed_stock(): void
     {
@@ -131,9 +127,7 @@ class StockTest extends TestCase
             ]);
     }
 
-    /**
-     * Test that viewing an unlisted stock returns a 404 error.
-     */
+
     #[Test]
     public function test_viewing_unlisted_stock_returns_404(): void
     {
@@ -149,11 +143,7 @@ class StockTest extends TestCase
             ]);
     }
 
-    // === Watchlist Tests ===
 
-    /**
-     * Test that the is_watchlist field works correctly for a stock.
-     */
     #[Test]
     public function test_is_watchlist_field_works_correctly(): void
     {
@@ -177,11 +167,6 @@ class StockTest extends TestCase
             ]);
     }
 
-    // === Admin Stock Management Tests ===
-
-    /**
-     * Test that an admin can create a stock.
-     */
     #[Test]
     public function test_admin_can_create_stock(): void
     {
@@ -216,9 +201,6 @@ class StockTest extends TestCase
         ]);
     }
 
-    /**
-     * Test that an admin can update a stock.
-     */
     #[Test]
     public function test_admin_can_update_stock(): void
     {
@@ -251,9 +233,7 @@ class StockTest extends TestCase
         ]);
     }
 
-    /**
-     * Test that an admin can delete a stock.
-     */
+
     #[Test]
     public function test_admin_can_delete_stock(): void
     {
@@ -271,9 +251,7 @@ class StockTest extends TestCase
         $this->assertDatabaseMissing('stocks', ['id' => $stock->id]);
     }
 
-    /**
-     * Test that a non-admin cannot create, update, or delete stocks.
-     */
+
     #[Test]
     public function test_non_admin_cannot_create_update_delete_stocks(): void
     {
