@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\WatchList\StoreWatchlistRequest;
 use App\Http\Resources\WatchListResource;
+use App\Models\Watchlist;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class WatchlistController extends Controller
@@ -58,4 +60,25 @@ class WatchlistController extends Controller
             'message' => 'Successfully removed watchlist',
         ]);
     }
+
+    public function multipleDelete(Request $request)
+    {
+        $request->validate([
+            'stock_ids' => 'required|array',
+            'stock_ids.*' => 'integer|exists:watchlists,stock_id',
+        ]);
+
+        $user = auth('api')->user();
+
+        $deleted = Watchlist::where('user_id', $user->id)
+            ->whereIn('stock_id', $request->stock_ids)
+            ->delete();
+
+        if ($deleted) {
+            return response()->json(['message' => 'Items deleted successfully'], 200);
+        }
+
+        return response()->json(['message' => 'No items deleted'], 404);
+    }
+
 }
