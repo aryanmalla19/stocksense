@@ -107,5 +107,37 @@ class StockTest extends TestCase
             ])
             ->assertJsonMissing(['symbol' => 'GOOGL']);
     }
+     /**
+     * Test that an authenticated user can view a specific listed stock.
+     */
+    #[Test]
+    public function test_authenticated_user_can_view_specific_listed_stock(): void
+    {
+        $user = User::factory()->create();
+        $sector = Sector::factory()->create();
+        $stock = Stock::factory()->create(['sector_id' => $sector->id, 'is_listed' => true]);
+        $price = StockPrice::factory()->create(['stock_id' => $stock->id]);
+
+        $response = $this->actingAs($user, 'api')->getJson("/api/v1/stocks/{$stock->id}");
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Successfully fetched stock data',
+                'data' => [
+                    'id' => $stock->id,
+                    'symbol' => $stock->symbol,
+                    'company_name' => $stock->company_name,
+                    'sector_id' => $sector->id,
+                    'is_listed' => true,
+                    'sector' => $sector->name,
+                    'is_watchlist' => false,
+                    'open_price' => (float) $price->open_price,
+                    'close_price' => (float) $price->close_price,
+                    'high_price' => (float) $price->high_price,
+                    'low_price' => (float) $price->low_price,
+                    'current_price' => (float) $price->current_price,
+                ],
+            ]);
+    }
 
    
