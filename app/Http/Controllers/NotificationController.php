@@ -7,10 +7,67 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
 
+/**
+ * @OA\Tag(
+ *     name="Notification",
+ *     description="API Endpoints for managing user notifications"
+ * )
+ */
+
+ /**
+ * @OA\Schema(
+ *     schema="Notification",
+ *     title="Notification",
+ *     description="User notification schema",
+ *     type="object",
+ *     required={"time", "notification"},
+ *     @OA\Property(
+ *         property="time",
+ *         type="string",
+ *         format="date-time",
+ *         example="2025-04-26T12:30:00.000000Z",
+ *         description="The time when the notification was created"
+ *     ),
+ *     @OA\Property(
+ *         property="notification",
+ *         type="string",
+ *         example="Your order has been shipped!",
+ *         description="Notification message"
+ *     )
+ * )
+ */
 class NotificationController extends Controller
 {
     /**
-     * Display a listing of the user's notifications.
+     * @OA\Get(
+     *     path="/api/v1/users/notifications",
+     *     summary="Get User Notifications",
+     *     description="Fetch a list of notifications for the authenticated user",
+     *     operationId="getUserNotifications",
+     *     tags={"Notifications"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successfully fetched user notifications",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Successfully fetched user's notifications"),
+     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Notification")),
+     *             @OA\Property(property="meta", type="object", 
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="last_page", type="integer", example=5),
+     *                 @OA\Property(property="per_page", type="integer", example=10),
+     *                 @OA\Property(property="total", type="integer", example=50)
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="No notifications found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="No notifications found")
+     *         )
+     *     ),
+     * )
      */
     public function index(): JsonResponse
     {
@@ -37,6 +94,30 @@ class NotificationController extends Controller
         ], 200);
     }
 
+     /**
+     * @OA\Post(
+     *     path="/api/v1/users/notifications/mark-all-as-read",
+     *     summary="Mark All Notifications as Read",
+     *     description="Mark all unread notifications for the authenticated user as read",
+     *     operationId="markAllNotificationsAsRead",
+     *     tags={"Notifications"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successfully marked all user's notifications as read",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Successfully marked all user's notifications as read")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="No unread notifications to mark as read",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="No unread notifications to mark as read")
+     *         )
+     *     ),
+     * )
+     */
     public function markAllAsRead(): JsonResponse
     {
         $user = auth('api')->user();
@@ -54,6 +135,48 @@ class NotificationController extends Controller
         ], 200);
     }
 
+     /**
+     * @OA\Put(
+     *     path="/api/v1/users/notifications/{id}",
+     *     summary="Mark Notification as Read",
+     *     description="Mark a specific notification as read for the authenticated user",
+     *     operationId="markNotificationAsRead",
+     *     tags={"Notifications"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Notification ID",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successfully marked notification as read",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Successfully marked notification as read"),
+     *             @OA\Property(property="data", ref="#/components/schemas/Notification")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Notification not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Notification does not belong to the user.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Notification already marked as read",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Already marked as read")
+     *         )
+     *     )
+     * )
+     */
     public function update(string $id)
     {
         $user = auth('api')->user();
@@ -81,7 +204,40 @@ class NotificationController extends Controller
         ]);
     }
 
-
+     /**
+     * @OA\Get(
+     *     path="/api/v1/users/notifications/{id}",
+     *     summary="Get a Specific Notification",
+     *     description="Fetch a specific notification by ID for the authenticated user",
+     *     operationId="getNotification",
+     *     tags={"Notifications"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Notification ID",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successfully fetched notification",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example="Successfully fetched notification data"),
+     *             @OA\Property(property="data", ref="#/components/schemas/Notification")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Notification not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Notification does not belong to the user.")
+     *         )
+     *     )
+     * )
+     */
     public function show(string $id)
     {
         $user = auth('api')->user();

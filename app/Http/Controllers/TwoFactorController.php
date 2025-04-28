@@ -9,8 +9,62 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
+/**
+ * @OA\Tag(
+ *     name="Authentication",
+ *     description="Operations related to user authentication"
+ * )
+ */
+
+/**
+ * @OA\Schema(
+ *     schema="VerifyOtpRequest",
+ *     type="object",
+ *     required={"otp", "email", "private_token"},
+ *     @OA\Property(
+ *         property="otp",
+ *         type="string",
+ *         description="The One-Time Password (OTP) sent to user's email or phone.",
+ *         example="123456",
+ *         minLength=6,
+ *         maxLength=6
+ *     ),
+ *     @OA\Property(
+ *         property="email",
+ *         type="string",
+ *         format="email",
+ *         description="The user's email address.",
+ *         example="user@example.com"
+ *     ),
+ *     @OA\Property(
+ *         property="private_token",
+ *         type="string",
+ *         description="A 32-character secret token associated with the user session.",
+ *         example="ab12cd34ef56gh78ij90kl12mn34op56",
+ *         minLength=32,
+ *         maxLength=32
+ *     )
+ * )
+ */
 class TwoFactorController extends Controller
 {
+     /**
+     * @OA\Post(
+     *     path="/api/v1/auth/2fa/enable",
+     *     summary="Enable Two-Factor Authentication",
+     *     description="Enables 2FA for the authenticated user.",
+     *     tags={"Two Factor Authentication"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="2FA enabled successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="2FA enabled successfully")
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="Unauthorized")
+     * )
+     */
     public function enable()
     {
         $user = Auth::user();
@@ -20,6 +74,23 @@ class TwoFactorController extends Controller
         return response()->json(['message' => '2FA enabled successfully']);
     }
 
+     /**
+     * @OA\Post(
+     *     path="/api/v1/auth/2fa/disable",
+     *     summary="Disable Two-Factor Authentication",
+     *     description="Disables 2FA for the authenticated user.",
+     *     tags={"Two Factor Authentication"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="2FA disabled successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="2FA disabled successfully")
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="Unauthorized")
+     * )
+     */
     public function disable()
     {
         $user = Auth::user();
@@ -35,6 +106,35 @@ class TwoFactorController extends Controller
         return response()->json(['message' => '2FA disabled successfully']);
     }
 
+     /**
+     * @OA\Post(
+     *     path="/api/v1/auth/verify-otp",
+     *     summary="Verify OTP for Two-Factor Authentication",
+     *     description="Verifies the user's One-Time Password (OTP) during the 2FA process. Returns new JWT tokens if successful.",
+     *     tags={"Two Factor Authentication"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/VerifyOtpRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OTP verified successfully, access and refresh tokens returned.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="access_token", type="string", example="eyJhbGciOi..."),
+     *             @OA\Property(property="refresh_token", type="string", example="abc123abc123abc123abc123abc123ab"),
+     *             @OA\Property(property="token_type", type="string", example="bearer"),
+     *             @OA\Property(property="expires_in", type="integer", example=3600)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Invalid OTP, expired OTP, or user not found.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Invalid OTP")
+     *         )
+     *     )
+     * )
+     */
     public function verifyOtp(VerifyOtpRequest $request)
     {
         $request->validate([

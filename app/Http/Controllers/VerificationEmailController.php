@@ -8,14 +8,39 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
+/**
+ * @OA\Tag(
+ *     name="Email Verification",
+ *     description="Operations related to user verification"
+ * )
+ */
 class VerificationEmailController extends Controller
 {
     /**
-     * Verify the user's email address.
-     *
-     * @param  int  $id
-     * @param  string  $hash
-     * @return \Illuminate\Http\RedirectResponse
+     * @OA\Get(
+     *     path="/v1/auth/email/verify/{id}/{hash}",
+     *     summary="Verify user's email address",
+     *     description="Verify a user's email when they click the verification link sent to them.",
+     *     tags={"Authentication"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the user",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="hash",
+     *         in="path",
+     *         required=true,
+     *         description="SHA1 hash of the user's email",
+     *         @OA\Schema(type="string", example="5d41402abc4b2a76b9719d911017c592")
+     *     ),
+     *     @OA\Response(
+     *         response=302,
+     *         description="Redirects to frontend URL with query parameters (success or error)"
+     *     )
+     * )
      */
     public function verify(Request $request, $id, $hash)
     {
@@ -62,9 +87,33 @@ class VerificationEmailController extends Controller
     }
 
     /**
-     * Resend the email verification notification.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @OA\Post(
+     *     path="/v1/auth/email/resend",
+     *     summary="Resend verification email",
+     *     description="Resend a verification email to the user if not already verified.",
+     *     tags={"Authentication"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email"},
+     *             @OA\Property(property="email", type="string", format="email", example="user@example.com")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Verification email resent",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Verification email resent.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="User not found or already verified",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="User not found or already verified.")
+     *         )
+     *     )
+     * )
      */
     public function resend(Request $request)
     {
