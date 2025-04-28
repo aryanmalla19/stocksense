@@ -193,4 +193,19 @@ class WatchlistTest extends TestCase
         ]);
     }
 
+
+    public function test_deleting_non_existent_watchlist_fails()
+    {
+        $user = User::factory()->create();
+        $stockId = 999; // Non-existent stock ID
+
+        $response = $this->actingAs($user, 'api')
+            ->deleteJson("/api/v1/watchlists/{$stockId}");
+
+        $response->assertStatus(404)
+            ->assertJson([
+                'message' => 'No watchlist found with Stock ID ' . $stockId,
+            ]);
+    }
+
 }
