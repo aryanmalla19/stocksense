@@ -262,6 +262,24 @@ class IpoDetailControllerTest extends TestCase
         ]);
     }
 
+    #[Test]
+    public function it_returns_404_for_updating_non_existent_ipo_detail()
+    {
+        $data = [
+            'issue_price' => 200,
+            'open_date' => Carbon::now()->addDays(1)->toDateString(),
+            'close_date' => Carbon::now()->addDays(5)->toDateString(),
+        ];
+
+        $response = $this->actingAs($this->user, 'api')
+            ->putJson('/api/v1/ipo-details/999', $data);
+
+        $response->assertStatus(404)
+                 ->assertJson([
+                     'message' => 'IPO detail not found for ID: 999',
+                 ]);
+    }
+
 
 
 
