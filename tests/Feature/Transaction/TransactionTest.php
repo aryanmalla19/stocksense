@@ -251,6 +251,31 @@ class TransactionTest extends TestCase
     }
 
 
+    public function test_transaction_creation_fails_with_invalid_data()
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user, 'api')
+            ->postJson('/api/v1/transactions', [
+                'stock_id' => 999, // Non-existent
+                'type' => 'invalid', // Not in buy,sell,ipo_allotted
+                'quantity' => 5, // Less than 10
+            ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['stock_id', 'type', 'quantity'])
+            ->assertJson([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => [
+                    'stock_id' => ['The selected stock id is invalid.'],
+                    'type' => ['The selected type is invalid.'],
+                    'quantity' => ['The quantity field must be at least 10.'],
+                ],
+            ]);
+    }
+
+
 
 
 
