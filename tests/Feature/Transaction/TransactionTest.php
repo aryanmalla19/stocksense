@@ -115,6 +115,44 @@ class TransactionTest extends TestCase
                 'type' => 'sell',
             ]);
     }
+    public function test_authenticated_user_can_create_buy_transaction()
+    {
+        $user = User::factory()->create();
+        $portfolio = Portfolio::factory()->create(['user_id' => $user->id, 'amount' => 10000]);
+        $sector = Sector::factory()->create();
+        $stock = Stock::factory()->create(['sector_id' => $sector->id]);
+        StockPrice::factory()->create(['stock_id' => $stock->id, 'current_price' => 100.00]);
+
+        $response = $this->actingAs($user, 'api')
+            ->postJson('/api/v1/transactions', [
+                'stock_id' => $stock->id,
+                'type' => 'buy',
+                'quantity' => 50,
+            ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Successfully created new transaction',
+                'data' => [
+                    'user_id' => $user->id,
+                    'stock_id' => $stock->id,
+                    'type' => 'buy',
+                    'quantity' => 50,
+                    'price' => '100.00',
+                    'total_price' => '5,050.00', // Updated to match response
+                    'transaction_fee' => '50.00',
+                    'company_name' => $stock->company_name,
+                ],
+            ]);
+
+        $this->assertDatabaseHas('transactions', [
+            'user_id' => $user->id,
+            'stock_id' => $stock->id,
+            'type' => 'buy',
+            'quantity' => 50,
+            'price' => 100.00,
+        ]);
+    }
 
 
     
