@@ -117,5 +117,28 @@ class IpoApplicationControllerTest extends TestCase
                  ]);
     }
 
+    #[Test]
+    public function it_fails_ipo_application_with_insufficient_balance()
+    {
+        $data = [
+            'ipo_id' => $this->ipoDetail->id,
+            'applied_shares' => 200, // 200 * 100 = 20000 > 10000 balance
+        ];
+
+        $response = $this->actingAs($this->user, 'api')
+            ->postJson('/api/v1/ipo-applications', $data);
+
+        $response->assertStatus(400)
+                 ->assertJson([
+                     'message' => 'Insufficient balance',
+                 ]);
+
+        $this->assertDatabaseMissing('ipo_applications', [
+            'user_id' => $this->user->id,
+            'ipo_id' => $this->ipoDetail->id,
+        ]);
+    }
+
+
    
 }
