@@ -29,6 +29,9 @@ class UserResource extends JsonResource
             'portfolio' => $this->whenLoaded('portfolio', function () {
                 return new PortfolioResource($this->portfolio);
             }),
+            'holdings' => $this->whenLoaded('portfolio', function () {
+                return HoldingResource::collection($this->portfolio->holdings);
+            }),
             'transactions' => $this->whenLoaded('transactions', function () {
                 return TransactionResource::collection($this->transactions);
             }),

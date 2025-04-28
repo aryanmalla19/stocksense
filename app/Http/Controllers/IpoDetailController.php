@@ -78,6 +78,12 @@ class IpoDetailController extends Controller
             ], 404);
         }
 
+        if($ipoDetail->ipo_status === IpoDetailStatus::Allotted){
+            return response()->json([
+                'message' => 'You cannot change IPO that is already allotted'
+            ], 400);
+        }
+
         $data = $request->validated();
 
         $now = now();
