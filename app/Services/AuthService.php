@@ -20,7 +20,7 @@ class AuthService
     public function register(array $data)
     {
         $user = new User;
-        $user->name = $data['name'];
+        $user->name = ucwords(strtolower($data['name']));
         $user->email = $data['email'];
         $user->password = Hash::make($data['password']);
 
@@ -116,7 +116,9 @@ class AuthService
         try {
             $user->password = Hash::make($data['new_password']);
             $user->save();
-
+            
+            $user->notify(new GeneralNotification('change-password', 'Password has been changed'));
+            
             return [
                 'message' => 'Password changed successfully',
                 'status' => 200,
