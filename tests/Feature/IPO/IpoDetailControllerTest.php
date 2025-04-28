@@ -280,6 +280,28 @@ class IpoDetailControllerTest extends TestCase
                  ]);
     }
 
+    #[Test]
+    public function it_deletes_an_ipo_detail()
+    {
+        $ipoDetail = IpoDetail::factory()->create([
+            'stock_id' => $this->stock->id,
+            'ipo_status' => IpoDetailStatus::Closed,
+            'close_date' => Carbon::now()->subDay(),
+        ]);
+
+        $response = $this->actingAs($this->user, 'api')
+            ->deleteJson("/api/v1/ipo-details/{$ipoDetail->id}");
+
+        $response->assertStatus(200)
+                 ->assertJson([
+                     'message' => 'Successfully deleted IPO detail with ID: ' . $ipoDetail->id,
+                 ]);
+
+        $this->assertDatabaseMissing('ipo_details', [
+            'id' => $ipoDetail->id,
+        ]);
+    }
+
 
 
 
