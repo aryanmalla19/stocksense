@@ -85,4 +85,42 @@ class WatchlistTest extends TestCase
         $response = $this->getJson('/api/v1/watchlists');
         $response->assertStatus(401);
     }
+
+
+    public function test_authenticated_user_can_add_watchlist()
+    {
+        $user = User::factory()->create();
+        $sector = Sector::factory()->create();
+        $stock = Stock::factory()->create(['sector_id' => $sector->id]);
+        StockPrice::factory()->create(['stock_id' => $stock->id, 'current_price' => 200.00]);
+
+        $response = $this->actingAs($user, 'api')
+            ->postJson('/api/v1/watchlists', [
+                'stock_id' => $stock->id,
+            ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Successfully added watchlist',
+                'data' => [
+                    'stock_id' => $stock->id,
+                    'user_id' => $user->id,
+                    'stock' => [
+                        'id' => $stock->id,
+                        'symbol' => $stock->symbol,
+                        'company_name' => $stock->company_name,
+                        'sector_id' => $sector->id,
+                        'is_listed' => true,
+                        'sector' => $sector->name,
+                        'is_watchlist' => true,
+                        'current_price' => '200.00',
+                    ],
+                ],
+            ]);
+
+        $this->assertDatabaseHas('watchlists', [
+            'user_id' => $user->id,
+            'stock_id' => $stock->id,
+        ]);
+    }
 }
