@@ -276,6 +276,42 @@ class TransactionTest extends TestCase
     }
 
 
+    public function test_authenticated_user_can_view_specific_transaction()
+    {
+        $user = User::factory()->create();
+        $sector = Sector::factory()->create();
+        $stock = Stock::factory()->create(['sector_id' => $sector->id]);
+        StockPrice::factory()->create(['stock_id' => $stock->id, 'current_price' => 100.00]);
+        $transaction = Transaction::factory()->create([
+            'user_id' => $user->id,
+            'stock_id' => $stock->id,
+            'type' => 'buy',
+            'quantity' => 50,
+            'price' => 100.00,
+            'transaction_fee' => 50.00,
+        ]);
+
+        $response = $this->actingAs($user, 'api')
+            ->getJson("/api/v1/transactions/{$transaction->id}");
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Successfully fetched transaction data',
+                'data' => [
+                    'id' => $transaction->id,
+                    'user_id' => $user->id,
+                    'stock_id' => $stock->id,
+                    'type' => 'buy',
+                    'quantity' => 50,
+                    'price' => '100.00',
+                    'total_price' => '5,050.00', // Updated to match response
+                    'transaction_fee' => '50.00',
+                    'company_name' => $stock->company_name,
+                ],
+            ]);
+    }
+
+
 
 
 
