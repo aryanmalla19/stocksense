@@ -146,4 +146,27 @@ class WatchlistTest extends TestCase
                 'message' => 'Same watchlist already exists',
             ]);
     }
+
+
+
+    public function test_adding_watchlist_with_invalid_data_fails()
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user, 'api')
+            ->postJson('/api/v1/watchlists', [
+                'stock_id' => 999, // Non-existent stock
+            ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['stock_id'])
+            ->assertJson([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => [
+                    'stock_id' => ['The selected stock does not exist.'],
+                ],
+            ]);
+    }
+
 }
