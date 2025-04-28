@@ -232,5 +232,15 @@ class SectorTest extends TestCase
         $this->assertDatabaseMissing('sectors', ['id' => $sector->id]);
     }
 
+    public function test_delete_non_existent_sector_fails()
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user, 'api')
+            ->deleteJson('/api/v1/sectors/999');
+
+        $response->assertStatus(404);
+    }
+
     
 }
