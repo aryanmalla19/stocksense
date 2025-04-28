@@ -94,6 +94,28 @@ class IpoApplicationControllerTest extends TestCase
         ]);
     }
 
-   
+    #[Test]
+    public function it_prevents_duplicate_ipo_application()
+    {
+        IpoApplication::factory()->create([
+            'user_id' => $this->user->id,
+            'ipo_id' => $this->ipoDetail->id,
+            'applied_shares' => 10,
+        ]);
 
-} 
+        $data = [
+            'ipo_id' => $this->ipoDetail->id,
+            'applied_shares' => 20,
+        ];
+
+        $response = $this->actingAs($this->user, 'api')
+            ->postJson('/api/v1/ipo-applications', $data);
+
+        $response->assertStatus(409)
+                 ->assertJson([
+                     'message' => 'You have already applied for this IPO.',
+                 ]);
+    }
+
+   
+}
