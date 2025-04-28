@@ -208,4 +208,31 @@ class WatchlistTest extends TestCase
             ]);
     }
 
+
+
+    public function test_multiple_delete_with_no_matching_watchlists_fails()
+    {
+        $user = User::factory()->create();
+        $stockIds = [999, 1000]; // Non-existent stock IDs
+
+        $response = $this->actingAs($user, 'api')
+            ->postJson('/api/v1/watchlists/multiple-delete', [
+                'stock_ids' => $stockIds,
+            ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['stock_ids.0', 'stock_ids.1'])
+            ->assertJson([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => [
+                    'stock_ids.0' => ['The selected stock_ids.0 is invalid.'],
+                    'stock_ids.1' => ['The selected stock_ids.1 is invalid.'],
+                ],
+            ]);
+    }
+
+
+
+    
 }
