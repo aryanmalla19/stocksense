@@ -54,4 +54,11 @@ class UserTest extends TestCase
                 ],
             ]);
     }
+
+
+    public function test_unauthenticated_user_cannot_access_profile()
+    {
+        $response = $this->getJson('/api/v1/profile');
+        $response->assertStatus(401);
+    }
 }    
