@@ -45,8 +45,7 @@ class NotificationTest extends TestCase
                  ]);
     }
 
-
-
+   
    
     // #[Test]
     // public function it_marks_all_notifications_as_read()
