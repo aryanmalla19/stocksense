@@ -99,6 +99,21 @@ class HoldingTest extends TestCase
         $response->assertStatus(401);
     }
 
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function test_user_with_no_portfolio_cannot_view_holdings()
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user, 'api')
+            ->getJson('/api/v1/holdings');
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Successfully fetched user holdings',
+                'data' => [],
+            ]);
+    }
+
 
 
    
