@@ -45,6 +45,31 @@ class NotificationTest extends TestCase
                  ]);
     }
 
+
+    #[Test]
+    public function it_fetches_a_single_notification()
+    {
+        $notification = DatabaseNotification::create([
+            'id' => Str::uuid()->toString(),
+            'type' => 'App\Notifications\GenericNotification',
+            'notifiable_type' => get_class($this->user),
+            'notifiable_id' => $this->user->id,
+            'data' => ['message' => 'Test notification'],
+            'read_at' => null,
+        ]);
+
+        $response = $this->actingAs($this->user, 'api')
+            ->getJson('/api/v1/users/notifications/' . $notification->id);
+
+        $response->assertStatus(200)
+                 ->assertJson([
+                     'status' => 'success',
+                     'message' => 'Successfully fetched notification data',
+                 ]);
+    }
+
+   
+
    
    
     // #[Test]
