@@ -233,6 +233,36 @@ class IpoDetailControllerTest extends TestCase
     }
 
 
+    #[Test]
+    public function it_updates_an_ipo_detail_with_opened_status()
+    {
+        $ipoDetail = IpoDetail::factory()->create([
+            'stock_id' => $this->stock->id,
+            'open_date' => Carbon::now()->subDay(),
+            'close_date' => Carbon::now()->addDays(5),
+            'ipo_status' => IpoDetailStatus::Opened,
+        ]);
+
+        $data = [
+            'issue_price' => 200,
+        ];
+
+        $response = $this->actingAs($this->user, 'api')
+            ->putJson("/api/v1/ipo-details/{$ipoDetail->id}", $data);
+
+        $response->assertStatus(200)
+                 ->assertJson([
+                     'message' => 'Successfully updated IPO detail',
+                 ]);
+
+        $this->assertDatabaseHas('ipo_details', [
+            'id' => $ipoDetail->id,
+            'issue_price' => 200,
+            'ipo_status' => IpoDetailStatus::Opened,
+        ]);
+    }
+
+
 
 
 }
