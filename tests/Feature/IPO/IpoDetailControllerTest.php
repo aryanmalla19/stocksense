@@ -83,4 +83,24 @@ class IpoDetailControllerTest extends TestCase
                  ->assertJsonCount(1, 'data');
     }
 
+
+    #[Test]
+    public function it_fetches_ipo_details_by_status()
+    {
+        IpoDetail::factory()->create([
+            'stock_id' => $this->stock->id,
+            'ipo_status' => IpoDetailStatus::Opened,
+            'close_date' => Carbon::now()->addDays(5),
+        ]);
+
+        $response = $this->actingAs($this->user, 'api')
+            ->getJson('/api/v1/ipo-details?status=' . IpoDetailStatus::Opened->value);
+
+        $response->assertStatus(200)
+                 ->assertJson([
+                     'message' => 'Successfully fetched all ipo details',
+                 ])
+                 ->assertJsonCount(1, 'data');
+    }
+
 }
