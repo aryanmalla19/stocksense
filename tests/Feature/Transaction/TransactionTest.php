@@ -326,6 +326,16 @@ class TransactionTest extends TestCase
     }
 
 
+    public function test_unauthenticated_user_cannot_access_transactions()
+    {
+        $response = $this->getJson('/api/v1/transactions');
+        $response->assertStatus(401);
+
+        $response = $this->getJson('/api/v1/transactions/1');
+        $response->assertStatus(401);
+    }
+
+
 
 
 
