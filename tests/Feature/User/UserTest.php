@@ -143,6 +143,40 @@ class UserTest extends TestCase
         Storage::disk('public')->assertMissing('profile_images/old_image.jpg');
     }
 
+
+    public function test_update_profile_with_invalid_data_fails()
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user, 'api')
+            ->postJson('/api/v1/profile', [
+                'name' => 'Jo', // Too short
+                'email' => 'invalid-email', // Invalid format
+                'phone_number' => '123', // Invalid format
+                'bio' => str_repeat('a', 501), // Too long
+                'profile_image' => UploadedFile::fake()->create('document.pdf'), // Invalid mime
+            ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['name', 'email', 'phone_number', 'bio', 'profile_image'])
+            ->assertJson([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => [
+                    'name' => ['The name field must be at least 3 characters.'],
+                    'email' => ['The email field must be a valid email address.'],
+                    'phone_number' => ['The phone number field format is invalid.'],
+                    'bio' => ['The bio field must not be greater than 500 characters.'],
+                    'profile_image' => [
+                        'The profile image field must be an image.',
+                        'The profile image field must be a file of type: jpg, jpeg, png.',
+                    ],
+                ],
+            ]);
+    }
+
+
+
     
 
 }
