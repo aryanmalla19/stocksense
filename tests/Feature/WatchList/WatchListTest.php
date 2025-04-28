@@ -234,5 +234,27 @@ class WatchlistTest extends TestCase
 
 
 
+    public function test_multiple_delete_with_empty_stock_ids_fails()
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user, 'api')
+            ->postJson('/api/v1/watchlists/multiple-delete', [
+                'stock_ids' => [],
+            ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['stock_ids'])
+            ->assertJson([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => [
+                    'stock_ids' => ['The stock ids field is required.'],
+                ],
+            ]);
+    }
+
+
+
     
 }
