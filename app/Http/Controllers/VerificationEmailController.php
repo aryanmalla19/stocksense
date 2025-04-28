@@ -7,6 +7,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 /**
  * @OA\Tag(
@@ -64,7 +65,7 @@ class VerificationEmailController extends Controller
         $user->markEmailAsVerified();
 
         // Create access token
-        $accessToken = \JWTAuth::fromUser($user);
+        $accessToken = JWTAuth::fromUser($user);
 
         // Generate refresh token
         $refreshToken = \Illuminate\Support\Str::random(32);
