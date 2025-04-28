@@ -160,6 +160,33 @@ class IpoApplicationControllerTest extends TestCase
                  ]);
     }
 
+    #[Test]
+    public function it_shows_a_specific_ipo_application()
+    {
+        $ipoApplication = IpoApplication::factory()->create([
+            'user_id' => $this->user->id,
+            'ipo_id' => $this->ipoDetail->id,
+            'applied_shares' => 10,
+        ]);
+
+        $response = $this->actingAs($this->user, 'api')
+            ->getJson("/api/v1/ipo-applications/{$ipoApplication->id}");
+
+        $response->assertStatus(200)
+                 ->assertJson([
+                     'message' => 'Successfully fetched all user ipo applications',
+                 ])
+                 ->assertJsonStructure([
+                     'message',
+                     'data' => [
+                         'id',
+                         'ipo_id',
+                         'applied_shares',
+                         'ipo',
+                     ],
+                 ]);
+    }
+
 
    
 }
