@@ -138,5 +138,27 @@ class SectorTest extends TestCase
             ]);
     }
 
+    public function test_authenticated_user_can_retrieve_specific_sector()
+    {
+        $user = User::factory()->create();
+        $sector = Sector::factory()->create([
+            'name' => 'Finance',
+        ]);
+
+        $response = $this->actingAs($user, 'api')
+            ->getJson("/api/v1/sectors/{$sector->id}");
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'data' => [
+                    'id' => $sector->id,
+                    'name' => 'Finance',
+                    'total_no_of_stocks' => 0,
+                    'total_price' => 0,
+                    'average_price' => null,
+                ],
+            ]);
+    }
+
     
 }
