@@ -54,4 +54,22 @@ class AdminTest extends TestCase
             ->assertJsonCount(15, 'data'); 
     }
 
+    public function test_non_admin_cannot_access_admin_routes()
+    {
+        $user = User::factory()->create(['role' => 'user']);
+
+        $routes = [
+            '/api/v1/admin/users',
+            '/api/v1/admin/users/1',
+            '/api/v1/admin/ipo-details/1/applications',
+        ];
+
+        foreach ($routes as $route) {
+            $response = $this->actingAs($user, 'api')
+                ->getJson($route);
+
+            $response->assertStatus(403);
+        }
+    }
+
 }    
