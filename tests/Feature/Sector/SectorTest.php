@@ -215,5 +215,22 @@ class SectorTest extends TestCase
             ]);
     }
 
+    public function test_admin_user_can_delete_sector()
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $sector = Sector::factory()->create();
+
+        $response = $this->actingAs($admin, 'api')
+            ->deleteJson("/api/v1/sectors/{$sector->id}");
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'status' => 'success',
+                'message' => 'Successfully deleted sector with ID '.$sector->id,
+            ]);
+
+        $this->assertDatabaseMissing('sectors', ['id' => $sector->id]);
+    }
+
     
 }
