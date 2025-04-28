@@ -68,6 +68,30 @@ class NotificationTest extends TestCase
                  ]);
     }
 
+
+    #[Test]
+    public function it_marks_a_notification_as_read()
+    {
+        $notification = DatabaseNotification::create([
+            'id' => Str::uuid()->toString(),
+            'type' => 'App\Notifications\GenericNotification',
+            'notifiable_type' => get_class($this->user),
+            'notifiable_id' => $this->user->id,
+            'data' => ['message' => 'Test notification'],
+            'read_at' => null,
+        ]);
+
+        $response = $this->actingAs($this->user, 'api')
+            ->putJson('/api/v1/users/notifications/' . $notification->id);
+
+        $response->assertStatus(200)
+                 ->assertJson([
+                     'success' => true,
+                     'message' => 'Successfully marked notification as read.',
+                 ]);
+    }
+
+
    
 
    
