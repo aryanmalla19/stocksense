@@ -55,10 +55,65 @@ class UserTest extends TestCase
             ]);
     }
 
-
     public function test_unauthenticated_user_cannot_access_profile()
     {
         $response = $this->getJson('/api/v1/profile');
         $response->assertStatus(401);
     }
-}    
+
+    public function test_authenticated_user_can_update_profile()
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user, 'api')
+            ->postJson('/api/v1/profile', [
+                'name' => 'John Doe',
+                'email' => 'john.doe@example.com',
+                'phone_number' => '+12345678901',
+                'bio' => 'Updated bio text',
+            ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Successfully updated profile',
+            ]);
+
+        $this->assertDatabaseHas('users', [
+            'id' => $user->id,
+            'name' => 'John Doe',
+            'email' => 'john.doe@example.com',
+            'phone_number' => '+12345678901',
+            'bio' => 'Updated bio text',
+        ]);
+    }
+
+    
+    public function test_authenticated_user_cannot_update_another_user_profile()
+    {
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
+
+        $response = $this->actingAs($user2, 'api')
+            ->postJson('/api/v1/profile', [
+                'name' => 'John Doe',
+                'email' => 'john.doe@example.com',
+            ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Successfully updated profile',
+            ]);
+
+        $this->assertDatabaseHas('users', [
+            'id' => $user2->id,
+            'name' => 'John Doe',
+            'email' => 'john.doe@example.com',
+        ]);
+
+        $this->assertDatabaseMissing('users', [
+            'id' => $user1->id,
+            'name' => 'John Doe',
+            'email' => 'john.doe@example.com',
+        ]);
+    }
+}
