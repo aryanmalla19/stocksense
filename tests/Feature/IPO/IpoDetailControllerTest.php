@@ -302,6 +302,18 @@ class IpoDetailControllerTest extends TestCase
         ]);
     }
 
+    #[Test]
+    public function it_returns_404_for_deleting_non_existent_ipo_detail()
+    {
+        $response = $this->actingAs($this->user, 'api')
+            ->deleteJson('/api/v1/ipo-details/999');
+
+        $response->assertStatus(404)
+                 ->assertJson([
+                     'message' => 'Could not find IPO detail with ID: 999',
+                 ]);
+    }
+
 
 
 
