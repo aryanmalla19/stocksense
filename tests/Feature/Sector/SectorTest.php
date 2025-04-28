@@ -160,5 +160,15 @@ class SectorTest extends TestCase
             ]);
     }
 
+    public function test_retrieve_non_existent_sector_fails()
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user, 'api')
+            ->getJson('/api/v1/sectors/999');
+
+        $response->assertStatus(404);
+    }
+
     
 }
