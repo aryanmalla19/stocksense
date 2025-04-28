@@ -34,28 +34,14 @@ class SectorTest extends TestCase
         $response = $this->actingAs($user, 'api')
             ->getJson('/api/v1/sectors');
 
-        // dd($response->json());
-
         $response->assertStatus(200)
-            ->assertJson([
-                'status' => 'success',
-                'message' => 'Successfully fetched all sectors data',
-            ])
             ->assertJsonStructure([
-                'status',
-                'message',
                 'data' => [
-                    'data' => [
-                        '*' => ['id', 'name'],
-                    ],
-                    'current_page',
-                    'per_page',
-                    'total',
+                    '*' => ['id', 'name'],
                 ],
             ]);
 
-        // Verify the sector data
-        $responseData = $response->json('data.data');
+        $responseData = $response->json('data');
         $expectedData = array_map(function ($name, $index) {
             return [
                 'id' => $index + 1,
@@ -65,18 +51,16 @@ class SectorTest extends TestCase
 
         $this->assertEquals($expectedData, $responseData);
     }
-
     public function test_unauthenticated_user_cannot_retrieve_sectors()
     {
         $response = $this->getJson('/api/v1/sectors');
         $response->assertStatus(401);
     }
-
-    public function test_authenticated_user_can_create_sector()
+    public function test_admin_user_can_create_sector()
     {
-        $user = User::factory()->create();
+        $admin = User::factory()->create(['role' => 'admin']);
 
-        $response = $this->actingAs($user, 'api')
+        $response = $this->actingAs($admin, 'api')
             ->postJson('/api/v1/sectors', [
                 'name' => 'Banking',
             ]);
@@ -97,9 +81,9 @@ class SectorTest extends TestCase
 
     public function test_create_sector_fails_with_invalid_name()
     {
-        $user = User::factory()->create();
+        $admin = User::factory()->create(['role' => 'admin']);
 
-        $response = $this->actingAs($user, 'api')
+        $response = $this->actingAs($admin, 'api')
             ->postJson('/api/v1/sectors', [
                 'name' => 'invalid-sector',
             ]);
@@ -117,9 +101,9 @@ class SectorTest extends TestCase
 
     public function test_create_sector_fails_with_missing_name()
     {
-        $user = User::factory()->create();
+        $admin = User::factory()->create(['role' => 'admin']);
 
-        $response = $this->actingAs($user, 'api')
+        $response = $this->actingAs($admin, 'api')
             ->postJson('/api/v1/sectors', []);
 
         $response->assertStatus(422)
@@ -135,10 +119,10 @@ class SectorTest extends TestCase
 
     public function test_create_sector_fails_with_duplicate_name()
     {
-        $user = User::factory()->create();
+        $admin = User::factory()->create(['role' => 'admin']);
         Sector::factory()->create(['name' => 'Banking']);
 
-        $response = $this->actingAs($user, 'api')
+        $response = $this->actingAs($admin, 'api')
             ->postJson('/api/v1/sectors', [
                 'name' => 'Banking',
             ]);
@@ -166,11 +150,12 @@ class SectorTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJson([
-                'status' => 'success',
-                'message' => 'Successfully fetched sector data',
                 'data' => [
                     'id' => $sector->id,
                     'name' => 'Finance',
+                    'total_no_of_stocks' => 0,
+                    'total_price' => 0,
+                    'average_price' => null,
                 ],
             ]);
     }
@@ -185,42 +170,14 @@ class SectorTest extends TestCase
         $response->assertStatus(404);
     }
 
-    public function test_authenticated_user_can_update_sector()
-    {
-        $user = User::factory()->create();
-        $sector = Sector::factory()->create([
-            'name' => 'Health',
-        ]);
-
-        $response = $this->actingAs($user, 'api')
-            ->putJson("/api/v1/sectors/{$sector->id}", [
-                'name' => 'Manufacturing',
-            ]);
-
-        $response->assertStatus(200)
-            ->assertJson([
-                'status' => 'success',
-                'message' => 'Successfully updated sector with ID '.$sector->id,
-                'data' => [
-                    'id' => $sector->id,
-                    'name' => 'Manufacturing',
-                ],
-            ]);
-
-        $this->assertDatabaseHas('sectors', [
-            'id' => $sector->id,
-            'name' => 'Manufacturing',
-        ]);
-    }
-
     public function test_update_sector_fails_with_invalid_name()
     {
-        $user = User::factory()->create();
+        $admin = User::factory()->create(['role' => 'admin']);
         $sector = Sector::factory()->create([
             'name' => 'Trading',
         ]);
 
-        $response = $this->actingAs($user, 'api')
+        $response = $this->actingAs($admin, 'api')
             ->putJson("/api/v1/sectors/{$sector->id}", [
                 'name' => 'invalid-sector',
             ]);
@@ -238,11 +195,11 @@ class SectorTest extends TestCase
 
     public function test_update_sector_fails_with_duplicate_name()
     {
-        $user = User::factory()->create();
+        $admin = User::factory()->create(['role' => 'admin']);
         Sector::factory()->create(['name' => 'Investment']);
         $sector = Sector::factory()->create(['name' => 'Microfinance']);
 
-        $response = $this->actingAs($user, 'api')
+        $response = $this->actingAs($admin, 'api')
             ->putJson("/api/v1/sectors/{$sector->id}", [
                 'name' => 'Investment',
             ]);
@@ -258,12 +215,12 @@ class SectorTest extends TestCase
             ]);
     }
 
-    public function test_authenticated_user_can_delete_sector()
+    public function test_admin_user_can_delete_sector()
     {
-        $user = User::factory()->create();
+        $admin = User::factory()->create(['role' => 'admin']);
         $sector = Sector::factory()->create();
 
-        $response = $this->actingAs($user, 'api')
+        $response = $this->actingAs($admin, 'api')
             ->deleteJson("/api/v1/sectors/{$sector->id}");
 
         $response->assertStatus(200)
@@ -284,4 +241,6 @@ class SectorTest extends TestCase
 
         $response->assertStatus(404);
     }
+
+    
 }

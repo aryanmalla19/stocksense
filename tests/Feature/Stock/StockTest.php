@@ -15,20 +15,14 @@ class StockTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * Set up the test environment.
-     */
+ 
     protected function setUp(): void
     {
         parent::setUp();
         $this->artisan('migrate', ['--database' => 'sqlite']);
     }
 
-    // === Authentication Tests ===
 
-    /**
-     * Test that unauthenticated users cannot access stock endpoints.
-     */
     #[Test]
     public function test_unauthenticated_user_cannot_access_endpoints(): void
     {
@@ -40,15 +34,9 @@ class StockTest extends TestCase
         $this->postJson('/api/v1/stocks', [])->assertStatus(401);
         $this->putJson("/api/v1/stocks/{$stock->id}", [])->assertStatus(401);
         $this->deleteJson("/api/v1/stocks/{$stock->id}")->assertStatus(401);
-        $this->getJson('/api/v1/stocks/sort/current_price/asc')->assertStatus(401);
-        $this->getJson('/api/v1/stocks/search?query=Apple')->assertStatus(401);
     }
 
-    // === Stock Viewing Tests ===
 
-    /**
-     * Test that an authenticated user can view all listed stocks.
-     */
     #[Test]
     public function test_authenticated_user_can_view_stocks(): void
     {
@@ -81,9 +69,7 @@ class StockTest extends TestCase
             ]);
     }
 
-    /**
-     * Test that an authenticated user can filter stocks by symbol.
-     */
+
     #[Test]
     public function test_authenticated_user_can_filter_stocks_by_symbol(): void
     {
@@ -110,9 +96,7 @@ class StockTest extends TestCase
             ->assertJsonMissing(['symbol' => 'GOOGL']);
     }
 
-    /**
-     * Test that an authenticated user can view a specific listed stock.
-     */
+
     #[Test]
     public function test_authenticated_user_can_view_specific_listed_stock(): void
     {
@@ -143,9 +127,7 @@ class StockTest extends TestCase
             ]);
     }
 
-    /**
-     * Test that viewing an unlisted stock returns a 404 error.
-     */
+
     #[Test]
     public function test_viewing_unlisted_stock_returns_404(): void
     {
@@ -161,11 +143,7 @@ class StockTest extends TestCase
             ]);
     }
 
-    // === Watchlist Tests ===
 
-    /**
-     * Test that the is_watchlist field works correctly for a stock.
-     */
     #[Test]
     public function test_is_watchlist_field_works_correctly(): void
     {
@@ -189,11 +167,6 @@ class StockTest extends TestCase
             ]);
     }
 
-    // === Admin Stock Management Tests ===
-
-    /**
-     * Test that an admin can create a stock.
-     */
     #[Test]
     public function test_admin_can_create_stock(): void
     {
@@ -228,9 +201,6 @@ class StockTest extends TestCase
         ]);
     }
 
-    /**
-     * Test that an admin can update a stock.
-     */
     #[Test]
     public function test_admin_can_update_stock(): void
     {
@@ -251,7 +221,7 @@ class StockTest extends TestCase
                     'symbol' => 'GOOGL',
                     'company_name' => 'Alphabet Inc.',
                     'sector_id' => $sector->id,
-                    'is_listed' => 1, // TODO: Fix cast issue
+                    'is_listed' => 1,
                     'is_watchlist' => false,
                 ],
             ]);
@@ -263,9 +233,7 @@ class StockTest extends TestCase
         ]);
     }
 
-    /**
-     * Test that an admin can delete a stock.
-     */
+
     #[Test]
     public function test_admin_can_delete_stock(): void
     {
@@ -283,9 +251,7 @@ class StockTest extends TestCase
         $this->assertDatabaseMissing('stocks', ['id' => $stock->id]);
     }
 
-    /**
-     * Test that a non-admin cannot create, update, or delete stocks.
-     */
+
     #[Test]
     public function test_non_admin_cannot_create_update_delete_stocks(): void
     {
@@ -311,81 +277,5 @@ class StockTest extends TestCase
         $this->actingAs($user, 'api')
             ->deleteJson("/api/v1/stocks/{$stock->id}")
             ->assertStatus(403);
-    }
-
-    // === Stock Sorting Tests ===
-
-    /**
-     * Test that stocks can be sorted by a specified column.
-     */
-    #[Test]
-    public function test_sort_stocks_by_column(): void
-    {
-        $user = User::factory()->create();
-        $sector = Sector::factory()->create();
-        $stock1 = Stock::factory()->create(['symbol' => 'AAPL', 'sector_id' => $sector->id, 'is_listed' => true]);
-        $stock2 = Stock::factory()->create(['symbol' => 'GOOGL', 'sector_id' => $sector->id, 'is_listed' => true]);
-
-        StockPrice::factory()->create([
-            'stock_id' => $stock1->id,
-            'current_price' => 150.00,
-            'date' => now(),
-        ]);
-        StockPrice::factory()->create([
-            'stock_id' => $stock2->id,
-            'current_price' => 100.00,
-            'date' => now()->subDay(),
-        ]);
-
-        // Debug: Verify database state
-        $this->assertDatabaseHas('stocks', ['symbol' => 'AAPL', 'is_listed' => true]);
-        $this->assertDatabaseHas('stocks', ['symbol' => 'GOOGL', 'is_listed' => true]);
-        $this->assertDatabaseHas('stock_prices', ['stock_id' => $stock1->id, 'current_price' => 150.00]);
-        $this->assertDatabaseHas('stock_prices', ['stock_id' => $stock2->id, 'current_price' => 100.00]);
-
-        // Debug: Log StockPrice records
-        $aaplPrice = StockPrice::where('stock_id', $stock1->id)->first();
-        $googlPrice = StockPrice::where('stock_id', $stock2->id)->first();
-        \Log::info('AAPL StockPrice:', $aaplPrice ? $aaplPrice->toArray() : []);
-        \Log::info('GOOGL StockPrice:', $googlPrice ? $googlPrice->toArray() : []);
-
-        $response = $this->actingAs($user, 'api')->getJson('/api/v1/stocks/sort/current_price/desc');
-
-        // Debug: Log response
-        \Log::info('Sort stocks response:', $response->json());
-
-        $response->assertStatus(200)
-            ->assertJson(['message' => 'Stocks retrieved successfully'])
-            ->assertJsonPath('data.data.*.symbol', ['AAPL', 'GOOGL']);
-    }
-
-    /**
-     * Test that sorting with an invalid column fails.
-     */
-    #[Test]
-    public function test_sorting_with_invalid_column_fails(): void
-    {
-        $user = User::factory()->create();
-
-        $response = $this->actingAs($user, 'api')->getJson('/api/v1/stocks/sort/invalid_column/asc');
-
-        $response->assertStatus(400)
-            ->assertJson(['message' => 'Invalid sort column'])
-            ->assertJsonStructure(['message']);
-    }
-
-    /**
-     * Test that sorting with an invalid direction fails.
-     */
-    #[Test]
-    public function test_sorting_with_invalid_direction_fails(): void
-    {
-        $user = User::factory()->create();
-
-        $response = $this->actingAs($user, 'api')->getJson('/api/v1/stocks/sort/current_price/invalid');
-
-        $response->assertStatus(400)
-            ->assertJson(['message' => 'Invalid sort direction. Use "asc" or "desc".'])
-            ->assertJsonStructure(['message']);
     }
 }

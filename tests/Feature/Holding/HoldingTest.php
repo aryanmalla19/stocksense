@@ -35,7 +35,7 @@ class HoldingTest extends TestCase
         ]);
 
         $response = $this->actingAs($user, 'api')
-            ->getJson('/api/v1/users/holdings');
+            ->getJson('/api/v1/holdings');
 
         $response->assertStatus(200)
             ->assertJson([
@@ -55,6 +55,7 @@ class HoldingTest extends TestCase
             ]);
     }
 
+
     #[\PHPUnit\Framework\Attributes\Test]
     public function test_authenticated_user_can_view_specific_holding()
     {
@@ -70,7 +71,7 @@ class HoldingTest extends TestCase
         ]);
 
         $response = $this->actingAs($user, 'api')
-            ->getJson("/api/v1/users/holdings/{$holding->id}");
+            ->getJson("/api/v1/holdings/{$holding->id}");
 
         $response->assertStatus(200)
             ->assertJson([
@@ -91,10 +92,10 @@ class HoldingTest extends TestCase
     #[\PHPUnit\Framework\Attributes\Test]
     public function test_unauthenticated_user_cannot_access_holdings()
     {
-        $response = $this->getJson('/api/v1/users/holdings');
+        $response = $this->getJson('/api/v1/holdings');
         $response->assertStatus(401);
 
-        $response = $this->getJson('/api/v1/users/holdings/1');
+        $response = $this->getJson('/api/v1/holdings/1');
         $response->assertStatus(401);
     }
 
@@ -104,7 +105,7 @@ class HoldingTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->actingAs($user, 'api')
-            ->getJson('/api/v1/users/holdings');
+            ->getJson('/api/v1/holdings');
 
         $response->assertStatus(200)
             ->assertJson([
@@ -113,6 +114,8 @@ class HoldingTest extends TestCase
             ]);
     }
 
+    
+    
     #[\PHPUnit\Framework\Attributes\Test]
     public function test_user_cannot_view_another_users_holding()
     {
@@ -129,8 +132,12 @@ class HoldingTest extends TestCase
         ]);
 
         $response = $this->actingAs($user2, 'api')
-            ->getJson("/api/v1/users/holdings/{$holding->id}");
+            ->getJson("/api/v1/holdings/{$holding->id}");
 
         $response->assertStatus(403); // Policy denies access to other user's holding
     }
+
+
+
+   
 }
