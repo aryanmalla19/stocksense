@@ -33,7 +33,7 @@ class IpoCreated extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => 'New Ipo has been opened '.$this->ipoDetail->stock->symbol,
+            'message' => 'New Ipo has been created '.$this->ipoDetail->stock->symbol,
         ];
     }
 }
