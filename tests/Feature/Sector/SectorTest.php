@@ -170,5 +170,28 @@ class SectorTest extends TestCase
         $response->assertStatus(404);
     }
 
+    public function test_update_sector_fails_with_invalid_name()
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $sector = Sector::factory()->create([
+            'name' => 'Trading',
+        ]);
+
+        $response = $this->actingAs($admin, 'api')
+            ->putJson("/api/v1/sectors/{$sector->id}", [
+                'name' => 'invalid-sector',
+            ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['name'])
+            ->assertJson([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => [
+                    'name' => ['The sector name must be one of the predefined values.'],
+                ],
+            ]);
+    }
+
     
 }
