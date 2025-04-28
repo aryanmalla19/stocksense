@@ -312,6 +312,20 @@ class TransactionTest extends TestCase
     }
 
 
+    public function test_view_non_existent_transaction_fails()
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user, 'api')
+            ->getJson('/api/v1/transactions/999');
+
+        $response->assertStatus(404)
+            ->assertJson([
+                'message' => 'No transaction found with ID 999',
+            ]);
+    }
+
+
 
 
 
