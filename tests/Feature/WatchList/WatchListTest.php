@@ -169,4 +169,28 @@ class WatchlistTest extends TestCase
             ]);
     }
 
+
+    public function test_authenticated_user_can_delete_watchlist()
+    {
+        $user = User::factory()->create();
+        $stock = Stock::factory()->create();
+        Watchlist::factory()->create([
+            'user_id' => $user->id,
+            'stock_id' => $stock->id,
+        ]);
+
+        $response = $this->actingAs($user, 'api')
+            ->deleteJson("/api/v1/watchlists/{$stock->id}");
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Successfully removed watchlist',
+            ]);
+
+        $this->assertDatabaseMissing('watchlists', [
+            'user_id' => $user->id,
+            'stock_id' => $stock->id,
+        ]);
+    }
+
 }
