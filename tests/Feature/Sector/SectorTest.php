@@ -51,6 +51,11 @@ class SectorTest extends TestCase
 
         $this->assertEquals($expectedData, $responseData);
     }
+    public function test_unauthenticated_user_cannot_retrieve_sectors()
+    {
+        $response = $this->getJson('/api/v1/sectors');
+        $response->assertStatus(401);
+    }
 
     
 }
