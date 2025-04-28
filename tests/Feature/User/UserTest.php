@@ -116,4 +116,33 @@ class UserTest extends TestCase
             'email' => 'john.doe@example.com',
         ]);
     }
+
+
+    public function test_authenticated_user_can_update_profile_image()
+    {
+        $user = User::factory()->create(['profile_image' => 'profile_images/old_image.jpg']);
+        Storage::disk('public')->put('profile_images/old_image.jpg', 'old content');
+
+        $newImage = UploadedFile::fake()->image('new_image.jpg');
+
+        $response = $this->actingAs($user, 'api')
+            ->postJson('/api/v1/profile', [
+                'profile_image' => $newImage,
+                'name' => $user->name,
+            ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Successfully updated profile',
+            ]);
+
+        $user->refresh();
+        $this->assertStringContainsString('profile_images/', $user->profile_image);
+        $this->assertStringNotContainsString('old_image.jpg', $user->profile_image);
+        Storage::disk('public')->assertExists($user->profile_image);
+        Storage::disk('public')->assertMissing('profile_images/old_image.jpg');
+    }
+
+    
+
 }
