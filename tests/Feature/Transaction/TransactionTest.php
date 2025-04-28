@@ -223,7 +223,35 @@ class TransactionTest extends TestCase
     }
 
 
-    
+    public function test_sell_transaction_fails_with_insufficient_quantity()
+    {
+        $user = User::factory()->create();
+        $portfolio = Portfolio::factory()->create(['user_id' => $user->id]);
+        $sector = Sector::factory()->create();
+        $stock = Stock::factory()->create(['sector_id' => $sector->id]);
+        StockPrice::factory()->create(['stock_id' => $stock->id, 'current_price' => 100.00]);
+        Holding::factory()->create([
+            'portfolio_id' => $portfolio->id,
+            'stock_id' => $stock->id,
+            'quantity' => 20,
+            'average_price' => 90.00,
+        ]);
+
+        $response = $this->actingAs($user, 'api')
+            ->postJson('/api/v1/transactions', [
+                'stock_id' => $stock->id,
+                'type' => 'sell',
+                'quantity' => 50, // More than 20
+            ]);
+
+        $response->assertStatus(400)
+            ->assertJson([
+                'message' => 'You are trying to sell more shares than you own or stock not present in your portfolio.',
+            ]);
+    }
+
+
+
 
 
 
