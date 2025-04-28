@@ -187,6 +187,25 @@ class IpoApplicationControllerTest extends TestCase
                  ]);
     }
 
+    #[Test]
+    public function it_prevents_unauthorized_access_to_ipo_application()
+    {
+        $otherUser = User::factory()->create();
+        $ipoApplication = IpoApplication::factory()->create([
+            'user_id' => $otherUser->id,
+            'ipo_id' => $this->ipoDetail->id,
+            'applied_shares' => 10,
+        ]);
+
+        $response = $this->actingAs($this->user, 'api')
+            ->getJson("/api/v1/ipo-applications/{$ipoApplication->id}");
+
+        $response->assertStatus(403)
+                 ->assertJson([
+                     'message' => 'This action is unauthorized.',
+                 ]);
+    }
+
 
    
 }
