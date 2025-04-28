@@ -56,6 +56,28 @@ class SectorTest extends TestCase
         $response = $this->getJson('/api/v1/sectors');
         $response->assertStatus(401);
     }
+    public function test_admin_user_can_create_sector()
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $response = $this->actingAs($admin, 'api')
+            ->postJson('/api/v1/sectors', [
+                'name' => 'Banking',
+            ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'status' => 'success',
+                'message' => 'Successfully created sector',
+                'data' => [
+                    'name' => 'Banking',
+                ],
+            ]);
+
+        $this->assertDatabaseHas('sectors', [
+            'name' => 'Banking',
+        ]);
+    }
 
     
 }
