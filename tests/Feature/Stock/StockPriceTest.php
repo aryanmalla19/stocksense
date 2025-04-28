@@ -18,7 +18,7 @@ class StockPriceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+        // Create and authenticate a user for API requests
         $this->user = User::factory()->create();
         $this->actingAs($this->user, 'api');
     }
@@ -26,14 +26,14 @@ class StockPriceTest extends TestCase
     #[Test]
     public function it_can_fetch_historical_stock_prices()
     {
-        
+        // Arrange: Create a stock with multiple prices
         $stock = Stock::factory()->create();
         StockPrice::factory()->count(5)->create(['stock_id' => $stock->id]);
 
+        // Act: GET request to history endpoint
         $response = $this->getJson("/api/v1/stocks/{$stock->id}/history");
 
-        
-        -
+        // Assert: Verify response structure and data
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'data' => [
@@ -67,6 +67,7 @@ class StockPriceTest extends TestCase
 
         $this->assertCount(5, $response->json('data.prices'));
     }
+
     #[Test]
     public function it_fails_to_fetch_history_for_non_existent_stock()
     {
@@ -79,6 +80,4 @@ class StockPriceTest extends TestCase
                 'message' => 'Stock not found',
             ]);
     }
-
-   
 }
