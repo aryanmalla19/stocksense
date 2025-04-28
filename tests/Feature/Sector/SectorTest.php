@@ -99,5 +99,23 @@ class SectorTest extends TestCase
             ]);
     }
 
+    public function test_create_sector_fails_with_missing_name()
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $response = $this->actingAs($admin, 'api')
+            ->postJson('/api/v1/sectors', []);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['name'])
+            ->assertJson([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => [
+                    'name' => ['Sector name is required'],
+                ],
+            ]);
+    }
+
     
 }
