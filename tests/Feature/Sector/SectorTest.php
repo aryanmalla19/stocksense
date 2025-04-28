@@ -117,5 +117,26 @@ class SectorTest extends TestCase
             ]);
     }
 
+    public function test_create_sector_fails_with_duplicate_name()
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        Sector::factory()->create(['name' => 'Banking']);
+
+        $response = $this->actingAs($admin, 'api')
+            ->postJson('/api/v1/sectors', [
+                'name' => 'Banking',
+            ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['name'])
+            ->assertJson([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => [
+                    'name' => ['Sector name must be unique'],
+                ],
+            ]);
+    }
+
     
 }
