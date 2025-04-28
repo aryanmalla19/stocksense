@@ -139,6 +139,27 @@ class IpoApplicationControllerTest extends TestCase
         ]);
     }
 
+    #[Test]
+    public function it_fails_ipo_application_with_invalid_data()
+    {
+        $data = [
+            'ipo_id' => 'invalid',
+            'applied_shares' => -10,
+        ];
+
+        $response = $this->actingAs($this->user, 'api')
+            ->postJson('/api/v1/ipo-applications', $data);
+
+        $response->assertStatus(422)
+                 ->assertJsonStructure([
+                     'message',
+                     'errors' => [
+                         'ipo_id',
+                         'applied_shares',
+                     ],
+                 ]);
+    }
+
 
    
 }
