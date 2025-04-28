@@ -257,9 +257,9 @@ class TransactionTest extends TestCase
 
         $response = $this->actingAs($user, 'api')
             ->postJson('/api/v1/transactions', [
-                'stock_id' => 999, // Non-existent
-                'type' => 'invalid', // Not in buy,sell,ipo_allotted
-                'quantity' => 5, // Less than 10
+                'stock_id' => 999, 
+                'type' => 'invalid',
+                'quantity' => 5, 
             ]);
 
         $response->assertStatus(422)
