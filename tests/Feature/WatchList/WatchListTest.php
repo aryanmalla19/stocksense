@@ -123,4 +123,27 @@ class WatchlistTest extends TestCase
             'stock_id' => $stock->id,
         ]);
     }
+
+
+
+    public function test_adding_existing_watchlist_fails()
+    {
+        $user = User::factory()->create();
+        $sector = Sector::factory()->create();
+        $stock = Stock::factory()->create(['sector_id' => $sector->id]);
+        Watchlist::factory()->create([
+            'user_id' => $user->id,
+            'stock_id' => $stock->id,
+        ]);
+
+        $response = $this->actingAs($user, 'api')
+            ->postJson('/api/v1/watchlists', [
+                'stock_id' => $stock->id,
+            ]);
+
+        $response->assertStatus(409)
+            ->assertJson([
+                'message' => 'Same watchlist already exists',
+            ]);
+    }
 }
