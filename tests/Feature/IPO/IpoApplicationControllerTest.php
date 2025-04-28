@@ -58,4 +58,42 @@ class IpoApplicationControllerTest extends TestCase
                  ]);
     }
 
+    #[Test]
+    public function it_stores_a_new_ipo_application()
+    {
+        $data = [
+            'ipo_id' => $this->ipoDetail->id,
+            'applied_shares' => 50,
+        ];
+
+        $response = $this->actingAs($this->user, 'api')
+            ->postJson('/api/v1/ipo-applications', $data);
+
+        $response->assertStatus(200)
+                 ->assertJson([
+                     'message' => 'Successfully IPO applied',
+                 ])
+                 ->assertJsonStructure([
+                     'message',
+                     'data' => [
+                         'id',
+                         'ipo_id',
+                         'applied_shares',
+                     ],
+                 ]);
+
+        $this->assertDatabaseHas('ipo_applications', [
+            'user_id' => $this->user->id,
+            'ipo_id' => $this->ipoDetail->id,
+            'applied_shares' => 50,
+        ]);
+
+        $this->assertDatabaseHas('portfolios', [
+            'user_id' => $this->user->id,
+            'amount' => 10000 - (50 * 100), // 100 is issue_price
+        ]);
+    }
+
+   
+
 } 
