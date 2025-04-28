@@ -78,4 +78,11 @@ class WatchlistTest extends TestCase
                 'meta',
             ]);
     }
+
+
+    public function test_unauthenticated_user_cannot_access_watchlists()
+    {
+        $response = $this->getJson('/api/v1/watchlists');
+        $response->assertStatus(401);
+    }
 }
