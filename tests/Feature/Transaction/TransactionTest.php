@@ -154,6 +154,28 @@ class TransactionTest extends TestCase
         ]);
     }
 
+    public function test_buy_transaction_fails_with_insufficient_balance()
+    {
+        $user = User::factory()->create();
+        $portfolio = Portfolio::factory()->create(['user_id' => $user->id, 'amount' => 100]);
+        $sector = Sector::factory()->create();
+        $stock = Stock::factory()->create(['sector_id' => $sector->id]);
+        StockPrice::factory()->create(['stock_id' => $stock->id, 'current_price' => 100.00]);
+
+        $response = $this->actingAs($user, 'api')
+            ->postJson('/api/v1/transactions', [
+                'stock_id' => $stock->id,
+                'type' => 'buy',
+                'quantity' => 50, // 50 * 100 = 5000 > 100
+            ]);
+
+        $response->assertStatus(400)
+            ->assertJson([
+                'message' => 'You do not have enough balance in your portfolio.',
+            ]);
+    }
+
+
 
     
 }
