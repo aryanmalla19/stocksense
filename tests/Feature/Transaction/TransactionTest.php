@@ -78,5 +78,44 @@ class TransactionTest extends TestCase
             ]);
     }
 
+    public function test_authenticated_user_can_filter_transactions_by_type()
+    {
+        $user = User::factory()->create();
+        $sector = Sector::factory()->create();
+        $stock = Stock::factory()->create(['sector_id' => $sector->id]);
+        StockPrice::factory()->create(['stock_id' => $stock->id, 'current_price' => 100.00]);
+        $buyTransaction = Transaction::factory()->create([
+            'user_id' => $user->id,
+            'stock_id' => $stock->id,
+            'type' => 'buy',
+            'quantity' => 50,
+        ]);
+        Transaction::factory()->create([
+            'user_id' => $user->id,
+            'stock_id' => $stock->id,
+            'type' => 'sell',
+            'quantity' => 20,
+        ]);
+
+        $response = $this->actingAs($user, 'api')
+            ->getJson('/api/v1/transactions?type=buy');
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Successfully fetched filtered transactions',
+                'data' => [
+                    [
+                        'id' => $buyTransaction->id,
+                        'type' => 'buy',
+                        'quantity' => 50,
+                    ],
+                ],
+            ])
+            ->assertJsonMissing([
+                'type' => 'sell',
+            ]);
+    }
+
+
     
 }
