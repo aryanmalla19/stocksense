@@ -114,6 +114,29 @@ class HoldingTest extends TestCase
             ]);
     }
 
+    
+    
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function test_user_cannot_view_another_users_holding()
+    {
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
+        $portfolio = Portfolio::factory()->create(['user_id' => $user1->id]);
+        $sector = Sector::factory()->create();
+        $stock = Stock::factory()->create(['sector_id' => $sector->id]);
+        $holding = Holding::factory()->create([
+            'portfolio_id' => $portfolio->id,
+            'stock_id' => $stock->id,
+            'quantity' => 10,
+            'average_price' => 250.05,
+        ]);
+
+        $response = $this->actingAs($user2, 'api')
+            ->getJson("/api/v1/holdings/{$holding->id}");
+
+        $response->assertStatus(403); // Policy denies access to other user's holding
+    }
+
 
 
    
