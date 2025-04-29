@@ -23,5 +23,5 @@ namespace App\Swagger;
  */
 class SwaggerDoc
 {
-    //
+    
 }
