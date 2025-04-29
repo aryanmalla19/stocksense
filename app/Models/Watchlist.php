@@ -19,29 +19,13 @@ class Watchlist extends Model
         'stock_id',
     ];
 
-    /**
-     * The primary key for the model.
-     *
-     * @var array<string>
-     */
-
-    /**
-     * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
-     */
-
-    /**
-     * Get the user who owns this watchlist entry.
-     */
+  
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Get the stock in this watchlist entry.
-     */
+ 
     public function stock(): BelongsTo
     {
         return $this->belongsTo(Stock::class);
