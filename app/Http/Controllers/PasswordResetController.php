@@ -12,8 +12,55 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 
+/**
+ * @OA\Tag(
+ *     name="Password Reset",
+ *     description="API Endpoints for user password resetting"
+ * )
+ */
 class PasswordResetController extends Controller
 {
+     /**
+     * @OA\Post(
+     *     path="/api/v1/forgot-password",
+     *     summary="Send a password reset link to user's email",
+     *     tags={"Password Reset"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             required={"email"},
+     *             @OA\Property(
+     *                 property="email",
+     *                 type="string",
+     *                 format="email",
+     *                 example="user@example.com",
+     *                 description="The email address associated with the user's account"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Password reset link sent successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="A password reset link has been sent to your email.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="User not found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="error",
+     *                 type="string",
+     *                 example="Validation error or failure message"
+     *             )
+     *         )
+     *     )
+     * )
+     */
     public function sendResetPassword(SendResetPasswordRequest $request)
     {
 
@@ -60,6 +107,68 @@ class PasswordResetController extends Controller
         };
     }
 
+        
+    /**
+     * @OA\Post(
+     *     path="/api/v1/reset-password",
+     *     summary="Reset the user's password",
+     *     tags={"Password Reset"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             required={"token", "email", "password", "password_confirmation"},
+     *             @OA\Property(
+     *                 property="token",
+     *                 type="string",
+     *                 example="your-password-reset-token",
+     *                 description="Password reset token"
+     *             ),
+     *             @OA\Property(
+     *                 property="email",
+     *                 type="string",
+     *                 format="email",
+     *                 example="user@example.com",
+     *                 description="User's email address"
+     *             ),
+     *             @OA\Property(
+     *                 property="password",
+     *                 type="string",
+     *                 format="password",
+     *                 example="SecureP@ssw0rd",
+     *                 description="New password (must contain uppercase, lowercase, number, special character)"
+     *             ),
+     *             @OA\Property(
+     *                 property="password_confirmation",
+     *                 type="string",
+     *                 format="password",
+     *                 example="SecureP@ssw0rd",
+     *                 description="Confirm new password (must match password)"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Password reset successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Your password has been successfully reset.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Password reset error",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="error",
+     *                 type="string",
+     *                 example="Validation error or failure message"
+     *           )
+     *        )
+     *     )
+     * )
+     */
     public function resetPasswordForm(Request $request)
     {
         return view('auth.reset-password', [

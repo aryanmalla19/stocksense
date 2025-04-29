@@ -14,13 +14,13 @@ class AdminController extends Controller
     {
         $user = User::paginate(15);
 
-        return UserResource::collection($user);
+        return $user;
     }
 
     public function user(Request $request, string $id)
     {
         $user = User::find($id);
-        $user->load(['portfolio.holdings.stock', 'transactions']);
+        $user->load(['portfolio.holdings.stock', 'transactions', 'portfolio.holdings']);
 
         return new UserResource($user);
     }

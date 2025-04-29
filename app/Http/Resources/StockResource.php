@@ -23,6 +23,7 @@ class StockResource extends JsonResource
             'company_name' => $this->company_name,
             'sector_id' => $this->sector_id,
             'is_listed' => $this->is_listed,
+            'description' => $this->description,
             'sector' => $this->whenLoaded('sector', fn () => $this->sector->name, null),
             'is_watchlist' => $user->watchlists->contains('stock_id', $this->id),
             'prices' => $this->whenLoaded('prices'),

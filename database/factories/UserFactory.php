@@ -27,7 +27,7 @@ class UserFactory extends Factory
             'is_active' => $this->faker->boolean(90), // 90% active
             'bio' => $this->faker->text(),
             'phone_number' => $this->faker->phoneNumber(),
-            'profile_image' => $this->faker->imageUrl,
+            'profile_image' => 'images/default-profile.png',
             'created_at' => $this->faker->dateTimeThisYear(),
             'updated_at' => $this->faker->dateTimeThisYear(),
         ];

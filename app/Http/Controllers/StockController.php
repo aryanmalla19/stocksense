@@ -7,12 +7,73 @@ use App\Http\Requests\Stock\UpdateStockRequest;
 use App\Http\Resources\StockResource;
 use App\Models\Stock;
 
+/**
+ * @OA\Tag(
+ *      name="Stocks",
+ *      description="Operations related to stocks"
+ * )
+ */
+
+ /**
+ * @OA\Schema(
+ *     schema="Stock",
+ *     type="object",
+ *     title="Stock",
+ *     required={"id", "name", "price"},
+ *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(property="name", type="string", example="Apple Inc."),
+ *     @OA\Property(property="price", type="number", format="float", example=178.34)
+ * )
+ */
 class StockController extends Controller
 {
+     /**
+     * @OA\Get(
+     *     path="/api/v1/stocks",
+     *     summary="Fetch a list of stocks",
+     *     tags={"Stocks"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="symbol",
+     *         in="query",
+     *         required=false,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="column",
+     *         in="query",
+     *         required=false,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="direction",
+     *         in="query",
+     *         required=false,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         required=false,
+     *         @OA\Schema(type="integer", default=10)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successfully fetched all stocks",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/Stock")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Stocks not found"
+     *     )
+     * )
+     */
     public function index()
     {
-        $stocks = Stock::with(['sector', 'latestPrice'])
-            ->listed();
+        $stocks = Stock::with(['sector', 'latestPrice']);
 
         if ($symbol = request('symbol')) {
             $symbol = strtoupper($symbol);
@@ -21,6 +82,10 @@ class StockController extends Controller
 
         if (request('column') && request('direction')) {
             $stocks->sortColumn(request('column'), request('direction'));
+        }
+
+        if(request('listed')){
+            $stocks->listed();
         }
 
         $perPage = request('per_page', 10); // default is 10
@@ -32,6 +97,27 @@ class StockController extends Controller
             ]);
     }
 
+     /**
+     * @OA\Post(
+     *     path="/api/v1/stocks",
+     *     summary="Create a new stock",
+     *     tags={"Stocks"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/Stock")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Successfully registered stock",
+     *         @OA\JsonContent(ref="#/components/schemas/Stock")
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation failed"
+     *     )
+     * )
+     */
     public function store(StoreStockRequest $request)
     {
         $stock = Stock::create($request->validated());
@@ -42,6 +128,29 @@ class StockController extends Controller
         ], 201);
     }
 
+     /**
+     * @OA\Get(
+     *     path="/api/v1/stocks/{id}",
+     *     summary="Fetch a single stock by ID",
+     *     tags={"Stocks"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successfully fetched stock data",
+     *         @OA\JsonContent(ref="#/components/schemas/Stock")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Stock not found"
+     *     )
+     * )
+     */
     public function show(string $id)
     {
         $stock = Stock::with(['sector', 'latestPrice'])
@@ -60,6 +169,33 @@ class StockController extends Controller
         ]);
     }
 
+     /**
+     * @OA\Put(
+     *     path="/api/v1/stocks/{id}",
+     *     summary="Update an existing stock",
+     *     tags={"Stocks"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/Stock")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Stock successfully updated",
+     *         @OA\JsonContent(ref="#/components/schemas/Stock")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Stock not found"
+     *     )
+     * )
+     */
     public function update(UpdateStockRequest $request, string $id)
     {
         $stock = Stock::find($id);
@@ -77,6 +213,28 @@ class StockController extends Controller
         ]);
     }
 
+     /**
+     * @OA\Delete(
+     *     path="/api/v1/stocks/{id}",
+     *     summary="Delete a stock by ID",
+     *     tags={"Stocks"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successfully deleted stock"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Stock not found"
+     *     )
+     * )
+     */
     public function destroy(string $id)
     {
         $stock = Stock::find($id);
