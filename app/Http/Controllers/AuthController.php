@@ -13,6 +13,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
+/**
+ * @OA\Tag(
+ *     name="Authentication",
+ *     description="API Endpoints for User Authentication"
+ * )
+ */
 class AuthController extends Controller
 {
     protected AuthService $authService;
@@ -22,55 +28,34 @@ class AuthController extends Controller
         $this->authService = $authService;
     }
 
-    /**
+     /**
      * @OA\Post(
      *     path="/api/v1/auth/register",
      *     summary="Register a new user",
      *     tags={"Authentication"},
-     *
      *     @OA\RequestBody(
      *         required=true,
-     *
      *         @OA\JsonContent(
      *             required={"name", "email", "password", "password_confirmation"},
-     *
      *             @OA\Property(property="name", type="string", example="John Doe"),
      *             @OA\Property(property="email", type="string", format="email", example="john@example.com"),
-     *             @OA\Property(property="password", type="string", format="password", example="password123"),
-     *             @OA\Property(property="password_confirmation", type="string", format="password", example="password123")
+     *             @OA\Property(property="password", type="string", format="password", example="Password123!"),
+     *             @OA\Property(property="password_confirmation", type="string", format="password", example="Password123!")
      *         )
      *     ),
-     *
      *     @OA\Response(
      *         response=201,
      *         description="User registered successfully",
-     *
      *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="User registered successfully"),
-     *             @OA\Property(
-     *                 property="user",
-     *                 type="object",
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="name", type="string", example="John Doe"),
-     *                 @OA\Property(property="email", type="string", example="john@example.com"),
-     *                 @OA\Property(property="created_at", type="string", format="date-time")
-     *             )
+     *             @OA\Property(property="message", type="string", example="User registered successfully."),
+     *             @OA\Property(property="user", type="object", example={"id":1,"name":"John Doe","email":"john@example.com"})
      *         )
      *     ),
-     *
      *     @OA\Response(
      *         response=422,
-     *         description="Validation errors",
-     *
+     *         description="Validation error",
      *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
-     *             @OA\Property(
-     *                 property="errors",
-     *                 type="object",
-     *                 @OA\Property(property="email", type="array", @OA\Items(type="string", example="The email has already been taken.")),
-     *             )
+     *             @OA\Property(property="error", type="string", example="Validation error details.")
      *         )
      *     )
      * )
@@ -88,63 +73,34 @@ class AuthController extends Controller
         );
     }
 
-    /**
+     /**
      * @OA\Post(
      *     path="/api/v1/auth/login",
      *     summary="Authenticate a user",
      *     tags={"Authentication"},
-     *
      *     @OA\RequestBody(
      *         required=true,
-     *
      *         @OA\JsonContent(
      *             required={"email", "password"},
-     *
      *             @OA\Property(property="email", type="string", format="email", example="john@example.com"),
-     *             @OA\Property(property="password", type="string", format="password", example="password123")
+     *             @OA\Property(property="password", type="string", format="password", example="Password123!")
      *         )
      *     ),
-     *
      *     @OA\Response(
      *         response=200,
      *         description="Login successful",
-     *
      *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="access_token", type="string", example="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."),
+     *             @OA\Property(property="access_token", type="string", example="jwt_access_token_here"),
      *             @OA\Property(property="token_type", type="string", example="bearer"),
      *             @OA\Property(property="expires_in", type="integer", example=3600),
-     *             @OA\Property(property="refresh_token", type="string", example="def5020089a95a56..."),
-     *             @OA\Property(property="user", type="object",
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="name", type="string", example="John Doe"),
-     *                 @OA\Property(property="email", type="string", example="john@example.com")
-     *             )
+     *             @OA\Property(property="refresh_token", type="string", example="refresh_token_here")
      *         )
      *     ),
-     *
      *     @OA\Response(
      *         response=401,
      *         description="Unauthorized",
-     *
      *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="error", type="string", example="Invalid credentials")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=422,
-     *         description="Validation errors",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
-     *             @OA\Property(
-     *                 property="errors",
-     *                 type="object",
-     *                 @OA\Property(property="email", type="array", @OA\Items(type="string", example="The email field is required."))
-     *             )
+     *             @OA\Property(property="error", type="string", example="Invalid credentials.")
      *         )
      *     )
      * )
@@ -163,42 +119,33 @@ class AuthController extends Controller
         );
     }
 
-    /**
+     /**
      * @OA\Post(
      *     path="/api/v1/auth/refresh",
-     *     summary="Refresh access token",
+     *     summary="Refresh access token using refresh token",
      *     tags={"Authentication"},
-     *
      *     @OA\RequestBody(
      *         required=true,
-     *
      *         @OA\JsonContent(
      *             required={"refresh_token"},
-     *
-     *             @OA\Property(property="refresh_token", type="string", example="def5020089a95a56...")
+     *             @OA\Property(property="refresh_token", type="string", example="refresh_token_here")
      *         )
      *     ),
-     *
      *     @OA\Response(
      *         response=200,
      *         description="Token refreshed successfully",
-     *
      *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="access_token", type="string", example="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."),
+     *             @OA\Property(property="access_token", type="string", example="new_jwt_access_token"),
      *             @OA\Property(property="token_type", type="string", example="bearer"),
      *             @OA\Property(property="expires_in", type="integer", example=3600),
-     *             @OA\Property(property="refresh_token", type="string", example="abc1234567890...")
+     *             @OA\Property(property="refresh_token", type="string", example="new_refresh_token_here")
      *         )
      *     ),
-     *
      *     @OA\Response(
      *         response=401,
-     *         description="Unauthorized",
-     *
+     *         description="Invalid or expired refresh token",
      *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="error", type="string", example="Invalid or expired refresh token")
+     *             @OA\Property(property="error", type="string", example="Invalid or expired refresh token.")
      *         )
      *     )
      * )
@@ -234,30 +181,17 @@ class AuthController extends Controller
         ]);
     }
 
-    /**
+     /**
      * @OA\Post(
      *     path="/api/v1/auth/logout",
-     *     summary="Logout a user and invalidate tokens",
+     *     summary="Logout user and invalidate tokens",
      *     tags={"Authentication"},
-     *     security={{"bearerAuth": {}}},
-     *
+     *     security={{"bearerAuth":{}}},
      *     @OA\Response(
      *         response=200,
-     *         description="Successfully logged out",
-     *
+     *         description="Logout successful",
      *         @OA\JsonContent(
-     *
      *             @OA\Property(property="message", type="string", example="Successfully logged out")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="error", type="string", example="Unauthenticated")
      *         )
      *     )
      * )
@@ -275,7 +209,37 @@ class AuthController extends Controller
         ]);
     }
 
-    // change user password
+     /**
+     * @OA\Post(
+     *     path="/api/v1/auth/change-password",
+     *     summary="Change the authenticated user's password",
+     *     tags={"Authentication"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"current_password", "new_password", "new_password_confirmation"},
+     *             @OA\Property(property="current_password", type="string", format="password", example="OldPassword123!"),
+     *             @OA\Property(property="new_password", type="string", format="password", example="NewPassword123!"),
+     *             @OA\Property(property="new_password_confirmation", type="string", format="password", example="NewPassword123!")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Password changed successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Password changed successfully.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Password change error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Invalid current password or other validation issue.")
+     *         )
+     *     )
+     * )
+     */
     public function changePassword(ChangePasswordRequest $request)
     {
         $result = $this->authService->changePassword($request->validated());

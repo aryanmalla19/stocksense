@@ -8,8 +8,49 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
+/**
+ * @OA\Schema(
+ *     schema="StockPrice",
+ *     type="object",
+ *     title="Stock Price",
+ *     description="Schema for a stock price record",
+ * )
+ */
 class StockPriceController extends Controller
 {
+     /**
+     * @OA\Get(
+     *     path="/api/v1/stocks/{id}/history",
+     *     summary="Get historical prices of a stock",
+     *     description="Fetch the stock along with all its past prices and sector information.",
+     *     tags={"Stock Prices"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID of the stock",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful fetch of stock history",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="data", ref="#/components/schemas/StockPrice")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Stock not found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Stock not found")
+     *         )
+     *     ),
+     *     security={{"bearerAuth":{}}}
+     * )
+     */
     public function historyStockPrices($id)
     {
         $stock = Stock::with(['prices', 'sector'])->find($id);
@@ -32,8 +73,40 @@ class StockPriceController extends Controller
         return new StockResource($stock);
     }
 
-
-
+     /**
+     * @OA\Get(
+     *     path="/api/v1/stocks/{id}/history/live",
+     *     summary="Get live historical stock prices (via SSE)",
+     *     description="Provides a Server-Sent Events (SSE) stream of stock prices in real-time.",
+     *     tags={"Stock Prices"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID of the stock",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Stream of stock price updates",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="type", type="string", example="initial|update"),
+     *             @OA\Property(property="data", ref="#/components/schemas/StockPrice")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Stock not found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Stock not found")
+     *         )
+     *     ),
+     *     security={{"bearerAuth":{}}}
+     * )
+     */
     public function historyStockPricesLive($id)
     {
         // Ensure the stock exists
