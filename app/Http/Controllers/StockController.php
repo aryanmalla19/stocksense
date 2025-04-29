@@ -73,8 +73,7 @@ class StockController extends Controller
      */
     public function index()
     {
-        $stocks = Stock::with(['sector', 'latestPrice'])
-            ->listed();
+        $stocks = Stock::with(['sector', 'latestPrice']);
 
         if ($symbol = request('symbol')) {
             $symbol = strtoupper($symbol);
@@ -83,6 +82,10 @@ class StockController extends Controller
 
         if (request('column') && request('direction')) {
             $stocks->sortColumn(request('column'), request('direction'));
+        }
+
+        if(request('listed')){
+            $stocks->listed();
         }
 
         $perPage = request('per_page', 10); // default is 10
