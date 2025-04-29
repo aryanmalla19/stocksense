@@ -19,6 +19,7 @@ class UpdateStockRequest extends FormRequest
             'symbol' => 'sometimes|string|max:6|regex:/^[A-Za-z]+$/|unique:stocks,symbol,'.$id,
             'company_name' => 'sometimes|string|max:255||regex:/^[A-Za-z\s\.]+$/|unique:stocks,company_name,'.$id,
             'sector_id' => 'sometimes|integer|exists:sectors,id',
+            'description' => 'sometimes|string',
         ];
     }
 
