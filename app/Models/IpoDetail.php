@@ -20,6 +20,9 @@ class IpoDetail extends Model
         'close_date',
         'listing_date',
         'ipo_status',
+        'opening_notified_at',
+        'closing_notified_at',
+        'listing_notified_at',
     ];
 
     protected $casts = [

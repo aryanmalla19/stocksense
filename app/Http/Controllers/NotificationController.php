@@ -69,29 +69,27 @@ class NotificationController extends Controller
      *     ),
      * )
      */
-    public function index(): JsonResponse
+    public function index()
     {
         $user = auth('api')->user();
 
         $notifications = $user->notifications()
             ->orderByRaw('read_at IS NULL DESC')
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->orderBy('created_at', 'desc');
 
-        if ($notifications->isEmpty()) {
-            return response()->json(['message' => 'No notifications found'], 200);
-        }
+        $perPage = request('per_page', 10);
+        $paginated = $notifications->paginate($perPage);
 
-        return response()->json([
-            'message' => 'Successfully fetched user\'s notifications',
-            'data' => NotificationResource::collection($notifications),
-            'meta' => [
-                'current_page' => $notifications->currentPage(),
-                'last_page' => $notifications->lastPage(),
-                'per_page' => $notifications->perPage(),
-                'total' => $notifications->total(),
-            ]
-        ], 200);
+        return NotificationResource::collection($paginated)
+            ->additional([
+                'message' => 'Successfully fetched user\'s notifications',
+                'meta' => [
+                    'current_page' => $paginated->currentPage(),
+                    'last_page' => $paginated->lastPage(),
+                    'per_page' => $paginated->perPage(),
+                    'total' => $paginated->total(),
+                ]
+            ]);
     }
 
      /**

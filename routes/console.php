@@ -9,4 +9,5 @@ Artisan::command('inspire', function () {
 
 // Schedule the command
 Schedule::command('ipo:check-listings')->everyMinute();
+Schedule::command('stocks:update-prices')->everyFiveSeconds();
 Schedule::command('stocks:update-prices')->everyFifteenSeconds();
