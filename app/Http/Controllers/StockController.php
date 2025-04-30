@@ -84,8 +84,10 @@ class StockController extends Controller
             $stocks->sortColumn(request('column'), request('direction'));
         }
 
-        if(request('listed')){
-            $stocks->listed();
+        if(request('listed') == 'false'){
+            $stocks = $stocks->unlisted();
+        }else{
+            $stocks = $stocks->listed();
         }
 
         $perPage = request('per_page', 10); // default is 10

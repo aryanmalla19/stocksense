@@ -94,6 +94,11 @@ class Stock extends Model
         return $query->where('is_listed', true);
     }
 
+    public function scopeUnlisted($query)
+    {
+        return $query->where('is_listed', false);
+    }
+
     public function scopeSymbol($query, $symbol)
     {
         return $query->whereRaw('LOWER(symbol) LIKE ?', ['%'.strtolower($symbol).'%']);

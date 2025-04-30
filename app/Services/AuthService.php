@@ -47,11 +47,11 @@ class AuthService
         $user = User::where('email', $credentials['email'])->first();
 
         if (! $user) {
-            return ['error' => 'Email does not exist', 'status' => 401];
+            return ['errors' => ['email' => 'Email does not exist'], 'status' => 401];
         }
 
         if (! Hash::check($credentials['password'], $user->password)) {
-            return ['error' => 'Invalid password', 'status' => 401];
+            return ['errors' => ['password' => 'Invalid password'], 'status' => 401];
         }
 
         if (! $user->hasVerifiedEmail()) {
@@ -116,9 +116,9 @@ class AuthService
         try {
             $user->password = Hash::make($data['new_password']);
             $user->save();
-            
+
             $user->notify(new GeneralNotification('change-password', 'Password has been changed'));
-            
+
             return [
                 'message' => 'Password changed successfully',
                 'status' => 200,
