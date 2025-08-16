@@ -21,7 +21,6 @@ return new class extends Migration
             $table->boolean('is_active')->default(true)->index();
             $table->enum('role', ['admin', 'user'])->default('user')->index();
             $table->text('refresh_token')->nullable();
-            $table->index('refresh_token');
             $table->timestamp('refresh_token_expires_at')->nullable();
             $table->string('profile_image')->nullable();
             $table->string('phone_number')->nullable();
