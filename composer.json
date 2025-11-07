@@ -1,6 +1,6 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "StockSense",
+    "name": "aryanmalla19/stocksense",
     "type": "project",
     "description": "StockSense is a online paper trading platform to learn about exchanging stocks",
     "keywords": [
