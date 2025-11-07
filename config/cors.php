@@ -3,7 +3,7 @@
 return [
     'paths' => ['api/*', 'sse-notifications'],
     'allowed_methods' => ['*'],
-    'allowed_origins' => ['http://localhost:3000', 'https://stocksense.me'],
+    'allowed_origins' => ['http://localhost:3000', 'https://stocksense.me', 'http://stocksense.test'],
     'allowed_origins_patterns' => [],
     'allowed_headers' => ['*'],
     'exposed_headers' => ['Content-Type', 'Authorization'],
