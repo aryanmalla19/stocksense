@@ -2,19 +2,13 @@
     "openapi": "3.0.0",
     "info": {
         "title": "Stock Trading API",
-        "description": "API for managing stocks, portfolios, IPOs, and user accounts",
-        "contact": {
-            "email": "support@yourapp.com"
-        },
+        "description": "API documentation for Stock Trading App",
         "version": "1.0.0"
     },
     "servers": [
         {
-            "url": "http://localhost:8000/",
-            "description": "API v1 Server"
-        },
-        {
-            "url": "/api/v1"
+            "url": "http://localhost/api/v1",
+            "description": "Local server"
         }
     ],
     "paths": {
@@ -49,12 +43,12 @@
                                     "password": {
                                         "type": "string",
                                         "format": "password",
-                                        "example": "password123"
+                                        "example": "Password123!"
                                     },
                                     "password_confirmation": {
                                         "type": "string",
                                         "format": "password",
-                                        "example": "password123"
+                                        "example": "Password123!"
                                     }
                                 },
                                 "type": "object"
@@ -71,28 +65,15 @@
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "User registered successfully"
+                                            "example": "User registered successfully."
                                         },
                                         "user": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "name": {
-                                                    "type": "string",
-                                                    "example": "John Doe"
-                                                },
-                                                "email": {
-                                                    "type": "string",
-                                                    "example": "john@example.com"
-                                                },
-                                                "created_at": {
-                                                    "type": "string",
-                                                    "format": "date-time"
-                                                }
-                                            },
-                                            "type": "object"
+                                            "type": "object",
+                                            "example": {
+                                                "id": 1,
+                                                "name": "John Doe",
+                                                "email": "john@example.com"
+                                            }
                                         }
                                     },
                                     "type": "object"
@@ -101,26 +82,14 @@
                         }
                     },
                     "422": {
-                        "description": "Validation errors",
+                        "description": "Validation error",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "message": {
+                                        "error": {
                                             "type": "string",
-                                            "example": "The given data was invalid."
-                                        },
-                                        "errors": {
-                                            "properties": {
-                                                "email": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "string",
-                                                        "example": "The email has already been taken."
-                                                    }
-                                                }
-                                            },
-                                            "type": "object"
+                                            "example": "Validation error details."
                                         }
                                     },
                                     "type": "object"
@@ -156,7 +125,7 @@
                                     "password": {
                                         "type": "string",
                                         "format": "password",
-                                        "example": "password123"
+                                        "example": "Password123!"
                                     }
                                 },
                                 "type": "object"
@@ -173,7 +142,7 @@
                                     "properties": {
                                         "access_token": {
                                             "type": "string",
-                                            "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+                                            "example": "jwt_access_token_here"
                                         },
                                         "token_type": {
                                             "type": "string",
@@ -185,24 +154,7 @@
                                         },
                                         "refresh_token": {
                                             "type": "string",
-                                            "example": "def5020089a95a56..."
-                                        },
-                                        "user": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "name": {
-                                                    "type": "string",
-                                                    "example": "John Doe"
-                                                },
-                                                "email": {
-                                                    "type": "string",
-                                                    "example": "john@example.com"
-                                                }
-                                            },
-                                            "type": "object"
+                                            "example": "refresh_token_here"
                                         }
                                     },
                                     "type": "object"
@@ -218,35 +170,7 @@
                                     "properties": {
                                         "error": {
                                             "type": "string",
-                                            "example": "Invalid credentials"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation errors",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "The given data was invalid."
-                                        },
-                                        "errors": {
-                                            "properties": {
-                                                "email": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "string",
-                                                        "example": "The email field is required."
-                                                    }
-                                                }
-                                            },
-                                            "type": "object"
+                                            "example": "Invalid credentials."
                                         }
                                     },
                                     "type": "object"
@@ -262,7 +186,7 @@
                 "tags": [
                     "Authentication"
                 ],
-                "summary": "Refresh access token",
+                "summary": "Refresh access token using refresh token",
                 "operationId": "05bd0482845348cafa4da9e4fb7d0ffb",
                 "requestBody": {
                     "required": true,
@@ -275,7 +199,7 @@
                                 "properties": {
                                     "refresh_token": {
                                         "type": "string",
-                                        "example": "def5020089a95a56..."
+                                        "example": "refresh_token_here"
                                     }
                                 },
                                 "type": "object"
@@ -292,7 +216,7 @@
                                     "properties": {
                                         "access_token": {
                                             "type": "string",
-                                            "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+                                            "example": "new_jwt_access_token"
                                         },
                                         "token_type": {
                                             "type": "string",
@@ -304,7 +228,7 @@
                                         },
                                         "refresh_token": {
                                             "type": "string",
-                                            "example": "abc1234567890..."
+                                            "example": "new_refresh_token_here"
                                         }
                                     },
                                     "type": "object"
@@ -313,14 +237,14 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "Invalid or expired refresh token",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "error": {
                                             "type": "string",
-                                            "example": "Invalid or expired refresh token"
+                                            "example": "Invalid or expired refresh token."
                                         }
                                     },
                                     "type": "object"
@@ -336,11 +260,11 @@
                 "tags": [
                     "Authentication"
                 ],
-                "summary": "Logout a user and invalidate tokens",
+                "summary": "Logout user and invalidate tokens",
                 "operationId": "8f1a443d39c3bf383f851fbb51253c64",
                 "responses": {
                     "200": {
-                        "description": "Successfully logged out",
+                        "description": "Logout successful",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -354,16 +278,2723 @@
                                 }
                             }
                         }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/change-password": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Change the authenticated user's password",
+                "operationId": "44fe4c4d98e162cb87389075195f88d4",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "current_password",
+                                    "new_password",
+                                    "new_password_confirmation"
+                                ],
+                                "properties": {
+                                    "current_password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "OldPassword123!"
+                                    },
+                                    "new_password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "NewPassword123!"
+                                    },
+                                    "new_password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "NewPassword123!"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password changed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Password changed successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
-                    "401": {
-                        "description": "Unauthenticated",
+                    "400": {
+                        "description": "Password change error",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "error": {
                                             "type": "string",
-                                            "example": "Unauthenticated"
+                                            "example": "Invalid current password or other validation issue."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/holdings": {
+            "get": {
+                "tags": [
+                    "Holdings"
+                ],
+                "summary": "Fetch all holdings of authenticated user",
+                "operationId": "a92aefad8cd783061a5b0abe9f824f32",
+                "responses": {
+                    "200": {
+                        "description": "Successfully fetched user holdings",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Holding"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/holdings/{holding}": {
+            "get": {
+                "tags": [
+                    "Holdings"
+                ],
+                "summary": "Fetch a specific holding by ID",
+                "operationId": "ef19d638fb6598884e35a8c28b39f6ce",
+                "parameters": [
+                    {
+                        "name": "holding",
+                        "in": "path",
+                        "description": "ID of the holding to fetch",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Holding details fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Holding"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Holding not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/ipo-applications": {
+            "get": {
+                "tags": [
+                    "IPO Applications"
+                ],
+                "summary": "Get all IPO applications for authenticated user",
+                "description": "Returns a list of IPO applications for the authenticated user. You can filter by allotted applications.",
+                "operationId": "c94b0fb0049e93efcf0e5068667e9027",
+                "parameters": [
+                    {
+                        "name": "is_allotted",
+                        "in": "query",
+                        "description": "Filter only allotted IPO applications",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully fetched IPO applications",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully fetched all user ipo applications"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/IpoApplication"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "IPO Applications"
+                ],
+                "summary": "Apply for an IPO",
+                "description": "Create a new IPO application for the authenticated user.",
+                "operationId": "ec2ead5fc257afda7a4f484c8acf1ae1",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "ipo_id",
+                                    "applied_shares"
+                                ],
+                                "properties": {
+                                    "ipo_id": {
+                                        "description": "ID of the IPO user wants to apply for",
+                                        "type": "integer",
+                                        "example": 3
+                                    },
+                                    "applied_shares": {
+                                        "description": "Number of shares user wants to apply",
+                                        "type": "integer",
+                                        "example": 100
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successfully applied for IPO",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully IPO applied"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/IpoApplication"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Insufficient balance",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Insufficient balance"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Already applied for this IPO",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You have already applied for this IPO."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/ipo-applications/{id}": {
+            "get": {
+                "tags": [
+                    "IPO Applications"
+                ],
+                "summary": "Get a specific IPO application by ID",
+                "description": "Returns details of a specific IPO application.",
+                "operationId": "2a0b0bb786eac8cfc2cc0c0205817eda",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the IPO application",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully fetched IPO application",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully fetched all user ipo applications"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/IpoApplication"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Not authorized to view this resource"
+                    },
+                    "404": {
+                        "description": "IPO Application not found"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/ipo-details": {
+            "get": {
+                "tags": [
+                    "IPO Details"
+                ],
+                "summary": "Get all IPO details",
+                "operationId": "a665546e542d8535433bea97e7af0aab",
+                "parameters": [
+                    {
+                        "name": "stock_id",
+                        "in": "query",
+                        "description": "Filter by Stock ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter by IPO Status",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully fetched all IPO details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully fetched all ipo details"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/IpoDetail"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "IPO Details"
+                ],
+                "summary": "Create a new IPO detail",
+                "operationId": "c675467f135a203a4c4b4aa61123b398",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "stock_id",
+                                    "issue_price",
+                                    "total_shares",
+                                    "open_date",
+                                    "close_date",
+                                    "listing_date"
+                                ],
+                                "properties": {
+                                    "stock_id": {
+                                        "description": "ID of the stock",
+                                        "type": "integer"
+                                    },
+                                    "issue_price": {
+                                        "description": "The issue price of the IPO",
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "total_shares": {
+                                        "description": "The total shares for the IPO",
+                                        "type": "integer"
+                                    },
+                                    "open_date": {
+                                        "description": "The open date of the IPO",
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "close_date": {
+                                        "description": "The close date of the IPO",
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "listing_date": {
+                                        "description": "The listing date of the IPO",
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "ipo_status": {
+                                        "description": "The status of the IPO",
+                                        "type": "string",
+                                        "enum": [
+                                            "Upcoming",
+                                            "Opened",
+                                            "Closed",
+                                            "Allotted"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successfully created new IPO detail",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully created new IPO detail"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/IpoDetail"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/ipo-details/{id}": {
+            "get": {
+                "tags": [
+                    "IPO Details"
+                ],
+                "summary": "Get a specific IPO detail",
+                "operationId": "927c8051961e6e6e021f9ce7008c632e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "IPO Detail ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully fetched ipo details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully fetched ipo details"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/IpoDetail"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "IPO detail not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "IPO detail not found for 1"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "IPO Details"
+                ],
+                "summary": "Update an existing IPO detail",
+                "operationId": "a324a59ea694646c01eb67b40e6cbcd5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "IPO Detail ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/IpoDetail"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successfully updated IPO detail",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully updated IPO detail"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/IpoDetail"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "IPO detail not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "IPO detail not found for ID: 1"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "IPO Details"
+                ],
+                "summary": "Delete an IPO detail",
+                "operationId": "bd91201c3e0024fc0cf10500e762c748",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "IPO Detail ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully deleted IPO detail",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully deleted IPO detail with ID: 1"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "IPO detail not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Could not find IPO detail with ID: 1"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/users/notifications": {
+            "get": {
+                "tags": [
+                    "Notifications"
+                ],
+                "summary": "Get User Notifications",
+                "description": "Fetch a list of notifications for the authenticated user",
+                "operationId": "getUserNotifications",
+                "responses": {
+                    "200": {
+                        "description": "Successfully fetched user notifications",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully fetched user's notifications"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Notification"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 50
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "No notifications found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No notifications found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/users/notifications/mark-all-as-read": {
+            "post": {
+                "tags": [
+                    "Notifications"
+                ],
+                "summary": "Mark All Notifications as Read",
+                "description": "Mark all unread notifications for the authenticated user as read",
+                "operationId": "markAllNotificationsAsRead",
+                "responses": {
+                    "200": {
+                        "description": "Successfully marked all user's notifications as read",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully marked all user's notifications as read"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "No unread notifications to mark as read",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No unread notifications to mark as read"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/users/notifications/{id}": {
+            "get": {
+                "tags": [
+                    "Notifications"
+                ],
+                "summary": "Get a Specific Notification",
+                "description": "Fetch a specific notification by ID for the authenticated user",
+                "operationId": "getNotification",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Notification ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully fetched notification",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully fetched notification data"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Notification"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Notification not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Notification does not belong to the user."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Notifications"
+                ],
+                "summary": "Mark Notification as Read",
+                "description": "Mark a specific notification as read for the authenticated user",
+                "operationId": "markNotificationAsRead",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Notification ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully marked notification as read",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully marked notification as read"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Notification"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Notification not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Notification does not belong to the user."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Notification already marked as read",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Already marked as read"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/forgot-password": {
+            "post": {
+                "tags": [
+                    "Password Reset"
+                ],
+                "summary": "Send a password reset link to user's email",
+                "operationId": "d00d15d380816772453ef68645d36799",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "description": "The email address associated with the user's account",
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password reset link sent successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "A password reset link has been sent to your email."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Validation error or failure message"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/reset-password": {
+            "post": {
+                "tags": [
+                    "Password Reset"
+                ],
+                "summary": "Reset the user's password",
+                "operationId": "55060861dde59a136c4f143dffc9f0da",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "token",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "token": {
+                                        "description": "Password reset token",
+                                        "type": "string",
+                                        "example": "your-password-reset-token"
+                                    },
+                                    "email": {
+                                        "description": "User's email address",
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
+                                    },
+                                    "password": {
+                                        "description": "New password (must contain uppercase, lowercase, number, special character)",
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "SecureP@ssw0rd"
+                                    },
+                                    "password_confirmation": {
+                                        "description": "Confirm new password (must match password)",
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "SecureP@ssw0rd"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password reset successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Your password has been successfully reset."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Password reset error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Validation error or failure message"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/portfolios": {
+            "get": {
+                "tags": [
+                    "Portfolio"
+                ],
+                "summary": "Get the authenticated user's portfolio",
+                "description": "Returns the authenticated user's portfolio, including holdings and their latest stock prices.",
+                "operationId": "94d3cd1d044bbad27f093f3527aafe5d",
+                "responses": {
+                    "200": {
+                        "description": "Successfully fetched portfolio data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully fetched all portfolios data"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Portfolio"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/sectors": {
+            "get": {
+                "tags": [
+                    "Sector"
+                ],
+                "summary": "Get all sectors",
+                "description": "Returns a list of all sectors.",
+                "operationId": "cdb4797ff792ff0ceab070365ec6f3b1",
+                "responses": {
+                    "200": {
+                        "description": "List of sectors",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Sector"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Sector"
+                ],
+                "summary": "Create a new sector",
+                "description": "Creates a new sector with a unique and valid name.",
+                "operationId": "08ef9ebbd833701d973b36b180f25904",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "Name of the sector (must be from predefined values)",
+                                        "type": "string",
+                                        "enum": [
+                                            "Banking",
+                                            "Hydropower",
+                                            "Life Insurance",
+                                            "Non-life Insurance",
+                                            "Health",
+                                            "Manufacturing",
+                                            "Hotel",
+                                            "Trading",
+                                            "Microfinance",
+                                            "Finance",
+                                            "Investment",
+                                            "Others"
+                                        ],
+                                        "example": "Banking"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Sector created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully created sector"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Sector"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/sectors/{id}": {
+            "get": {
+                "tags": [
+                    "Sector"
+                ],
+                "summary": "Get a sector",
+                "description": "Returns a specific sector along with its stocks and their latest prices.",
+                "operationId": "f14e4429c3d183153bca89c253156c00",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Sector ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sector details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Sector"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Sector not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Sector"
+                ],
+                "summary": "Update a sector",
+                "description": "Updates the name of an existing sector.",
+                "operationId": "bca74807772018fd0c8ce847f1027f2c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Sector ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "Name of the sector (must be from predefined values)",
+                                        "type": "string",
+                                        "enum": [
+                                            "Banking",
+                                            "Hydropower",
+                                            "Life Insurance",
+                                            "Non-life Insurance",
+                                            "Health",
+                                            "Manufacturing",
+                                            "Hotel",
+                                            "Trading",
+                                            "Microfinance",
+                                            "Finance",
+                                            "Investment",
+                                            "Others"
+                                        ],
+                                        "example": "Health"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Sector updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully updated sector with ID 1"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "404": {
+                        "description": "Sector not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Sector"
+                ],
+                "summary": "Delete a sector",
+                "description": "Deletes a specific sector by ID.",
+                "operationId": "c660c58657c79cae858fde7d4ae8badd",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Sector ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sector deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully deleted sector with ID 1"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Sector not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/sectors/stats": {
+            "get": {
+                "tags": [
+                    "Sector"
+                ],
+                "summary": "Get sector statistics",
+                "description": "Returns number of stocks available under each sector for charts.",
+                "operationId": "1433136b4a53659b4879f9b102816074",
+                "responses": {
+                    "200": {
+                        "description": "Sector statistics",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "name": {
+                                                "type": "string",
+                                                "example": "Banking"
+                                            },
+                                            "value": {
+                                                "type": "integer",
+                                                "example": 5
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/sectors/user-stats": {
+            "get": {
+                "tags": [
+                    "Sector"
+                ],
+                "summary": "Get user sector statistics",
+                "description": "Returns the number of stocks a user holds categorized by sectors for chart visualizations.",
+                "operationId": "b05baa0387889a89bd61a73543915ca6",
+                "responses": {
+                    "200": {
+                        "description": "User sector statistics",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "name": {
+                                                "type": "string",
+                                                "example": "Hydropower"
+                                            },
+                                            "value": {
+                                                "type": "integer",
+                                                "example": 3
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/google/callback": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Handle Google OAuth callback",
+                "description": "Handles the Google OAuth callback, verifies the ID token, and returns an access token and refresh token",
+                "operationId": "handleGoogleCallback",
+                "requestBody": {
+                    "description": "Google ID token",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "id_token"
+                                ],
+                                "properties": {
+                                    "id_token": {
+                                        "description": "The Google ID token",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful authentication",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "access_token": {
+                                            "type": "string",
+                                            "example": "your-access-token"
+                                        },
+                                        "token_type": {
+                                            "type": "string",
+                                            "example": "bearer"
+                                        },
+                                        "expires_in": {
+                                            "type": "integer",
+                                            "example": 3600
+                                        },
+                                        "refresh_token": {
+                                            "type": "string",
+                                            "example": "your-refresh-token"
+                                        },
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "ID token is required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "ID token is required"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid ID token",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Invalid ID token"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Authentication failed"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Detailed error message"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/stocks": {
+            "get": {
+                "tags": [
+                    "Stocks"
+                ],
+                "summary": "Fetch a list of stocks",
+                "operationId": "d372fd51bce9199ceebd4e0f565c73d6",
+                "parameters": [
+                    {
+                        "name": "symbol",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "column",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "direction",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully fetched all stocks",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Stock"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Stocks not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Stocks"
+                ],
+                "summary": "Create a new stock",
+                "operationId": "841de6805d7b988d56586536b0461578",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Stock"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successfully registered stock",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Stock"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/stocks/{id}": {
+            "get": {
+                "tags": [
+                    "Stocks"
+                ],
+                "summary": "Fetch a single stock by ID",
+                "operationId": "0b1aff72798df0fd90d29b7a3470796f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully fetched stock data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Stock"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Stock not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Stocks"
+                ],
+                "summary": "Update an existing stock",
+                "operationId": "afb22133f0dc87e0219602180bdfd89e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Stock"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Stock successfully updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Stock"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Stock not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Stocks"
+                ],
+                "summary": "Delete a stock by ID",
+                "operationId": "ae1fd41a2bdf08ed396850628b16cb8b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully deleted stock"
+                    },
+                    "404": {
+                        "description": "Stock not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/stocks/{id}/history": {
+            "get": {
+                "tags": [
+                    "Stock Prices"
+                ],
+                "summary": "Get historical prices of a stock",
+                "description": "Fetch the stock along with all its past prices and sector information.",
+                "operationId": "ef9e37f9e5452705f445d578af3d0597",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the stock",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful fetch of stock history",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/StockPrice"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Stock not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Stock not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/stocks/{id}/history/live": {
+            "get": {
+                "tags": [
+                    "Stock Prices"
+                ],
+                "summary": "Get live historical stock prices (via SSE)",
+                "description": "Provides a Server-Sent Events (SSE) stream of stock prices in real-time.",
+                "operationId": "10621ce3a0c7d2720b97b2e4ef5e1ad1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the stock",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Stream of stock price updates",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "type": {
+                                            "type": "string",
+                                            "example": "initial|update"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/StockPrice"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Stock not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Stock not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/transactions": {
+            "get": {
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "List user's transactions",
+                "description": "Fetch a paginated list of user's transactions with optional filters (type, date range).",
+                "operationId": "9115b43a55e6c92c81e6c62926e4034f",
+                "parameters": [
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "Filter by transaction type (buy, sell, ipo_allotted)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "from",
+                        "in": "query",
+                        "description": "Start date (YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "to",
+                        "in": "query",
+                        "description": "End date (YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paginated transactions list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Transaction"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Create a new transaction",
+                "description": "Create a buy, sell, or ipo_allotted transaction for a stock.",
+                "operationId": "5968345d7524698be1b46f545cf2a41d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "stock_id",
+                                    "type",
+                                    "quantity"
+                                ],
+                                "properties": {
+                                    "stock_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "buy",
+                                            "sell",
+                                            "ipo_allotted"
+                                        ],
+                                        "example": "buy"
+                                    },
+                                    "quantity": {
+                                        "type": "integer",
+                                        "example": 20
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Transaction created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully created new transaction"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Transaction"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error or insufficient balance/holdings",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You do not have enough balance in your portfolio."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/transactions/{id}": {
+            "get": {
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Get a specific transaction",
+                "description": "Retrieve a transaction by its ID.",
+                "operationId": "688bc3b066f6fe867ee32162fa08e71b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Transaction ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Transaction found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully fetched transaction data"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Transaction"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Transaction not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No transaction found with ID 5"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/2fa/enable": {
+            "post": {
+                "tags": [
+                    "Two Factor Authentication"
+                ],
+                "summary": "Enable Two-Factor Authentication",
+                "description": "Enables 2FA for the authenticated user.",
+                "operationId": "5a151618c9e8aeb2b54d03bf44531e72",
+                "responses": {
+                    "200": {
+                        "description": "2FA enabled successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "2FA enabled successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/2fa/disable": {
+            "post": {
+                "tags": [
+                    "Two Factor Authentication"
+                ],
+                "summary": "Disable Two-Factor Authentication",
+                "description": "Disables 2FA for the authenticated user.",
+                "operationId": "05c927d0614eb4cef6aa9fbdcd51fbdd",
+                "responses": {
+                    "200": {
+                        "description": "2FA disabled successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "2FA disabled successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/verify-otp": {
+            "post": {
+                "tags": [
+                    "Two Factor Authentication"
+                ],
+                "summary": "Verify OTP for Two-Factor Authentication",
+                "description": "Verifies the user's One-Time Password (OTP) during the 2FA process. Returns new JWT tokens if successful.",
+                "operationId": "d9693a76bb9089e512146ae884333676",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/VerifyOtpRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OTP verified successfully, access and refresh tokens returned.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "access_token": {
+                                            "type": "string",
+                                            "example": "eyJhbGciOi..."
+                                        },
+                                        "refresh_token": {
+                                            "type": "string",
+                                            "example": "abc123abc123abc123abc123abc123ab"
+                                        },
+                                        "token_type": {
+                                            "type": "string",
+                                            "example": "bearer"
+                                        },
+                                        "expires_in": {
+                                            "type": "integer",
+                                            "example": 3600
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid OTP, expired OTP, or user not found.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Invalid OTP"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/user": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get authenticated user profile",
+                "description": "Get authenticated user's profile.",
+                "operationId": "cb9ab8cf21952b4694d0f1c71ffbeb20",
+                "responses": {
+                    "200": {
+                        "description": "User profile retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Update authenticated user profile",
+                "description": "Update authenticated user's profile.",
+                "operationId": "64b701822060dfcfb562ec5acd406a3f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "phone_number",
+                                    "bio"
+                                ],
+                                "properties": {
+                                    "profile_image": {
+                                        "description": "Profile image (jpg, jpeg, png, max 2MB)",
+                                        "type": "file"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@example.com"
+                                    },
+                                    "phone_number": {
+                                        "type": "string",
+                                        "example": "+12345678901"
+                                    },
+                                    "bio": {
+                                        "type": "string",
+                                        "example": "Love investing in tech stocks."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Profile updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully updated profile"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/v1/auth/email/verify/{id}/{hash}": {
+            "get": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Verify user's email address",
+                "description": "Verify a user's email when they click the verification link sent to them.",
+                "operationId": "210dff70a02abffd35f8a18345bc9e86",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the user",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "hash",
+                        "in": "path",
+                        "description": "SHA1 hash of the user's email",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "5d41402abc4b2a76b9719d911017c592"
+                        }
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "Redirects to frontend URL with query parameters (success or error)"
+                    }
+                }
+            }
+        },
+        "/v1/auth/email/resend": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Resend verification email",
+                "description": "Resend a verification email to the user if not already verified.",
+                "operationId": "50d8d9f1ab506b3b7db9d86e633eb837",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Verification email resent",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Verification email resent."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "User not found or already verified",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User not found or already verified."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/watchlist": {
+            "get": {
+                "tags": [
+                    "Watchlist"
+                ],
+                "summary": "Get all stocks in user's watchlist",
+                "operationId": "5d038199cde98fd4e561f504b846776a",
+                "responses": {
+                    "200": {
+                        "description": "List of watchlist entries",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully fetched all watchlist data"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Watchlist"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Watchlist"
+                ],
+                "summary": "Add a new stock to user's watchlist",
+                "operationId": "7301f653d0ab7a641e42af55db891840",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "stock_id"
+                                ],
+                                "properties": {
+                                    "stock_id": {
+                                        "description": "ID of the stock to add",
+                                        "type": "integer",
+                                        "example": 101
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successfully added watchlist",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully added watchlist"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Watchlist"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Watchlist already exists",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Same watchlist already exists"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/watchlist/{stock_id}": {
+            "delete": {
+                "tags": [
+                    "Watchlist"
+                ],
+                "summary": "Remove a stock from user's watchlist",
+                "operationId": "68ba39e0c483555bf635d78f702be258",
+                "parameters": [
+                    {
+                        "name": "stock_id",
+                        "in": "path",
+                        "description": "ID of the stock to remove from watchlist",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 101
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully removed watchlist",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully removed watchlist"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Watchlist not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No watchlist found with Stock ID 101"
                                         }
                                     },
                                     "type": "object"
@@ -382,8 +3013,389 @@
     },
     "components": {
         "schemas": {
+            "Holding": {
+                "title": "Holding",
+                "required": [
+                    "id",
+                    "quantity",
+                    "stock_id",
+                    "portfolio_id"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "quantity": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 10.5
+                    },
+                    "stock_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "portfolio_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "stock": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 2
+                            },
+                            "symbol": {
+                                "type": "string",
+                                "example": "AAPL"
+                            },
+                            "sector": {
+                                "type": "string",
+                                "example": "Technology"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "IpoApplication": {
+                "title": "IPO Application",
+                "description": "IPO Application model",
+                "required": [
+                    "user_id",
+                    "ipo_id",
+                    "applied_shares",
+                    "status",
+                    "applied_date",
+                    "allotted_shares"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "Unique ID of the IPO application",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "user_id": {
+                        "description": "User ID who applied",
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "ipo_id": {
+                        "description": "ID of the IPO",
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "applied_shares": {
+                        "description": "Number of shares applied for",
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "status": {
+                        "description": "Status of the IPO application",
+                        "type": "string",
+                        "enum": [
+                            "pending",
+                            "allotted",
+                            "rejected"
+                        ],
+                        "example": "pending"
+                    },
+                    "applied_date": {
+                        "description": "Date when IPO was applied",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-04-26T10:00:00Z"
+                    },
+                    "allotted_shares": {
+                        "description": "Number of shares actually allotted",
+                        "type": "integer",
+                        "example": 80
+                    },
+                    "created_at": {
+                        "description": "When the record was created",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-04-26T10:05:00Z"
+                    },
+                    "updated_at": {
+                        "description": "When the record was last updated",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-04-26T11:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "IpoDetail": {
+                "title": "IPO Detail",
+                "description": "IPO Detail model",
+                "required": [
+                    "stock_id",
+                    "issue_price",
+                    "total_shares",
+                    "open_date",
+                    "close_date",
+                    "listing_date",
+                    "ipo_status"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "stock_id": {
+                        "description": "ID of the related stock",
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "issue_price": {
+                        "description": "Issue price of the IPO",
+                        "type": "number",
+                        "format": "float",
+                        "example": 100.5
+                    },
+                    "total_shares": {
+                        "description": "Total number of shares issued",
+                        "type": "integer",
+                        "example": 10000
+                    },
+                    "open_date": {
+                        "description": "IPO open date",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-05-01T09:00:00Z"
+                    },
+                    "close_date": {
+                        "description": "IPO close date",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-05-10T17:00:00Z"
+                    },
+                    "listing_date": {
+                        "description": "Listing date on the exchange",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-05-15T10:00:00Z"
+                    },
+                    "ipo_status": {
+                        "description": "Current status of the IPO",
+                        "type": "string",
+                        "enum": [
+                            "Upcoming",
+                            "Opened",
+                            "Closed",
+                            "Allotted"
+                        ],
+                        "example": "Upcoming"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-04-26T10:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-04-26T12:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "Notification": {
+                "title": "Notification",
+                "description": "User notification schema",
+                "required": [
+                    "time",
+                    "notification"
+                ],
+                "properties": {
+                    "time": {
+                        "description": "The time when the notification was created",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-04-26T12:30:00.000000Z"
+                    },
+                    "notification": {
+                        "description": "Notification message",
+                        "type": "string",
+                        "example": "Your order has been shipped!"
+                    }
+                },
+                "type": "object"
+            },
+            "Portfolio": {
+                "title": "Portfolio",
+                "required": [
+                    "user_id"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "amount": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 50000.75
+                    },
+                    "holdings": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Holding"
+                        }
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-04-26T10:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-04-26T10:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "Sector": {
+                "title": "Sector",
+                "description": "Sector model",
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Banking"
+                    }
+                },
+                "type": "object"
+            },
+            "GoogleOAuthCallbackResponse": {
+                "title": "Google OAuth Callback Response",
+                "description": "Request and Response structure for Google OAuth callback",
+                "required": [
+                    "id_token"
+                ],
+                "properties": {
+                    "id_token": {
+                        "description": "The Google ID token",
+                        "type": "string"
+                    },
+                    "access_token": {
+                        "description": "JWT Access Token returned after authentication",
+                        "type": "string",
+                        "example": "your-access-token"
+                    },
+                    "token_type": {
+                        "description": "The type of token returned",
+                        "type": "string",
+                        "example": "bearer"
+                    },
+                    "expires_in": {
+                        "description": "The expiration time of the access token in seconds",
+                        "type": "integer",
+                        "example": 3600
+                    },
+                    "refresh_token": {
+                        "description": "JWT Refresh Token returned after authentication",
+                        "type": "string",
+                        "example": "your-refresh-token"
+                    },
+                    "status": {
+                        "description": "HTTP status code of the response",
+                        "type": "integer",
+                        "example": 200
+                    },
+                    "error": {
+                        "description": "Error message for invalid ID token",
+                        "type": "string",
+                        "example": "Invalid ID token"
+                    },
+                    "message": {
+                        "description": "Additional error details",
+                        "type": "string",
+                        "example": "Detailed error message"
+                    }
+                },
+                "type": "object"
+            },
+            "Stock": {
+                "title": "Stock",
+                "required": [
+                    "id",
+                    "name",
+                    "price"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Apple Inc."
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 178.34
+                    }
+                },
+                "type": "object"
+            },
+            "StockPrice": {
+                "title": "Stock Price",
+                "description": "Schema for a stock price record",
+                "type": "object"
+            },
+            "Transaction": {
+                "title": "Transaction",
+                "description": "A user's stock transaction record",
+                "type": "object"
+            },
+            "VerifyOtpRequest": {
+                "required": [
+                    "otp",
+                    "email",
+                    "private_token"
+                ],
+                "properties": {
+                    "otp": {
+                        "description": "The One-Time Password (OTP) sent to user's email or phone.",
+                        "type": "string",
+                        "maxLength": 6,
+                        "minLength": 6,
+                        "example": "123456"
+                    },
+                    "email": {
+                        "description": "The user's email address.",
+                        "type": "string",
+                        "format": "email",
+                        "example": "user@example.com"
+                    },
+                    "private_token": {
+                        "description": "A 32-character secret token associated with the user session.",
+                        "type": "string",
+                        "maxLength": 32,
+                        "minLength": 32,
+                        "example": "ab12cd34ef56gh78ij90kl12mn34op56"
+                    }
+                },
+                "type": "object"
+            },
             "User": {
                 "title": "User",
+                "description": "User details",
                 "properties": {
                     "id": {
                         "type": "integer",
@@ -401,18 +3413,95 @@
                     "email_verified_at": {
                         "type": "string",
                         "format": "date-time",
-                        "example": "2025-04-08T12:00:00Z",
+                        "example": "2025-01-01T12:00:00Z",
                         "nullable": true
                     },
-                    "created_at": {
+                    "profile_image": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2025-04-08T12:00:00Z"
+                        "format": "url",
+                        "example": "https://example.com/storage/profile_images/avatar.jpg",
+                        "nullable": true
                     },
-                    "updated_at": {
+                    "phone_number": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2025-04-08T12:00:00Z"
+                        "example": "+12345678901",
+                        "nullable": true
+                    },
+                    "bio": {
+                        "type": "string",
+                        "example": "Passionate stock trader.",
+                        "nullable": true
+                    },
+                    "role": {
+                        "type": "string",
+                        "example": "user"
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "Watchlist": {
+                "title": "Watchlist",
+                "description": "A stock added to user's watchlist",
+                "properties": {
+                    "user_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "stock_id": {
+                        "type": "integer",
+                        "example": 101
+                    },
+                    "stock": {
+                        "description": "Stock details",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 101
+                            },
+                            "symbol": {
+                                "type": "string",
+                                "example": "AAPL"
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Apple Inc."
+                            },
+                            "latestPrice": {
+                                "description": "Latest stock price",
+                                "properties": {
+                                    "price": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 172.5
+                                    },
+                                    "change": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": -1.25
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "sector": {
+                                "description": "Sector of the stock",
+                                "properties": {
+                                    "id": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Technology"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "type": "object"
                     }
                 },
                 "type": "object"
@@ -421,7 +3510,6 @@
         "securitySchemes": {
             "bearerAuth": {
                 "type": "http",
-                "description": "Enter JWT token in the format: Bearer {token}",
                 "bearerFormat": "JWT",
                 "scheme": "bearer"
             }
@@ -430,7 +3518,59 @@
     "tags": [
         {
             "name": "Authentication",
-            "description": "Authentication"
+            "description": "API Endpoints for User Authentication"
+        },
+        {
+            "name": "Password Reset",
+            "description": "API Endpoints for user password resetting"
+        },
+        {
+            "name": "Holdings",
+            "description": "Holdings"
+        },
+        {
+            "name": "IPO Applications",
+            "description": "IPO Applications"
+        },
+        {
+            "name": "IPO Details",
+            "description": "IPO Details"
+        },
+        {
+            "name": "Notifications",
+            "description": "Notifications"
+        },
+        {
+            "name": "Portfolio",
+            "description": "Portfolio"
+        },
+        {
+            "name": "Sector",
+            "description": "Sector"
+        },
+        {
+            "name": "Stocks",
+            "description": "Stocks"
+        },
+        {
+            "name": "Stock Prices",
+            "description": "Stock Prices"
+        },
+        {
+            "name": "Transactions",
+            "description": "Transactions"
+        },
+        {
+            "name": "Two Factor Authentication",
+            "description": "Two Factor Authentication"
+        },
+        {
+            "name": "User",
+            "description": "User"
+        },
+        {
+            "name": "Watchlist",
+            "description": "Watchlist"
         }
     ]
 }
