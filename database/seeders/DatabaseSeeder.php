@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -22,7 +23,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(SectorSeeder::class);
 
-        Stock::factory(50)
+        Stock::factory(15)
 //            ->has(StockPrice::factory(10), 'prices')
             ->create();
 
@@ -134,5 +135,14 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         });
+
+        // Admin
+        User::factory()->create([
+            'name' => 'Admin',
+            'email' => 'aryanmalla19@gmail.com',
+            'password' => Hash::make('Password@123'),
+            'email_verified_at' => now(),
+            'role' => 'admin',
+        ]);
     }
 }
