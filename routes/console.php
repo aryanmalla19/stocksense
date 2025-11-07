@@ -8,6 +8,6 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 // Schedule the command
-Schedule::command('ipo:check-listings')->everyMinute();
-Schedule::command('stocks:update-prices')->everyFiveSeconds();
-Schedule::command('ipo:check-dates')->everyFifteenSeconds();
+Schedule::command('ipo:check-listings')->everyFourHours();
+Schedule::command('stocks:update-prices')->daily();
+Schedule::command('ipo:check-dates')->everyFourHours();
