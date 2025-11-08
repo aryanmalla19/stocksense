@@ -16,6 +16,7 @@
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.19",
         "laravel/tinker": "^2.10.1",
+        "symfony/http-client": "^7.3",
         "symfony/postmark-mailer": "^7.3",
         "tymon/jwt-auth": "^2.2"
     },
